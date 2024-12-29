@@ -154,12 +154,12 @@
                             </div>
                         </form>
 
-                        <p class="text-center">
+                        <!-- <p class="text-center">
                             <span>¿Eres nuevo en la plataforma?</span>
-                            <a href="<?= base_url(['register']) ?>">
+                            <a href="<= base_url(['register']) ?>">
                                 <span>Crear cuenta</span>
                             </a>
-                        </p>
+                        </p> -->
                     </div>
                 </div>
                 <!-- /Login -->

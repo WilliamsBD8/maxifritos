@@ -121,79 +121,79 @@ class AuthController extends BaseController
         }
     }
 
-    public function register()
-    {
-        $validation = Services::validation();
-        return view('auth/register', ['validation' => $validation]);
-    }
+    // public function register()
+    // {
+    //     $validation = Services::validation();
+    //     return view('auth/register', ['validation' => $validation]);
+    // }
 
-    public function create()
-    {
-        $validation = Services::validation();
-        if ($this->validate([
-            'name'              => 'required|max_length[45]',
-            'username'          => 'required|is_unique[users.username]|max_length[40]',
-            'email'             => 'required|valid_email|is_unique[users.email]|max_length[100]',
-            'password'          => 'required|min_length[6]',
-            'password_confirm'  => 'required|matches[password]',
-        ], [
-            'name' => [
-                'required' => 'El campo Nombres y Apellidos es obrigatorio.',
-                'max_length' => 'El campo Nombres Y Apellidos no debe tener mas de 45 caracteres.'
-            ],
-            'username' => [
-                'required' => 'El campo Nombre de Usuario es obligatorio',
-                'is_unique' => 'Lo sentimos. El nombre de usuario ya se encuentra registrado.',
-                'max_length' => 'El campo Nombre de Usuario no puede superar mas de 20 caracteres.'
-            ],
-            'email' => [
-                'required' => 'El campo Correo Electronico es obrigatorio.',
-                'is_unique' => 'Lo sentimos. El correo ya se encuentra registrado.'
-            ],
-            'password' => [
-                'required' => 'El campo Contraseña es obligatorio.',
-                'min_length' => 'El campo Contraseña debe tener minimo 6 caracteres.'
-            ],
-            'password_confirm' => [
-                'required'      => 'La confirmacion de la contraseña es obligatoria.',
-                'matches'       => 'Las contraseñas no coinciden.'
-            ]
+    // public function create()
+    // {
+    //     $validation = Services::validation();
+    //     if ($this->validate([
+    //         'name'              => 'required|max_length[45]',
+    //         'username'          => 'required|is_unique[users.username]|max_length[40]',
+    //         'email'             => 'required|valid_email|is_unique[users.email]|max_length[100]',
+    //         'password'          => 'required|min_length[6]',
+    //         'password_confirm'  => 'required|matches[password]',
+    //     ], [
+    //         'name' => [
+    //             'required' => 'El campo Nombres y Apellidos es obrigatorio.',
+    //             'max_length' => 'El campo Nombres Y Apellidos no debe tener mas de 45 caracteres.'
+    //         ],
+    //         'username' => [
+    //             'required' => 'El campo Nombre de Usuario es obligatorio',
+    //             'is_unique' => 'Lo sentimos. El nombre de usuario ya se encuentra registrado.',
+    //             'max_length' => 'El campo Nombre de Usuario no puede superar mas de 20 caracteres.'
+    //         ],
+    //         'email' => [
+    //             'required' => 'El campo Correo Electronico es obrigatorio.',
+    //             'is_unique' => 'Lo sentimos. El correo ya se encuentra registrado.'
+    //         ],
+    //         'password' => [
+    //             'required' => 'El campo Contraseña es obligatorio.',
+    //             'min_length' => 'El campo Contraseña debe tener minimo 6 caracteres.'
+    //         ],
+    //         'password_confirm' => [
+    //             'required'      => 'La confirmacion de la contraseña es obligatoria.',
+    //             'matches'       => 'Las contraseñas no coinciden.'
+    //         ]
 
-        ])) {
-            $info = $this->request->getJson();
-            $data = [
-                'name' => $info->name,
-                'username' => $info->username,
-                'email' => $info->email,
-                'status' => 'inactive',
-                'role_id' => 3
-            ];
+    //     ])) {
+    //         $info = $this->request->getJson();
+    //         $data = [
+    //             'name' => $info->name,
+    //             'username' => $info->username,
+    //             'email' => $info->email,
+    //             'status' => 'inactive',
+    //             'role_id' => 3
+    //         ];
 
-            $u_model = new User();
-            $u_model->save($data);
+    //         $u_model = new User();
+    //         $u_model->save($data);
 
-            $user_id = $u_model->insertID();
-            $p_model = new Password();
-            $p_model->save([
-                'user_id'   => $user_id,
-                'password'  => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT)
-            ]);
-            return $this->respond([
-                'status'    => '200',
-                'title'     => 'Creación de éxitosa',
-                'msg'   => "Esperando a activar la cuenta."
-            ]);
-        } else {
-            $errors = implode("<br>", $validation->getErrors());
-            return $this->respond([
-                'status'    => '403',
-                'title'     => 'Error en los datos de creación.',
-                'msg'   => $errors
-            ]);
-        }
+    //         $user_id = $u_model->insertID();
+    //         $p_model = new Password();
+    //         $p_model->save([
+    //             'user_id'   => $user_id,
+    //             'password'  => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT)
+    //         ]);
+    //         return $this->respond([
+    //             'status'    => '200',
+    //             'title'     => 'Creación de éxitosa',
+    //             'msg'   => "Esperando a activar la cuenta."
+    //         ]);
+    //     } else {
+    //         $errors = implode("<br>", $validation->getErrors());
+    //         return $this->respond([
+    //             'status'    => '403',
+    //             'title'     => 'Error en los datos de creación.',
+    //             'msg'   => $errors
+    //         ]);
+    //     }
 
 
-    }
+    // }
 
     public function resetPassword()
     {

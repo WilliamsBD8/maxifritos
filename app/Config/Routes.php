@@ -70,8 +70,8 @@ $routes->group('data', function($routes){
 });
 
 $routes->get('/login', 'AuthController::login');
-$routes->get('/register', 'AuthController::register');
-$routes->post('/create', 'AuthController::create');
+// $routes->get('/register', 'AuthController::register');
+// $routes->post('/create', 'AuthController::create');
 $routes->get('/reset_password', 'AuthController::resetPassword');
 $routes->post('/forgot_password', 'AuthController::forgotPassword');
 $routes->post('/validation', 'AuthController::validation');
