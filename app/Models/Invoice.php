@@ -84,10 +84,10 @@ class Invoice extends Model
     }
 
     public function getFilteredInvoices($user_id = null)
-{
-    if ($user_id) {
-        $this->where('invoices.user_id', $user_id);
+    {
+        if ($user_id != null) {
+            $this->where(['invoices.user_id' => $user_id]);
+        }
+        return $this;
     }
-    return $this;
-}
 }
