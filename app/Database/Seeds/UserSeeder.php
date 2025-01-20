@@ -25,9 +25,9 @@ class UserSeeder extends \CodeIgniter\Database\Seeder
                 'role_id'           => 2
             ],
             [
-                'name'              => 'Vendedor',
-                'email'             => 'vendedor@gmail.com',
-                'username'          => 'vendedor',
+                'name'              => 'Cotizador',
+                'email'             => 'cotizador@gmail.com',
+                'username'          => 'cotizador',
                 'status'            => 'active',
                 'photo'             => '',
                 'role_id'           => 3

@@ -23,9 +23,9 @@
           <div class="col-md-8 order-2 order-md-1">
             <div class="card-body">
               <h4 class="card-title mb-4">Bienvenido <span class="fw-bold"><?= session('user')->name ?></span> 🎉</h4>
-              <div class=" h-100 p-5">
+              <!-- <div class=" h-100 p-5">
                 <div id="map"></div>
-              </div>
+              </div> -->
               <!-- <p class="mb-0">You have done 68% 😎 more sales today.</p>
               <p>Check your new badge in your profile.</p>
               <a href="javascript:;" class="btn btn-primary">View Profile</a> -->
