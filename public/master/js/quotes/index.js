@@ -25,6 +25,7 @@ async function load_datatable(){
             {title: 'Valor', data: 'payable_amount', render: (v) => formatPrice(parseFloat(v))},
             {title: 'Fecha', data: 'created_at'},
             {title: 'Creado por', data: 'u_name'},
+            user.role_id <= 2 ? {title: "Ubicación", data:"address_origin", render:(coor) => `<a onclick="view_map_detail('${coor}')" href="javascript:void(0)" class="btn btn-sm btn-text-primary rounded-pill btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-info" data-bs-original-title="Ver mapa"><i class="ri-map-pin-line"></i></a>`} : null,
             {title: 'Acciones', data:'id', render: (_, __, c) => {
 
                 let actions = `
@@ -34,7 +35,7 @@ async function load_datatable(){
                             <a href="javascript:void(0);" class="btn btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-2-line"></i></a>
                             <ul class="dropdown-menu dropdown-menu-end m-0" style="">
                                 <li><a href="${base_url(['dashboard/cotizaciones/editar', c.id])}" class="dropdown-item">Editar</a></li>
-                                <li><a href="${base_url(['dashboard/cotizaciones/invoice', c.id])}" class="dropdown-item">Remisionar</a></li>
+                                ${user.role_id != 3 ? `<li><a href="${base_url(['dashboard/cotizaciones/invoice', c.id])}" class="dropdown-item">Remisionar</a></li>` : ""}
                                 <li><a href="javascript:void(0);" onclick="decline(${c.id}, ${c.resolution})" class="dropdown-item text-danger">Rechazar</a></li>
                             </ul>                
                         ` : ''}
@@ -216,9 +217,11 @@ function decline(id, resolution){
             Swal.fire({
                 icon: 'success',
                 title: res.title,
-                showConfirmButton: false,
+                showConfirmButton: true,
                 allowOutsideClick: false,
-                customClass: {}
+                customClass: {
+                    confirmButton: "btn btn-primary"
+                }
             });
             reloadTable()
         }

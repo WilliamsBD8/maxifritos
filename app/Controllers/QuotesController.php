@@ -10,6 +10,7 @@ use App\Models\Status;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\TypeDocument;
+use App\Models\User;
 
 use CodeIgniter\API\ResponseTrait;
 
@@ -71,7 +72,7 @@ class QuotesController extends BaseController
             ])
             ->where([
                 'invoices.created_at >=' => "{$dataPost->date_init} 00:00:00",
-                'invoices.created_at <=' => "{$dataPost->date_end} 23:59:59"
+                'invoices.created_at <=' => "{$dataPost->date_end} 23:59:59" 
             ])
             ->join('type_documents as td', 'td.id = invoices.type_document_id', 'left')
             ->join('customers as c', 'c.id = invoices.customer_id', 'left')
@@ -89,8 +90,10 @@ class QuotesController extends BaseController
             ->where([
                 'invoices.created_at >=' => "{$dataPost->date_init} 00:00:00",
                 'invoices.created_at <=' => "{$dataPost->date_end} 23:59:59"
-            ])
-            ->groupBy('invoices.type_document_id')
+            ]);
+        if(session('user')->role_id == 3)
+            $indicadores->where(['invoices.user_id' => session('user')->id]);
+        $indicadores = $indicadores->groupBy('invoices.type_document_id')
             ->findAll();
 
         $count_data = $this->invoices->where([
@@ -110,10 +113,13 @@ class QuotesController extends BaseController
     public function new(){
         $c_model = new Customer();
         $p_model = new Product();
-        $customers = $c_model->where(['status' => 'active'])->findAll();
+        $u_model = new User();
+        $customers = $c_model->where(['type_customer_id' => 1, 'customers.status' => 'active'])->findAll();
         $products = $p_model->where(['status' => 'active'])->findAll();
+        $sellers    = $u_model->where(['role_id' => 3, 'status' => 'active'])->findAll();
         return view('quotes/created', [
             'customers' => $customers,
+            'sellers'   => $sellers,
             'products'  => $products
         ]);
     }
@@ -143,7 +149,7 @@ class QuotesController extends BaseController
     }
 
     public function products(){
-        $data = $this->request->getJson();
+        $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
         $products = $this->p_model
         ->select([
             'products.*',

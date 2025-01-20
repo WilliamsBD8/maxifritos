@@ -3,6 +3,12 @@
 <?= $this->section('styles'); ?>
   <link rel="stylesheet" href="<?= base_url(["assets/vendor/css/pages/cards-statistics.css"]) ?>" />
   <link rel="stylesheet" href="<?= base_url(["assets/vendor/css/pages/cards-analytics.css"]) ?>" />
+  <style>
+    #map {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
 <?= $this->endSection(); ?>
 
 <?php $user_permit = session('user')->role_id == 3 ? false : true ?>
@@ -14,15 +20,18 @@
     <div class="col-md-12 col-xxl-<?= $user_permit ? '8' : '12' ?>">
       <div class="card h-100">
         <div class="d-flex align-items-center row">
-          <div class="col-md-6 order-2 order-md-1">
+          <div class="col-md-8 order-2 order-md-1">
             <div class="card-body">
               <h4 class="card-title mb-4">Bienvenido <span class="fw-bold"><?= session('user')->name ?></span> 🎉</h4>
+              <div class=" h-100 p-5">
+                <div id="map"></div>
+              </div>
               <!-- <p class="mb-0">You have done 68% 😎 more sales today.</p>
               <p>Check your new badge in your profile.</p>
               <a href="javascript:;" class="btn btn-primary">View Profile</a> -->
             </div>
           </div>
-          <div class="col-md-6 text-center text-md-end order-1 order-md-2">
+          <div class="col-md-4 text-center text-md-end order-1 order-md-2">
             <div class="card-body pb-0 px-0 pt-2">
               <img
                 src="../../assets/img/illustrations/illustration-john-light.png"
@@ -34,6 +43,7 @@
             </div>
           </div>
         </div>
+        
       </div>
     </div>
     <!--/ Gamification Card -->
@@ -136,6 +146,7 @@
 <?php $this->endSection() ?>
 
 <?= $this->section('javaScripts'); ?>
+
 
   <script src="<?= base_url(['assets/vendor/libs/apex-charts/apexcharts.js']) ?>"></script>
   <script>

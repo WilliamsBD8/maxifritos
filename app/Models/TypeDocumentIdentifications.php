@@ -12,7 +12,7 @@ class TypeDocumentIdentifications extends Model
     protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['name'];
+    protected $allowedFields    = ['name', 'code'];
 
     protected bool $allowEmptyInserts = false;
 

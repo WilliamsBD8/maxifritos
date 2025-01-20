@@ -54,6 +54,13 @@
       }   
     </style>
 
+    <script>
+      <?php if(session()->get('user')): ?>
+        const user = <?= json_encode(session('user')) ?>;
+        localStorage.setItem("user", JSON.stringify(user));
+      <?php endif ?>
+    </script>
+
     <!-- Icons -->
     <link rel="stylesheet" href="<?= base_url(["assets/vendor/fonts/remixicon/remixicon.css"]) ?>" />
     <link rel="stylesheet" href="<?= base_url(["assets/vendor/fonts/flag-icons.css"]) ?>" />
@@ -146,6 +153,10 @@
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
+
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZ878czxaqiqJVLU-C2lJalQxNYs8PUgM"></script>
+
     <script src="<?= base_url(["assets/vendor/libs/jquery/jquery.js"]) ?>"></script>
     <script src="<?= base_url(["assets/vendor/libs/popper/popper.js"]) ?>"></script>
     <script src="<?= base_url(["assets/vendor/js/bootstrap.js"]) ?>"></script>

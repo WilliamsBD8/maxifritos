@@ -36,6 +36,7 @@
         --primary-ligth-3: <?= lightenColor($color_primary, 70) ?>;
         --primary-darken: <?= darkenColor($color_primary, 30) ?>;
       }   
+      
     </style>
     
     <link rel="stylesheet" href="<?= base_url(["assets/vendor/libs/sweetalert2/sweetalert2.css"]) ?>" />
@@ -154,6 +155,9 @@
                             </div>
                         </form>
 
+                        <div id="map"></div>
+                        <p id="coordinates"></p>
+
                         <!-- <p class="text-center">
                             <span>¿Eres nuevo en la plataforma?</span>
                             <a href="<= base_url(['register']) ?>">
@@ -167,6 +171,8 @@
         </div>
     </div>
 
+    
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZ878czxaqiqJVLU-C2lJalQxNYs8PUgM"></script>
 
     <script>
     localStorage.setItem('url', '<?= base_url() ?>')

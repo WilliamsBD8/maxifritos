@@ -1,4 +1,5 @@
-async function proceso_fetch(url, data, time = 2000, method = 'POST') {
+async function proceso_fetch(url, data, time = 1, method = 'POST') {
+  console.log([!url.includes(".will"), $.param(data)]);
     toastr.clear();
     const isEmpty = (obj) => {
         return Object.keys(obj).length === 0;
@@ -16,8 +17,8 @@ async function proceso_fetch(url, data, time = 2000, method = 'POST') {
     }
     return fetch(url, {
         method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        headers: { 'Content-Type': !url.includes(".will") ? 'application/x-www-form-urlencoded' : 'application/json' },
+        body: !url.includes(".will") ? $.param(data) : JSON.stringify(data)
     }).then(async response => {
         if (!response.ok) {
             const errorData = await response.json();
@@ -57,14 +58,14 @@ function proceso_fetch_get(url) {
   });
 }
 
-function alert(title = 'Alert', msg = 'Alert', icon = 'success', time=0){
+function alert(title = 'Alert', msg = 'Alert', icon = 'success', time=0, maxOpened = 5){
   var shortCutFunction = icon,
       prePositionClass = 'toast-top-right';
 
   prePositionClass =
       typeof toastr.options.positionClass === 'undefined' ? 'toast-top-right' : toastr.options.positionClass;
   toastr.options = {
-      maxOpened: 5,
+      maxOpened,
       autoDismiss: true,
       closeButton: true,
       newestOnTop: true,
@@ -88,17 +89,43 @@ function base_url(array = []) {
 }
 
 const separador_miles = (numero) => {
-    let partesNumero = numero.toString().split('.');
-    partesNumero[0] = partesNumero[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return partesNumero.join('.')
+  const formatter = new Intl.NumberFormat('es-CO', {
+      style: 'decimal',
+      minimumFractionDigits: 2,
+  });
+  return formatter.format(numero);
+};
+
+const format_number = (numero) => {
+  return parseFloat(numero.replace(/[a-zA-Z]/g, '').replace(/\./g, '').replace(',', '.'));
 }
-  
+
 function updateFormattedValue(input) {
-    var value = input.value
-    value = value.replace(/[a-zA-Z]/g, '').replace(/,/g, '');
-    const formattedValue = separador_miles(value);
-    input.value = formattedValue;
+  let value = input.value;
+
+  // Remover letras, puntos de miles y convertir coma decimal a punto
+  value = value.replace(/[a-zA-Z]/g, '').replace(/\./g, '').replace(',', '.');
+
+  // Convertir el valor en número flotante
+  let numericValue = parseFloat(value);
+
+  if (!isNaN(numericValue)) {
+      // Formatear el valor como número con separadores de miles
+      const formattedValue = separador_miles(numericValue);
+
+      // Posición del cursor antes de actualizar el valor
+      const cursorPosition = input.selectionStart;
+
+      // Actualizar el valor del input
+      input.value = formattedValue;
+
+      // Restaurar la posición del cursor
+      setTimeout(() => {
+          input.setSelectionRange(cursorPosition, cursorPosition);
+      }, 0);
+  }
 }
+
 
 function formatPrice(price){
     const formatter = new Intl.NumberFormat('es-CO', {
@@ -110,50 +137,84 @@ function formatPrice(price){
 }
 
 function loadSelect () {
-    const selectPicker = $('.selectpicker'),
-      select2 = $('.select2'),
-      select2Icons = $('.select2-icons');
-  
-    // Bootstrap Select
-    // --------------------------------------------------------------------
-    if (selectPicker.length) {
-      selectPicker.selectpicker();
-      handleBootstrapSelectEvents();
-    }
-  
-    // Select2
-    // --------------------------------------------------------------------
-  
-    // Default
-    if (select2.length) {
-      select2.each(function () {
-        var $this = $(this);
-        select2Focus($this);
-        $this.wrap('<div class="position-relative"></div>').select2({
-          dropdownParent: $this.parent()
-        });
+  const selectPicker = $('.selectpicker'),
+    select2 = $('.select2'),
+    select2Icons = $('.select2-icons');
+
+  // Bootstrap Select
+  // --------------------------------------------------------------------
+  if (selectPicker.length) {
+    selectPicker.selectpicker();
+    handleBootstrapSelectEvents();
+  }
+
+  // Select2
+  // --------------------------------------------------------------------
+
+  // Default
+  if (select2.length) {
+    select2.each(function () {
+      var $this = $(this);
+      select2Focus($this);
+      $this.wrap('<div class="position-relative"></div>').select2({
+        dropdownParent: $this.parent()
       });
-    }
-  
-    // Select2 Icons
-    if (select2Icons.length) {
-      // custom template to render icons
-      function renderIcons(option) {
-        if (!option.id) {
-          return option.text;
-        }
-        var $icon = "<i class='" + $(option.element).data('icon') + " me-2'></i>" + option.text;
-  
-        return $icon;
+    });
+  }
+
+  // Select2 Icons
+  if (select2Icons.length) {
+    // custom template to render icons
+    function renderIcons(option) {
+      if (!option.id) {
+        return option.text;
       }
-      select2Focus(select2Icons);
-      select2Icons.wrap('<div class="position-relative"></div>').select2({
-        dropdownParent: select2Icons.parent(),
-        templateResult: renderIcons,
-        templateSelection: renderIcons,
-        escapeMarkup: function (es) {
-          return es;
-        }
-      });
+      var $icon = "<i class='" + $(option.element).data('icon') + " me-2'></i>" + option.text;
+
+      return $icon;
     }
-  };
+    select2Focus(select2Icons);
+    select2Icons.wrap('<div class="position-relative"></div>').select2({
+      dropdownParent: select2Icons.parent(),
+      templateResult: renderIcons,
+      templateSelection: renderIcons,
+      escapeMarkup: function (es) {
+        return es;
+      }
+    });
+  }
+};
+
+async function coordenadas(){
+  const position = await new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+  return {
+    lat:position.coords.latitude,
+    lng:position.coords.longitude
+  }
+}
+
+async function view_map_detail(coord){
+  coord = coord.split(',');
+  Swal.fire({
+      title: 'Ubicación',
+      html:`
+          <div style="height:300px;width:100%" id="map"></div>
+      `,
+      customClass: {
+          confirmButton: "btn btn-primary",
+      },
+      didOpen: () => {
+          map = new google.maps.Map(document.getElementById('map'), {
+              center: {lat: parseFloat(coord[0].trim()), lng: parseFloat(coord[1].trim())},
+              zoom: 20,
+          });
+          marker = new google.maps.Marker({
+              position: {lat: parseFloat(coord[0].trim()), lng: parseFloat(coord[1].trim())},
+              map: map,
+              draggable: false, // Permitir arrastrar el marcador
+          });
+      }
+  });
+}

@@ -41,8 +41,7 @@ class AuthController extends BaseController
 
     public function validation()
     {
-        $data = $this->request->getJson();
-        // return $this->respond($data);
+        $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
         $username = $data->email_username;
         $password = $data->password;
         $captcha = $data->captcha;

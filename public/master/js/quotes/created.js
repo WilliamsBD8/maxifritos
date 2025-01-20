@@ -2,6 +2,10 @@
 
 const productsD = [];
 const products = [];
+const local_coord = {
+    lat:0,
+    lng:0
+}
 
 $(() => {
     setTimeout(() => {
@@ -11,6 +15,15 @@ $(() => {
 
 async function loadProducts(customer = null){
     if(customer != null){
+        let customers = customersData();
+        let cust = customers.find(c => c.id == customer);
+        let sellers = sellersData();
+        let seller = sellers.find(s => cust.user_origin_id == s.id);
+        if(seller){
+            $('#seller_id').val(seller.id);
+            loadSelect()
+        }
+
         const url = base_url(['data/products']);
         const data = {
             customer
@@ -27,7 +40,15 @@ async function loadProducts(customer = null){
                 text: `${item.name} - ${item.code}`
             }))
         });
-        reloadTable()
+        if(cust.discount_percentage > 0){
+            var aux_customer = `
+                Descuento sugerido del ${cust.discount_percentage}%: ${cust.discount_detail}
+            `
+        }else
+            var aux_customer = "";
+        $('#address').val(cust.address)
+        $('#id_descuento_customer').html(aux_customer)
+        reloadTable();
     }else{
         $('#products_id').select2({
             data: [],
@@ -78,7 +99,7 @@ function changeDiscount(value){
 }
 
 function changeDiscountValue(type, value){
-    $(`#${type == 2 ? 'discount_percentaje' : 'discount_amount'}`).val(type == 2 ? value : value.replace(/,/, ''))
+    $(`#${type == 2 ? 'discount_percentaje' : 'discount_amount'}`).val(type == 2 ? value : format_number(value))
 }
 const table = [];
 
@@ -103,7 +124,7 @@ function productDelete(id){
 
 function handleChange(value, id, campo){
     let producto = products.find(p => p.id == id);
-    value = campo == 'value' || campo == 'discount_amount' ? parseFloat(value.replace(/,/g, '')) : value;
+    value = campo == 'value' || campo == 'discount_amount' ? format_number(value) : value;
     if(campo == 'discount_amount'){
         validate = value >= (parseFloat(producto.value) * parseInt(producto.quantity)) ? false : true;
         if(!validate){
@@ -145,7 +166,7 @@ function loadTable(){
                 return `
                     <div class="input-group input-group-merge">
                         <div class="form-floating form-floating-outline">
-                            <input type="text" class="form-control" onkeyup="updateFormattedValue(this)" value="${separador_miles(parseFloat(v))}" onchange="handleChange(this.value, ${p.id}, 'value')">
+                            <input type="text" class="form-control" onkeyup="updateFormattedValue(this)" value="${separador_miles(v)}" onchange="handleChange(this.value, ${p.id}, 'value')">
                         </div>
                     </div>
                 `;
@@ -180,10 +201,13 @@ function loadTable(){
         ordering: false,
         initComplete: ()  => {
             let info = `
+                <p id="id_descuento_customer"></p>
                 <table>
                     <tbody>
                         <tr>
-                            <td><b>Total Descuentos: </b></td>
+                            <td>
+                                <b>Total Descuentos: </b>
+                            </td>
                             <td id="td_descuentos">$0.00</td>
                         </tr>
                         <tr>
@@ -218,11 +242,15 @@ function loadTable(){
                     return a + (parseInt(b.quantity) * parseFloat(value));
                 }, 0);
             }else{
-                var value_descount = $('#discount_amount').val() == 0 ? ($('#discount_percentaje').val() / 100) * value_total : $('#discount_amount').val().replace(/,/g, '');
+                var value_descount = $('#discount_amount').val() == 0 ? ($('#discount_percentaje').val() / 100) * value_total : format_number($('#discount_amount').val());
             }
             $('#td_productos').html(formatPrice(parseFloat(value_total)));
             $('#td_descuentos').html(formatPrice(parseFloat(value_descount)));
             $('#td_cotizacion').html(formatPrice(parseFloat(value_total) - parseFloat(value_descount)));
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+              return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         },
         buttons: [
             {
@@ -359,6 +387,11 @@ async function sendCotizacion(){
     if(!isValid){
         return alert('Campos obligatorios', 'Por favor llenar los campos rerqueridos.', 'warning', 5000)
     }
+    const lat_lng = await coordenadas();
+    local_coord.lat = lat_lng.lat
+    local_coord.lng = lat_lng.lng
+    data.coordenadas = JSON.stringify(local_coord);
+
     data.products = products;
     data.type_document = 1;
     data.value_invoice = products.reduce((a, b) => {
@@ -371,7 +404,7 @@ async function sendCotizacion(){
             return a + (parseInt(b.quantity) * parseFloat(value));
         }, 0);
     }else{
-        data.value_descount = $('#discount_amount').val() == 0 ? ($('#discount_percentaje').val() / 100) * data.value_invoice : $('#discount_amount').val().replace(/,/g, '');
+        data.value_descount = $('#discount_amount').val() == 0 ? ($('#discount_percentaje').val() / 100) * data.value_invoice : format_number($('#discount_amount'));
     }
     let url = base_url(['invoices/created']);
     const res = await proceso_fetch(url, data);
@@ -385,8 +418,6 @@ async function sendCotizacion(){
             Swal.showLoading();
         }
     });
-    setTimeout(() => {
-        window.location.href = base_url(['dashboard/cotizaciones'])
-    }, 3000)
+    window.location.href = base_url(['dashboard/cotizaciones']);
     console.log(res);
 }

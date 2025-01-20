@@ -6,5 +6,10 @@ class DataSeeder extends \CodeIgniter\Database\Seeder
     {
         $this->call('RoleSeeder');
         $this->call('UserSeeder');
+        $this->call('StatusSeeder');
+        $this->call('TypeDocumentIdentificationsSeeder');
+        $this->call('TypeDocumentsSeeder');
+        $this->call('TypesCustomersSeeder');
+        $this->call('MenuSeeder');
     }
 }

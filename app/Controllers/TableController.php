@@ -84,34 +84,32 @@ class TableController extends BaseController
                         $stateParameters->data['updated_at'] = date('Y-m-d H:i:s');
                         return $stateParameters;
                     });
+
+                    
                     break;
                 case 'sellers':
+                    $this->crud->where(['role_id' => 3]);
+                    $this->crud->unsetDelete();
+                    $this->crud->setFieldUpload('photo', 'assets/upload/images', '/assets/upload/images');
+                    $this->crud->setRelation('role_id', 'roles', 'name', ['id > ?' => 1]);
                     $this->crud->displayAs([
-                        'type_document_identification_id'   => 'Tipo de documento',
-                        'name'                              => 'Nombre',
-                        'identification_number'             => 'Número de identificacón',
-                        'phone'                             => 'Télefono',
-                        'address'                           => 'Dirección',
-                        'status'                            => 'Estado',
-                        'created_at'                        => 'Fecha de creación'
+                        'name'  => 'Nombre',
+                        'photo' => 'Foto',
+                        'username'  => 'Usuario',
+                        'status'    => 'Estado',
                     ]);
-                    $this->crud->where(['type_customer_id' => 2]);
-                    $this->crud->setRelation('type_document_identification_id', 'type_document_identifications', 'name');
-                    $this->crud->setTexteditor(['address']);
-                    $unsetData = ['type_customer_id', 'user_id', 'updated_at'];
+                    
+                    $unsetData = ['role_id'];
                     $this->crud->unsetColumns($unsetData);
-                    $unsetData[] = 'created_at';
                     $this->crud->unsetEditFields($unsetData);
-                    $unsetData[] = 'status';
                     $this->crud->unsetAddFields($unsetData);
+                    $this->crud->unsetEditFields(['usuario']);
+                    $this->crud->uniqueFields(['email', 'username']);
+                    $this->crud->setActionButton('Avatar', 'fa fa-lock', function ($row) {
+                        return base_url(['table', 'users', $row->id]);
+                    }, false);
                     $this->crud->callbackBeforeInsert(function ($stateParameters) {
-                        $stateParameters->data['type_customer_id'] = 2;
-                        $stateParameters->data['created_at'] = date('Y-m-d H:i:s');
-                        $stateParameters->data['updated_at'] = date('Y-m-d H:i:s');
-                        return $stateParameters;
-                    });
-                    $this->crud->callbackBeforeUpdate(function ($stateParameters) {
-                        $stateParameters->data['updated_at'] = date('Y-m-d H:i:s');
+                        $stateParameters->data['role_id'] = 3;
                         return $stateParameters;
                     });
                     break;
@@ -130,7 +128,7 @@ class TableController extends BaseController
                 case 'productos':
                     $this->crud->displayAs([
                         'group_product_id'  => 'Familia',
-                        'code'              => 'Código',
+                        'code'              => 'Código Completo',
                         'code_item'         => 'Código producto',
                         'name'              => 'Nombre',
                         'description'       => 'Descripción',

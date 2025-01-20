@@ -31,9 +31,7 @@
                                             data-allow-clear="false" data-placeholder="Seleccione un cliente">
                                                 <option value="" disabled selected>Seleccione un cliente</option>
                                                 <?php foreach($customers as $customer): ?>
-                                                    <?php if($customer->type_customer_id == 1): ?>
-                                                        <option value="<?= $customer->id ?>"><?= $customer->name ?></option>
-                                                    <?php endif ?>
+                                                    <option value="<?= $customer->id ?>"><?= "$customer->name - $customer->identification_number" ?></option>
                                                 <?php endforeach ?>
                                             </select>
                                             <label for="customer_id">* Cliente de cotización</label>
@@ -46,10 +44,8 @@
                                             id="seller_id" name="seller" required
                                             data-allow-clear="false" data-placeholder="Seleccione un vendedor">
                                                 <option value="" disabled selected>Seleccione un vendedor</option>
-                                                <?php foreach($customers as $customer): ?>
-                                                    <?php if($customer->type_customer_id == 2): ?>
-                                                        <option value="<?= $customer->id ?>"><?= $customer->name ?></option>
-                                                    <?php endif ?>
+                                                <?php foreach($sellers as $seller): ?>
+                                                    <option value="<?= $seller->id ?>"><?= $seller->name ?></option>
                                                 <?php endforeach ?>
                                             </select>
                                             <label for="seller_id">* Vendedor</label>
@@ -157,6 +153,8 @@
 <?= $this->include('layouts/js_datatables') ?>
 <script>
     const productsData = () => <?= json_encode($products) ?>;
+    const sellersData = () => <?= json_encode($sellers) ?>;
+    const customersData = () => <?= json_encode($customers) ?>;
 </script>
 <script src="<?= base_url(['assets/js/forms-selects.js']) ?>"></script>
 <script src="<?= base_url(['master/js/quotes/created.js']) ?>"></script>

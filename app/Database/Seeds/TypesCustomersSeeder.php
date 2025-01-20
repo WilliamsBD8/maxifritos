@@ -10,8 +10,7 @@ class TypesCustomersSeeder extends Seeder
     public function run()
     {
         $types = [
-            ['name' => 'Cliente'],
-            ['name' => 'Vendedor']
+            ['name' => 'Cliente']
         ];
         $tc_model = new TypesCustomers();
         foreach ($types as $key => $type) {

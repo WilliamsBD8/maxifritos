@@ -56,6 +56,12 @@ $routes->group('dashboard', function ($routes){
 		$routes->get('invoice/(:num)', 'QuotesController::invoice/$1');
 	});
 
+	$routes->group('clientes', function($routes){
+		$routes->get('', 'CustomersController::index');
+		$routes->get('data', 'CustomersController::data');
+		$routes->post('created', 'CustomersController::created');
+	});
+
 });
 
 $routes->group('invoices', function($routes){
@@ -86,6 +92,10 @@ $routes->post('/table/(:segment)', 'TableController::index/$1');
 $routes->get('/table/(:segment)', 'TableController::index/$1');
 $routes->post('/table/(:segment)/(:segment)', 'TableController::detail/$1/$2');
 $routes->get('/table/(:segment)/(:segment)', 'TableController::detail/$1/$2');
+
+$routes->group('load', function($routes){
+	$routes->get('products', 'LoadsController::products');
+});
 
 /**
  * --------------------------------------------------------------------

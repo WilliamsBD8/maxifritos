@@ -12,8 +12,8 @@ class Status extends Migration
             'id'        => ['type' => 'INT', 'constraint' => 11, 'unsigned' => TRUE, 'auto_increment'  => TRUE],
             'name'      => ['type' => 'VARCHAR', 'constraint' => 100],
         ]);
-		$this->forge->addKey('id', TRUE);
-		$this->forge->createTable('status');
+        $this->forge->addKey('id', TRUE);
+        $this->forge->createTable('status');
     }
 
     public function down()

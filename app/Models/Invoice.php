@@ -25,7 +25,8 @@ class Invoice extends Model
         'invoice_amount',
         'payable_amount',
         'discount_amount',
-        'discount_percentage'
+        'discount_percentage',
+        'address_origin'
     ];
 
     protected bool $allowEmptyInserts = false;

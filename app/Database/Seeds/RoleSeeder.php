@@ -8,7 +8,7 @@ class RoleSeeder extends \CodeIgniter\Database\Seeder
             $data = [
                 ['name' =>  'Super Administrador'],
                 ['name' =>  'Administrador'],
-                ['name' =>  'Usuario']
+                ['name' =>  'Vendedor']
              ];
 
              foreach ($data as $key) {

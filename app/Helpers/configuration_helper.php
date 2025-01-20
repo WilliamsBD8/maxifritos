@@ -63,3 +63,12 @@ function lightenColor($hex, $percent) {
     // Convertir de vuelta a HEX y retornar el nuevo color
     return sprintf("#%02x%02x%02x", (int)$r, (int)$g, (int)$b);
 }
+
+function only_full_group(){
+    $db = \Config\Database::connect();
+    $db->query("SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
+}
+
+function validUrl(){
+    return strpos(base_url(), ".will");
+}

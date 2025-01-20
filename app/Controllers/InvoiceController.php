@@ -24,13 +24,17 @@ class InvoiceController extends BaseController
     public function created()
     {
         try{
-            $data = $this->request->getJson();
+            $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
             $invoice = $this->i_model->where(['type_document_id' => $data->type_document])->orderBy('id', 'DESC')->first();
+
+            $data->coordenadas = json_decode($data->coordenadas);
+            $data->coordenadas = "{$data->coordenadas->lat}, {$data->coordenadas->lng}";
+
             $dataInvoice = [
                 'customer_id'           => $data->customer_id,
                 'seller_id'             => $data->seller_id,
                 'user_id'               => session('user')->id,
-                'type_document_id'      => $data->type_document,
+                'type_document_id'      => $data->type_document, 
                 'address'               => $data->address,
                 'note'                  => $data->notes,
                 'status_id'             => isset($data->resolution_reference) ? 2 : 1,
@@ -40,11 +44,13 @@ class InvoiceController extends BaseController
                 'invoice_amount'        => isset($data->invoice_amount) ? $data->invoice_amount:$data->value_invoice,
                 'payable_amount'        => isset($data->payable_amount) ? $data->payable_amount : ($data->value_invoice - $data->value_descount),
                 'discount_amount'       => $data->discount_amount,
-                'discount_percentage'   => isset($data->discount_percentage) ? $data->discount_percentage:$data->discount_percentaje
+                'discount_percentage'   => isset($data->discount_percentage) ? $data->discount_percentage:$data->discount_percentaje,
+                'address_origin'        => $data->coordenadas
             ];
             if($this->i_model->save($dataInvoice)){
                 $invoice_id = $this->i_model->insertID();
                 foreach($data->products as $product){
+                    $product = validUrl() ? $product : (object) $product;
                     $this->li_model->save([
                         'product_id'            => isset($product->product_id) ? $product->product_id : $product->id,
                         'invoice_id'            => $invoice_id,
@@ -80,7 +86,7 @@ class InvoiceController extends BaseController
 
     public function edit(){
         try{
-            $data = $this->request->getJson();
+            $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
             $dataInvoice = [
                 'id'                    => $data->id,
                 'customer_id'           => $data->customer_id,
@@ -120,7 +126,7 @@ class InvoiceController extends BaseController
 
     public function decline(){
         try{
-            $data = $this->request->getJson();
+            $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
             $dataSave = [
                 'id'    => $data->id,
                 'status_id' => 3,
