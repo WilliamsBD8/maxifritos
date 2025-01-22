@@ -19,6 +19,7 @@ class QuotesController extends BaseController
     use ResponseTrait;
 
     protected $i_model;
+    protected $td_model;
     protected $p_model;
     protected $dataTable;
     protected $columns;
@@ -27,6 +28,7 @@ class QuotesController extends BaseController
 
     public function __construct(){
         $this->i_model            = new Invoice();
+        $this->td_model           = new TypeDocument();
         $this->p_model            = new Product();
         $this->dataTable                = (object) [
             'draw'      => $_GET['draw'] ?? 1,
@@ -36,7 +38,7 @@ class QuotesController extends BaseController
         ];
         $this->columns = $_GET['columns'] ?? [];
 		$this->user 		= session('user')->role_id == 3 ? session('user')->id : null;
-        $this->invoices = $this->i_model->getFilteredInvoices($this->user)->orderBy('invoices.id', 'DESC');
+        $this->invoices = $this->i_model->orderBy('invoices.id', 'DESC');
     }
     
     public function index(){
@@ -44,15 +46,21 @@ class QuotesController extends BaseController
         $td_model = new TypeDocument();
         $status = $s_model->findAll();
         $type_documents = $td_model->findAll();
+
         $periods = [
-            (object) ['value' => "", 'name' => 'Personalizado'],
-            (object) ['value' => "day", 'name' => 'Hoy'],
-            (object) ['value' => "yesterday", 'name' => 'Ayer'],
-            (object) ['value' => "weekend", 'name' => 'Esta semana'],
-            (object) ['value' => "last_weekend", 'name' => 'Semana Pasada'],
-            (object) ['value' => "month", 'name' => 'Este mes'],
-            (object) ['value' => "last_month", 'name' => 'Mes pasado'],
+            (object) ['value' => "", 'name' => 'Personalizado', "selected" => false],
+            (object) ['value' => "day", 'name' => 'Hoy', "selected" => false],
+            (object) ['value' => "yesterday", 'name' => 'Ayer', "selected" => false],
+            (object) ['value' => "weekend", 'name' => 'Esta semana', "selected" => false],
+            (object) ['value' => "last_weekend", 'name' => 'Semana Pasada', "selected" => false],
+            (object) ['value' => "month", 'name' => 'Este mes', "selected" => !false],
+            (object) ['value' => "last_month", 'name' => 'Mes pasado', "selected" => false],
         ];
+
+        foreach ($periods as $key => $period) {
+            $period->dates = getPeriodDate($period->value);
+        }
+
         return view('quotes/index', [
             'status'            => $status,
             'type_documents'    => $type_documents,
@@ -70,36 +78,33 @@ class QuotesController extends BaseController
                 'td.name as td_name',
                 'u.name as u_name',
             ])
-            ->where([
-                'invoices.created_at >=' => "{$dataPost->date_init} 00:00:00",
-                'invoices.created_at <=' => "{$dataPost->date_end} 23:59:59" 
-            ])
             ->join('type_documents as td', 'td.id = invoices.type_document_id', 'left')
             ->join('customers as c', 'c.id = invoices.customer_id', 'left')
-            ->join('customers as s', 's.id = invoices.seller_id', 'left')
+            ->join('users as s', 's.id = invoices.seller_id', 'left')
             ->join('users as u', 'u.id = invoices.user_id', 'left');
         
         $data = $this->dataTable->length == -1 ? $data->findAll() : $data->paginate($this->dataTable->length, 'dataTable', $this->dataTable->page);
 
-        $indicadores = $this->invoices
-            ->select([
-                'invoices.type_document_id as document',
-                'COUNT(invoices.id) as count',
-                'SUM(invoices.payable_amount) as payable_amount'
-            ])
-            ->where([
-                'invoices.created_at >=' => "{$dataPost->date_init} 00:00:00",
-                'invoices.created_at <=' => "{$dataPost->date_end} 23:59:59"
-            ]);
-        if(session('user')->role_id == 3)
-            $indicadores->where(['invoices.user_id' => session('user')->id]);
-        $indicadores = $indicadores->groupBy('invoices.type_document_id')
-            ->findAll();
+        $indicadores = [];
+        if($this->dataTable->length > 0){
+            $indicadores = $this->td_model
+                ->setAdditionalParams(['origin' => 'indicadores_cot_rem'])
+                ->select([
+                    'type_documents.id as document',
+                    'i.id as invoice_id',
+                    'COALESCE(i.payable_amount, 0) as payable_amount',
+                    'COALESCE(li.quantity, 0) as quantity'
+                    // 'COALESCE(COUNT(DISTINCT i.id), 0) as count', // Devuelve 0 si no hay facturas
+                    // 'COALESCE(SUM(i.payable_amount), 0) as payable_amount', // Devuelve 0 si no hay monto
+                    // 'COALESCE(SUM(li.quantity), 0) as products' // Devuelve 0 si no hay monto
+                ])
+                ->join('invoices i', "i.type_document_id = type_documents.id AND i.created_at BETWEEN '{$dataPost->date_init} 00:00:00' AND '{$dataPost->date_end} 23:59:59'", 'left') // LEFT JOIN para incluir todos los documentos
+                ->join('line_invoices li', "li.invoice_id = i.id", 'left') // LEFT JOIN para incluir todos los documentos
+                // ->groupBy('type_documents.id', 'i.id', 'li.product_id') // Agrupa por documento
+                ->findAll();
+        }
 
-        $count_data = $this->invoices->where([
-            'invoices.created_at >=' => "{$dataPost->date_init} 00:00:00",
-            'invoices.created_at <=' => "{$dataPost->date_end} 23:59:59"
-        ])->countAllResults();
+        $count_data = $this->invoices->countAllResults();
         return $this->respond([
             'data'              => $data,
             'draw'              => $this->dataTable->draw,
@@ -127,14 +132,17 @@ class QuotesController extends BaseController
     public function editar($id){
         $c_model = new Customer();
         $p_model = new Product();
-        $customers = $c_model->where(['status' => 'active'])->findAll();
+        $u_model = new User();
+        $customers = $c_model->where(['type_customer_id' => 1, 'customers.status' => 'active'])->findAll();
         $products = $p_model->where(['status' => 'active'])->findAll();
         $invoice = $this->invoices->find($id);
         $invoice->line_invoice = $this->i_model->getLineInvoice($invoice->id);
+        $sellers    = $u_model->where(['role_id' => 3, 'status' => 'active'])->findAll();
         return view('quotes/edit', [
             'customers' => $customers,
             'products'  => $products,
-            'invoice'   => $invoice
+            'invoice'   => $invoice,
+            'sellers'   => $sellers,
         ]);
     }
 
@@ -156,7 +164,7 @@ class QuotesController extends BaseController
             "COALESCE(
                 (SELECT li.value
                 FROM line_invoices li
-                JOIN invoices i ON i.id = li.invoice_id
+                JOIN invoices i ON i.id = li.invoice_id and i.type_document_id = 2
                 WHERE i.customer_id = {$data->customer}
                 AND li.product_id = products.id
                 ORDER BY li.created_at DESC

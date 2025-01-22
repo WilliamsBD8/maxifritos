@@ -2,8 +2,13 @@
 
 namespace App\Controllers;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
+
+use Config\Services;
 
 use App\Models\Invoice;
 use App\Models\LineInvoice;
@@ -102,6 +107,8 @@ class InvoiceController extends BaseController
             ];
             if($this->i_model->save($dataInvoice)){
                 foreach($data->products as $product){
+                    $product = validUrl() ? $product : (object) $product;
+                    $product->isDelete = validUrl() ? $product->isDelete : filter_var($product->isDelete, FILTER_VALIDATE_BOOLEAN);
                     if($product->isDelete && $product->line_invoice_id != null){
                         $this->li_model->delete($product->line_invoice_id);
                     }else if(!$product->isDelete){
@@ -192,5 +199,132 @@ class InvoiceController extends BaseController
         $mpdf->WriteHTML($inter, \Mpdf\HTMLParserMode::HEADER_CSS);
         $mpdf->WriteHTML($page);
         $mpdf->Output("{$invoice->name_document}_{$invoice->resolution}.pdf", 'I');
+    }
+
+    public function load_order(){
+        try{
+
+            $dataPost = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
+
+            $data = $this->i_model
+                ->setAdditionalParams(['origin' => 'load_order'])
+                ->select([
+                    'c.name as customer',
+                    'c.id as id_customer',
+                    'li.product_id',
+                    'li.quantity',
+                    'p.name',
+                    'p.code'
+                ])
+                ->join('customers as c', 'c.id = invoices.customer_id', 'left')
+                ->join('line_invoices as li', 'li.invoice_id = invoices.id', 'left')
+                ->join('products as p', 'li.product_id = p.id', 'left')
+                ->findAll();
+            if(!empty($data['data'])){
+
+                $spreadsheet = new Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet()->setTitle('Hoja de carga');
+    
+                $sheet->setCellValue('B1', "FECHA");
+                $sheet->setCellValue('C1', "Desde {$dataPost->date_init} hasta {$dataPost->date_end}");
+                $sheet->setCellValue('B2', "NOMBRE TRANSPORTADOR")->getStyle("B2")->getAlignment()->setWrapText(true);
+                $sheet->setCellValue('A3', "CONTEO REFERENCIAS")->getStyle("A3")->getAlignment()->setTextRotation(90)->setWrapText(true);
+    
+                $sheet->getStyle('B1')->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+                $sheet->getStyle('C1')->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+                $sheet->getStyle('B2')->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+                $sheet->getStyle('C2')->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+    
+    
+                $headers = array_merge(['COD', 'DESCRIPCIÓN DEL PRODUCTO'], array_reduce($data['customers'], function($carry, $item){
+                    $carry[] = strtoupper($item['name']);
+                    return $carry;
+                }, []), ['TOTAL']);
+    
+                $sheet->fromArray($headers, null, 'B3');
+    
+                $products = [];
+    
+                foreach ($data['products'] as $key => $product) {
+                    $product = (object) $product;
+                    foreach ($data['customers'] as $key => $customer) {
+                        $customer = (object) $customer;
+                        $result = array_filter($data['data'], function ($item) use ($product, $customer) {
+                            $item = (object) $item;
+                            return $item->id_customer == $customer->id_customer && $item->product_id == $product->product_id;
+                        });
+                        $firstResult = $result ? array_shift($result) : null;
+                        $products[$product->product_id][] = !empty($firstResult) ? $firstResult->quantity : 0;
+                    }
+                }
+    
+                $row = 4;
+                foreach ($data['products'] as $key => $product) {
+                    $product = (object) $product;
+                    $rowData = [$product->code, $product->name];
+                    foreach ($products as $key => $prs) {
+                        if($key == $product->product_id){
+                            $rowData = array_merge($rowData, array_reduce($prs, function($carry, $item){
+                                $carry[] = $item;
+                                return $carry;
+                            }, []), [array_reduce($prs, function($carry, $item){
+                                $carry += (int) $item;
+                                return $carry;
+                            }, 0)]);
+                        }
+                    }
+                    $sheet->fromArray($rowData, null, "B{$row}");
+                    $row++;
+    
+                }
+                for ($i=1; $i <= (count($data['customers']) + 1) ; $i++) {
+                    $column = getColumnLetter($i + 3);
+                    $sheet->getStyle("{$column}3")->getAlignment()->setTextRotation(90);
+                    $sheet->getStyle("{$column}3")->getAlignment()->setWrapText(true);
+                }
+    
+                for ($i=1; $i <= (count($data['customers']) + 4) ; $i++) {
+                    $column = getColumnLetter($i);
+                    $sheet->getStyle("{$column}3")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle("{$column}3")->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+                    for ($j=3; $j < (count($data['products']) + 4); $j++) { 
+                        $sheet->getStyle("{$column}{$j}")->getAlignment()->setIndent(1); // Indentar el texto hacia la derecha (simula margen)
+                        $sheet->getStyle("{$column}{$j}")->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+                    }
+                }
+    
+                $sheet->getRowDimension(3)->setRowHeight("80");
+                $sheet->getColumnDimension('B')->setWidth(17);
+                $sheet->getColumnDimension('A')->setWidth(7);
+    
+                $highestColumn = $sheet->getHighestColumn();
+                $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
+    
+                for ($col = 3; $col <= $highestColumnIndex; $col++) {
+                    $sheet->getColumnDimensionByColumn($col)->setAutoSize(true);
+                }
+    
+                $writer = new Xlsx($spreadsheet);
+                $tempFile = tempnam(sys_get_temp_dir(), 'excel_');
+                
+                $writer->save($tempFile);
+    
+                $fileContent = file_get_contents($tempFile);
+                $base64Content = base64_encode($fileContent);
+                unlink($tempFile);
+            }else{
+                $base64Content = "";
+            }
+
+
+            return $this->respond([
+                'data'      => $data,
+                "file"      => $base64Content,
+                "type"      => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'status'    => !empty($data['data'])
+            ]);
+        }catch(\Exception $e){
+            return $this->respond(['title' => 'Error en el servidor', 'error' => $e->getMessage()], 500);
+        }
     }
 }

@@ -24,7 +24,9 @@
                                     </div>
                                     <div class="col-sm-12 col-lg-3 col-md-6 mb-2">
                                         <div class="form-floating form-floating-outline">
-                                            <select class="select2 form-select form-select-lg" id="customer_id" name="customer" required>
+                                            <select
+                                                onchange="loadProducts(this.value)"
+                                                class="select2 form-select form-select-lg" id="customer_id" name="customer" required>
                                                 <option value="" disabled selected>Seleccione un cliente</option>
                                                 <?php foreach($customers as $customer): ?>
                                                     <?php if($customer->type_customer_id == 1): ?>
@@ -40,10 +42,8 @@
                                         <div class="form-floating form-floating-outline">
                                             <select class="select2 form-select form-select-lg" id="seller_id" name="seller" required>
                                                 <option value="" disabled selected>Seleccione un vendedor</option>
-                                                <?php foreach($customers as $customer): ?>
-                                                    <?php if($customer->type_customer_id == 2): ?>
-                                                        <option value="<?= $customer->id ?>" <?= $customer->id == $invoice->seller_id ? 'selected' : '' ?>><?= $customer->name ?></option>
-                                                    <?php endif ?>
+                                                <?php foreach($sellers as $seller): ?>
+                                                    <option value="<?= $seller->id ?>" <?= $seller->id == $invoice->seller_id ? 'selected' : '' ?>><?= $seller->name ?></option>
                                                 <?php endforeach ?>
                                             </select>
                                             <label for="seller_id">* Vendedor</label>
@@ -111,6 +111,8 @@
         let invoice = <?= json_encode($invoice) ?>;
         return invoice;
     };
+    const sellersData = () => <?= json_encode($sellers) ?>;
+    const customersData = () => <?= json_encode($customers) ?>;
 </script>
 <script src="<?= base_url(['assets/js/forms-selects.js']) ?>"></script>
 <script src="<?= base_url(['master/js/quotes/edit.js']) ?>"></script>

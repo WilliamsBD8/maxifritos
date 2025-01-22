@@ -38,7 +38,13 @@ async function load_datatable(){
                                 ${user.role_id != 3 ? `<li><a href="${base_url(['dashboard/cotizaciones/invoice', c.id])}" class="dropdown-item">Remisionar</a></li>` : ""}
                                 <li><a href="javascript:void(0);" onclick="decline(${c.id}, ${c.resolution})" class="dropdown-item text-danger">Rechazar</a></li>
                             </ul>                
-                        ` : ''}
+                        ` : `
+                            <a href="javascript:void(0);" class="btn btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-2-line"></i></a>
+                            <ul class="dropdown-menu dropdown-menu-end m-0" style="">
+                                <li><a href="${base_url(['dashboard/cotizaciones/editar', c.id])}" class="dropdown-item">Editar</a></li>
+                                <li><a href="javascript:void(0);" onclick="decline(${c.id}, ${c.resolution})" class="dropdown-item text-danger">Rechazar</a></li>
+                            </ul>
+                        `}
                     </div>
                 `
                 return actions;
@@ -59,25 +65,32 @@ async function load_datatable(){
             });
             if(setting.json != undefined){
                 let indicadores = setting.json.indicadores;
+                let val_period = periods.find(p => p.value == $('#period').val());
+
+                let dates = val_period.value == "" ? `Desde <b>${$("#date_init").val()}</b> hasta <b>${$("#date_end").val()}</b>` : val_period.name;
+                $('.text-date').html(dates)
+
                 indicadores.map(i => {
+                    console.log(i);
                     $(`#div_${i.document} h2`).html(formatPrice(parseFloat(i.payable_amount)));
-                    let val_period = periods.find(p => p.value == $('#period').val())
-                    $(`#div_${i.document} p`).html(`Creadas ${ val_period.value == "" ? `desde ${$("#date_init").val()} hasta ${$("#date_end").val()}`:val_period.name}: <b>${i.count}</b>`)
+
+                    $(`#div_${i.document} .inv`).html(`Documentos: <b>${parseInt(i.count)}</b>`);
+                    $(`#div_${i.document} .pro`).html(`Productos: <b> ${parseInt(i.products)}</b>`);
                 })
             }
         },
         buttons: [
             {
                 text: '<i class="ri-add-line ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Crear Nueva Cotizacion</span>',
-                className: 'btn btn-primary waves-effect waves-light mx-2',
+                className: 'btn btn-primary waves-effect waves-light mx-2 mt-2',
                 action: () => {
                     window.location.href = base_url(['dashboard/cotizaciones/new']);
                 }
             },
             {
                 extend: 'excel',
-                text: '<i class="ri-file-excel-line me-1"></i>Excel',
-                className: 'btn btn-primary waves-effect waves-light mx-2',
+                text: '<i class="ri-file-excel-line me-1"></i><span class="d-none d-sm-inline-block">Excel</span>',
+                className: 'btn btn-primary waves-effect waves-light mx-2 mt-2',
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4, 5, 6, 7],
                     format: {
@@ -105,10 +118,69 @@ async function load_datatable(){
                     dt.draw();
                     $.fn.dataTable.ext.buttons.excelHtml5.action.call(this, e, dt, button, config);
                 }
-            },         
+            },
             {
-                text: '<i class="ri-filter-3-fill ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Filtrar</span>',
-                className: 'btn btn-primary waves-effect waves-light',
+                text: '<i class="ri-file-excel-line me-1"></i> <span class="d-none d-sm-inline-block">Pedidos</span>',
+                className: 'btn btn-primary waves-effect waves-light mx-2 mt-2',
+                action: async () => {
+                    const {value:data} = await Swal.fire({
+                        title: 'Ingrese el rango de busqueda',
+                        html: `
+                            <div class="input-field col s12">
+                                <div class="form-floating form-floating-outline mb-6 mt-5">
+                                    <input class="form-control" type="date" id="sweet_date_init" value="${$("#date_init").val()}">
+                                    <label for="sweet_date_init">Fecha de inicio</label>
+                                </div>
+                            </div>
+                            <div class="input-field col s12">
+                                <div class="form-floating form-floating-outline mb-6 mt-5">
+                                    <input class="form-control" type="date" id="sweet_date_end" value="${$("#date_end").val()}">
+                                    <label for="sweet_date_end">Fecha de finalización</label>
+                                </div>
+                            </div>
+                        `,
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Buscar',
+                        preConfirm: () => {
+                            var date_init = $('#sweet_date_init').val();
+                            var date_end = $('#sweet_date_end').val();
+                            if(date_init.length == 0 && date_end.length == 0)
+                                return Swal.showValidationMessage(`
+                                    'Necesita minimo una fecha para buscar'
+                                `)
+                            else if(date_init.length == 0)
+                                return Swal.showValidationMessage(`
+                                    'Necesita la fecha de incio para buscar'
+                                `)
+                            else if(date_end.length == 0)
+                                return Swal.showValidationMessage(`
+                                    'Necesita la fecha de finalizacion para buscar'
+                                `)
+                            return {date_init, date_end}
+                        }
+                    });
+                    if(data){
+                        let url = base_url(['invoices/load/order']);
+                        const {file, type, status} = await proceso_fetch(url, data);
+                        if(status)
+                            downloadBase64(file, "hoja_cargue.xlsx", type);
+                        else
+                            Swal.fire({
+                                icon: "warning",
+                                title:"No se encontraron documentos en el rango de fechas",
+                                customClass: {
+                                    confirmButton: 'btn btn-primary waves-effect'
+                                },
+                            })
+                    }
+
+                }
+            },     
+            {
+                text: '<i class="ri-filter-3-fill ri-16px me-2"></i> <span class="d-none d-sm-inline-block">Filtrar</span>',
+                className: 'btn btn-primary waves-effect waves-light mx-2 mt-2',
                 action: () => {
                     const offCanvasElement = document.querySelector('#canvasFilter');
                     let offCanvasEl = new bootstrap.Offcanvas(offCanvasElement);
@@ -127,65 +199,10 @@ function formatDate (date){
     return `${year}-${month}-${day}`;
 };
 
-function changePeriod(period){
-    switch(period){
-        case 'day':
-        default:
-            var today = new Date(); // Obtener la fecha actual
-            var year = today.getFullYear(); // Obtener el año
-            var month = String(today.getMonth() + 1).padStart(2, '0'); // Mes (0-11) y añadir 0 si es menor a 10
-            var day = String(today.getDate()).padStart(2, '0'); // Día y añadir 0 si es menor a 10
-            var date_init = `${year}-${month}-${day}`;
-            var date_end = `${year}-${month}-${day}`;
-            break;
-        case 'yesterday':
-            var today = new Date(); // Obtener la fecha actual
-            today.setDate(today.getDate() - 1); // Restar un día
-            var year = today.getFullYear(); // Obtener el año
-            var month = String(today.getMonth() + 1).padStart(2, '0'); // Mes (0-11) y añadir 0 si es menor a 10
-            var day = String(today.getDate()).padStart(2, '0'); // Día y añadir 0 si es menor a 10
-
-            var date_init = `${year}-${month}-${day}`;
-            var date_end = `${year}-${month}-${day}`;
-            break;
-        case 'weekend':
-            var today = new Date();
-            var firstDay = new Date(today);
-            var day = firstDay.getDay() || 7;
-            firstDay.setDate(today.getDate() - day + 1);
-            var lastDay = new Date(firstDay);
-            lastDay.setDate(firstDay.getDate() + 6);
-            var date_init = formatDate(firstDay);
-            var date_end = formatDate(lastDay);
-            break;
-        case 'last_weekend':
-            var today = new Date();
-            var firstDayLastWeek = new Date(today);
-            var day = firstDayLastWeek.getDay() || 7;
-            firstDayLastWeek.setDate(today.getDate() - day - 6);
-            var lastDayLastWeek = new Date(firstDayLastWeek);
-            lastDayLastWeek.setDate(firstDayLastWeek.getDate() + 6);
-            var date_init = formatDate(firstDayLastWeek);
-            var date_end = formatDate(lastDayLastWeek);
-            break;
-        case 'month':
-            var today = new Date();
-            var firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            var lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-            var date_init = formatDate(firstDayOfMonth);
-            var date_end = formatDate(lastDayOfMonth);
-            break;
-        case 'last_month':
-            var today = new Date();
-            var firstDayOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-            var lastDayOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-            var date_init = formatDate(firstDayOfLastMonth);
-            var date_end = formatDate(lastDayOfLastMonth);
-            break;
-    }
-
-    $('#date_init').val(date_init).prop('readonly', period == '' ? false : true);
-    $('#date_end').val(date_end).prop('readonly', period == '' ? false : true);
+function changePeriod(value){
+    let period = periods.find(p => p.value == value)
+    $('#date_init').val(period.dates.date_init).prop('readonly', period.value == '' ? false : true);
+    $('#date_end').val(period.dates.date_end).prop('readonly', period.value == '' ? false : true);
 }
 
 function sendFilter(e){

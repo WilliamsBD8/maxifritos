@@ -70,5 +70,15 @@ function only_full_group(){
 }
 
 function validUrl(){
-    return strpos(base_url(), ".will");
+    return !strpos(base_url(), "localhost");
+}
+
+function getColumnLetter($columnNumber) {
+    $columnLetter = '';
+    while ($columnNumber > 0) {
+        $remainder = ($columnNumber - 1) % 26;
+        $columnLetter = chr(65 + $remainder) . $columnLetter;
+        $columnNumber = intval(($columnNumber - 1) / 26);
+    }
+    return $columnLetter;
 }

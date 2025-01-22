@@ -404,7 +404,7 @@ async function sendCotizacion(){
             return a + (parseInt(b.quantity) * parseFloat(value));
         }, 0);
     }else{
-        data.value_descount = $('#discount_amount').val() == 0 ? ($('#discount_percentaje').val() / 100) * data.value_invoice : format_number($('#discount_amount'));
+        data.value_descount = $('#discount_amount').val() == 0 ? ($('#discount_percentaje').val() / 100) * data.value_invoice : format_number($('#discount_amount').val());
     }
     let url = base_url(['invoices/created']);
     const res = await proceso_fetch(url, data);

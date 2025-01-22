@@ -218,3 +218,19 @@ async function view_map_detail(coord){
       }
   });
 }
+
+function downloadBase64(fileContent, fileName, type){
+  const blob = new Blob([Uint8Array.from(atob(fileContent), c => c.charCodeAt(0))], {
+    type,
+  });
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  window.URL.revokeObjectURL(url);
+}

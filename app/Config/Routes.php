@@ -69,6 +69,8 @@ $routes->group('invoices', function($routes){
 	$routes->post('edit', 'InvoiceController::edit');
 	$routes->post('decline', 'InvoiceController::decline');
 	$routes->get('download/(:num)', 'InvoiceController::download/$1');
+
+	$routes->post('load/order', "InvoiceController::load_order");
 });
 
 $routes->group('data', function($routes){
@@ -95,6 +97,7 @@ $routes->get('/table/(:segment)/(:segment)', 'TableController::detail/$1/$2');
 
 $routes->group('load', function($routes){
 	$routes->get('products', 'LoadsController::products');
+	$routes->get('customers', 'LoadsController::customers');
 });
 
 /**

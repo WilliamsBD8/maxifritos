@@ -50,10 +50,18 @@ class Invoice extends Model
     protected $afterInsert    = [];
     protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
-    protected $beforeFind     = [];
-    protected $afterFind      = [];
+    protected $beforeFind     = ["functionBeforeFind"];
+    protected $afterFind      = ["functionAfterFind"];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    protected $additionalParams = ["origin" => ""];
+
+    public function setAdditionalParams(array $params)
+    {
+        $this->additionalParams = $params;
+        return $this; // Permite el encadenamiento de métodos
+    }
 
     public function getLineInvoice($id){
         $data = $this->builder('line_invoices')
@@ -90,5 +98,58 @@ class Invoice extends Model
             $this->where(['invoices.user_id' => $user_id]);
         }
         return $this;
+    }
+
+    protected function functionBeforeFind(array $data){
+        $getData = !empty($_GET) ? (object) $_GET : (object) $_POST;
+        if (!empty($data['method']) && $data['method'] === 'findAll') {
+            if(session('user')->role_id == 3 && $data['limit'] == 10)
+                $this->where(['user_id' => session('user')->id])
+                    ->orWhere('user_id', session('user')->id);
+
+            if(isset($getData->date_init) && isset($getData->date_end)){
+                $this->where([
+                    'invoices.created_at >=' => "{$getData->date_init} 00:00:00",
+                    'invoices.created_at <=' => "{$getData->date_end} 23:59:59" 
+                ]);
+            }
+        }
+        return $data;
+    }
+
+    protected function functionAfterFind(array $data){
+        log_message('info', json_encode($data));
+        $params = (object) $this->additionalParams;
+        switch ($params->origin) {
+            case 'load_order':
+                $data['data'] = ['data' => array_values($data['data'])];
+                $products = array_reduce($data['data']['data'], function ($carry, $item) {
+                    $id = $item->product_id;
+                    $carry[$id] = [
+                        "product_id"    => $id,
+                        "name"          => $item->name,
+                        "code"          => $item->code,
+                    ];
+                    return $carry;
+                }, []);
+
+                $customers = array_reduce($data['data']['data'], function ($carry, $item) {
+                    $id = $item->id_customer;
+                    $carry[$id] = [
+                        "id_customer"   => $id,
+                        "name"          => $item->customer,
+                    ];
+                    return $carry;
+                }, []);
+
+                $data['data']['products'] = array_values($products);
+                $data['data']['customers'] = array_values($customers);
+                break;
+            
+            default:
+                # code...
+                break;
+        }
+        return $data;
     }
 }
