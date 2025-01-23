@@ -13,8 +13,16 @@ async function onSubmit(event) {
     return $('#card-error').show();
   }
   await proceso_fetch(url, data).then(respond => {
-    alert('Credenciales confirmadas', msg = 'Será redireccinado al Home');
-    window.location.href = respond.url;
+    console.log(respond);
+    if(respond.error == undefined){
+      alert('Credenciales confirmadas', msg = 'Será redireccinado al Home');
+      window.location.href = respond.url;
+    }else{
+      const {title, msg, captcha} = respond;
+      alert(title, msg, 'error');
+      $('#text_captcha').html(`Cuanto es: ${captcha.number_a} ${captcha.operacion == 'mas' ? "+" : "-"} ${captcha.number_b}`);
+      $('#captcha').val('')
+    }
   });
 }
 

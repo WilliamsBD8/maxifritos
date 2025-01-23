@@ -136,7 +136,7 @@
                             <div class="form-floating form-floating-outline mb-5">
                                 <input type="text" class="form-control" id="captcha" name="captcha"
                                     placeholder="Ingresar la respuesta"/>
-                                <label for="captcha">
+                                <label for="captcha" id="text_captcha">
                                     Cuanto es: <?= 
                                     session('captcha')->number_a
                                     ." ".

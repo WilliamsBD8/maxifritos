@@ -18,106 +18,97 @@ class AuthController extends BaseController
     
     public function login()
     {
-        $session = session();
-        $operations = ['mas', 'menos'];
-        $number_a = (int) rand(1, 10);
-        $number_b = (int) rand(1, 10);
-
-        // Asegurarse de que number_a sea mayor que number_b
-        if ($number_a < $number_b) {
-            $temp = $number_a;
-            $number_a = $number_b;
-            $number_b = $temp;
-        }
-
-        $session->set('captcha', (object)[
-            'number_a'  => $number_a,
-            'number_b'  => $number_b,
-            'operacion' => $operations[array_rand($operations)]
-        ]);
+        GenerateCaptcha();
 
         return view('auth/login');
     }
 
     public function validation()
     {
-        $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
-        $username = $data->email_username;
-        $password = $data->password;
-        $captcha = $data->captcha;
-        $validationCaptcha = ValidateReCaptcha($captcha);
-        if($validationCaptcha){
-            $user = new User();
-            $data = $user
-                ->select(['users.*', 'roles.name as role_name'])
-                ->join('roles', 'roles.id = users.role_id')
-                ->where('username', $username)
-                ->orWhere('email', $username)->first();
-            if ($data) {
-                if ($data->status == 'active') {
-                    $data->password = $user->getPassword($data->id);
-                    if((int) $data->password->attempts < 5){
-                        if (password_verify($password, $data->password->password)) {
-                            $hu_model = new HistoryUser();
-                            $hu_model->save([
-                                'user_id'   => $data->id,
-                                'attempts'  => (int) $data->password->attempts + 1
-                            ]);
-                            if($data->password->attempts > 0){
+        try{
+            $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
+            $username = $data->email_username;
+            $password = $data->password;
+            $captcha = $data->captcha;
+            $validationCaptcha = ValidateReCaptcha($captcha);
+            if($validationCaptcha->code == 3){
+                $user = new User();
+                $data = $user
+                    ->select(['users.*', 'roles.name as role_name'])
+                    ->join('roles', 'roles.id = users.role_id')
+                    ->where('username', $username)
+                    ->orWhere('email', $username)->first();
+                if ($data) {
+                    if ($data->status == 'active') {
+                        $data->password = $user->getPassword($data->id);
+                        if((int) $data->password->attempts < 5){
+                            if (password_verify($password, $data->password->password)) {
+                                $hu_model = new HistoryUser();
+                                $hu_model->save([
+                                    'user_id'   => $data->id,
+                                    'attempts'  => (int) $data->password->attempts + 1
+                                ]);
+                                if($data->password->attempts > 0){
+                                    $p_model = new Password();
+                                    $p_model->save([
+                                        'id'        => $data->password->id,
+                                        'attempts'  => 0
+                                    ]);
+                                }
+                                $session = session();
+                                $session->set('user', $data);
+                                return $this->respond([
+                                    'title'     => 'Validación de éxitosa',
+                                    'msg'   => "Redirigiendo página",
+                                    'url'       => base_url(['dashboard'])
+                                ]);
+                                return redirect()->to(base_url(['dashboard']));
+                            } else {
                                 $p_model = new Password();
                                 $p_model->save([
                                     'id'        => $data->password->id,
-                                    'attempts'  => 0
+                                    'attempts'  => (int) $data->password->attempts + 1
                                 ]);
+                                return $this->respond([
+                                    'title'     => 'Validación de usuario',
+                                    'msg'   => "Las credenciales no concuerdan. Numeros de intentos restantes <b>".(4 - $data->password->attempts)."</b>"
+                                ], 403);
+                                return redirect()->to(base_url(['login']))->with('errors', "Las credenciales no concuerdan. Numeros de intentos restantes <b>".(4 - $data->password->attempts)."</b>");
                             }
-                            $session = session();
-                            $session->set('user', $data);
-                            return $this->respond([
-                                'title'     => 'Validación de éxitosa',
-                                'msg'   => "Redirigiendo página",
-                                'url'       => base_url(['dashboard'])
-                            ]);
-                            return redirect()->to(base_url(['dashboard']));
-                        } else {
-                            $p_model = new Password();
-                            $p_model->save([
-                                'id'        => $data->password->id,
-                                'attempts'  => (int) $data->password->attempts + 1
-                            ]);
+                        }else{
                             return $this->respond([
                                 'title'     => 'Validación de usuario',
-                                'msg'   => "Las credenciales no concuerdan. Numeros de intentos restantes <b>".(4 - $data->password->attempts)."</b>"
+                                'msg'   => 'Limite de intentos superados.'
                             ], 403);
-                            return redirect()->to(base_url(['login']))->with('errors', "Las credenciales no concuerdan. Numeros de intentos restantes <b>".(4 - $data->password->attempts)."</b>");
+                            // return redirect()->to(base_url(['login']))->with('errors', 'Limite de intentos superados.');
                         }
-                    }else{
+                    } else {
                         return $this->respond([
                             'title'     => 'Validación de usuario',
-                            'msg'   => 'Limite de intentos superados.'
+                            'msg'   => 'La cuenta no se encuentra activa.'
                         ], 403);
-                        // return redirect()->to(base_url(['login']))->with('errors', 'Limite de intentos superados.');
+                        // return redirect()->to(base_url(['login']))->with('errors', 'La cuenta no se encuentra activa.');
                     }
                 } else {
                     return $this->respond([
                         'title'     => 'Validación de usuario',
-                        'msg'   => 'La cuenta no se encuentra activa.'
+                        'msg'   => 'Las credenciales no concuerdan 1.'
                     ], 403);
-                    // return redirect()->to(base_url(['login']))->with('errors', 'La cuenta no se encuentra activa.');
+                    // return redirect()->to(base_url(['login']))->with('errors', 'Las credenciales no concuerdan.');
                 }
-            } else {
+            }else {
+
                 return $this->respond([
                     'title'     => 'Validación de usuario',
-                    'msg'   => 'Las credenciales no concuerdan 1.'
-                ], 403);
-                // return redirect()->to(base_url(['login']))->with('errors', 'Las credenciales no concuerdan.');
+                    'msg'       => $validationCaptcha->message,
+                    'error'     => true,
+                    'captcha'   => session('captcha')
+
+                ], $validationCaptcha->code == 1 ? 200 : 403);
             }
-        }else {
-            return $this->respond([
-                'title'     => 'Validación de usuario',
-                'msg'   => 'Error al validar el Captcha'
-            ], 403);
-            // return redirect()->to(base_url(['login']))->with('errors', 'Error al validar el Captcha');
-        }
+        }catch(\Exception $e){
+			return $this->respond(['title' => 'Error en el servidor', 'error' => $e->getMessage()], 500);
+		}
     }
 
     // public function register()
