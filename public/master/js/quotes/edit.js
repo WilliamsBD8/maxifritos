@@ -253,7 +253,7 @@ function loadTable(){
         },
         buttons: [
             {
-                text: '<i class="ri-add-line ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Editar Cotizacion</span>',
+                text: `<i class="ri-add-line ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Editar ${invoice.type_document_id == 1 ? 'Cotización' : 'Remisión'}</span>`,
                 className: `btn btn-primary waves-effect waves-light`,
                 action: () => sendCotizacion()
             },
