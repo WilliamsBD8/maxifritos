@@ -219,6 +219,7 @@ class InvoiceController extends BaseController
                 ->join('customers as c', 'c.id = invoices.customer_id', 'left')
                 ->join('line_invoices as li', 'li.invoice_id = invoices.id', 'left')
                 ->join('products as p', 'li.product_id = p.id', 'left')
+                ->where(['invoices.type_document_id' => 2])
                 ->findAll();
             if(!empty($data['data'])){
 
@@ -249,12 +250,15 @@ class InvoiceController extends BaseController
                     $product = (object) $product;
                     foreach ($data['customers'] as $key => $customer) {
                         $customer = (object) $customer;
-                        $result = array_filter($data['data'], function ($item) use ($product, $customer) {
+                        $results = array_filter($data['data'], function ($item) use ($product, $customer) {
                             $item = (object) $item;
                             return $item->id_customer == $customer->id_customer && $item->product_id == $product->product_id;
                         });
-                        $firstResult = $result ? array_shift($result) : null;
-                        $products[$product->product_id][] = !empty($firstResult) ? $firstResult->quantity : 0;
+                        // $firstResult = $result ? array_shift($result) : null;
+                        $products[$product->product_id][] = array_reduce($results, function($carry, $item){
+                            $carry += (int) $item->quantity;
+                            return $carry;
+                        }, 0);
                     }
                 }
     
