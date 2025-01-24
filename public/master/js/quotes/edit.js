@@ -389,6 +389,7 @@ async function sendCotizacion(){
     data.products = products;
     data.discount_amount = format_number(data.discount_amount);
     data.id = invoice.id;
+    data.status_id = invoice.status_id;
     let products_aux = table[0].data().toArray();
     data.value_invoice = products_aux.reduce((a, b) => {
         return a + (parseInt(b.quantity) * parseFloat(b.value));

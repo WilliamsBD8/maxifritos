@@ -97,7 +97,7 @@ class InvoiceController extends BaseController
                 'customer_id'           => $data->customer_id,
                 'seller_id'             => $data->seller_id,
                 'user_id'               => session('user')->id,
-                'status_id'             => 1,
+                'status_id'             => $data->status_id,
                 'address'               => $data->address,
                 'note'                  => $data->notes,
                 'invoice_amount'        => $data->value_invoice,
