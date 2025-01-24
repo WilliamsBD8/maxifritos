@@ -60,6 +60,8 @@ $routes->group('dashboard', function ($routes){
 		$routes->get('', 'CustomersController::index');
 		$routes->get('data', 'CustomersController::data');
 		$routes->post('created', 'CustomersController::created');
+		$routes->post('edit', 'CustomersController::edit');
+		$routes->post('delete', 'CustomersController::delete');
 	});
 
 });

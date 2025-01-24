@@ -24,7 +24,8 @@ class Customers extends Migration
             'address_origin'  			            => ['type' => 'TEXT', 'null' => TRUE],
             'status'    			                  => ['type' => 'ENUM("active", "inactive")', 'default' => 'active'],
             'created_at'                        => ['type' => 'DATETIME', 'null' => TRUE],
-            'updated_at'                        => ['type' => 'DATETIME', 'null' => TRUE]
+            'updated_at'                        => ['type' => 'DATETIME', 'null' => TRUE],
+            'deleted_at'                        => ['type' => 'DATETIME', 'null' => TRUE],
         ]);
 		$this->forge->addKey('id', TRUE);
 		$this->forge->addForeignKey('type_customer_id', 'type_customers', 'id');

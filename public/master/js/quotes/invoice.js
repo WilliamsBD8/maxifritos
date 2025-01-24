@@ -1,6 +1,15 @@
+const local_coord = {
+    lat:0,
+    lng:0
+}
+
 async function sendInvoice(){
     let url = base_url(['invoices/created']);
     let data = invoiceData();
+    const lat_lng = await coordenadas();
+    local_coord.lat = lat_lng.lat
+    local_coord.lng = lat_lng.lng
+    data.coordenadas = JSON.stringify(local_coord);
     data.type_document = 2;
     data.resolution_reference = data.id;
     data.products = data.line_invoices;
@@ -31,9 +40,7 @@ async function sendInvoice(){
                     Swal.showLoading();
                 }
             });
-            setTimeout(() => {
-                window.location.href = base_url(['dashboard/cotizaciones'])
-            }, 3000)
+            window.location.href = base_url(['dashboard/cotizaciones'])
         }
     });
 }

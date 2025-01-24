@@ -57,8 +57,8 @@ class CustomersController extends BaseController
             $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
             $rules = [
                 'email'                 => 'required|valid_email|is_unique[customers.email]',
-                'identification_number' => 'required|integer|greater_than[0]|is_unique[customers.identification_number]',
-                'phone'                 => 'required|min_length[10]|is_unique[customers.phone]',
+                'identification_number' => 'required|integer|is_unique[customers.identification_number]',
+                'phone'                 => 'required|min_length[6]|is_unique[customers.phone]',
             ];
             $messages = [
                 'email' => [
@@ -68,13 +68,12 @@ class CustomersController extends BaseController
                 ],
                 'identification_number' => [
                     'required'      => 'El campo numero de identificación es obligatorio.',
-                    'integer'       => 'La edad debe ser un número entero.',
-                    'greater_than'  => 'La edad debe ser mayor que 0.',
+                    'integer'       => 'El campo numero de identificación debe ser un número entero.',
                     'is_unique'     => 'Este numero de identificación ya está registrado.',
                 ],
                 'phone' => [
                     'required'      => 'El campo numero de telefono es obligatorio.',
-                    'min_length'    => 'El numero de telefono debe tener al menos 10 caracteres.',
+                    'min_length'    => 'El numero de telefono debe tener al menos 6 caracteres.',
                     'is_unique'     => 'Este numero de telefono ya está registrado.',
                 ],
             ];
@@ -110,6 +109,100 @@ class CustomersController extends BaseController
                 'title'     => 'Cliente creado con exito',
                 'data'      => $data
             ]);
+        }catch(\Exception $e){
+            return $this->respond(['title' => 'Error en el servidor', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function edit(){
+        try{
+            $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
+            $validationRules = [
+                'email' => [
+                    'rules' => "required|valid_email|is_unique[customers.email,id,{$data->id_customer}]",
+                    'errors' => [
+                        'required'    => 'El campo correo electrónico es obligatorio.',
+                        'valid_email' => 'Debe ser un correo electrónico válido.',
+                        'is_unique'   => 'Este correo ya está registrado en el sistema.'
+                    ]
+                ],
+                'identification_number' => [
+                    'rules' => "required|integer|is_unique[customers.identification_number,id,{$data->id_customer}]",
+                    'errors' => [
+                        'required'      => 'El campo numero de identificación es obligatorio.',
+                        'integer'       => 'El campo numero de identificación debe ser un número entero.',
+                        'is_unique'     => 'Este numero de identificación ya está registrado.',
+                    ]
+                ],
+                'phone' => [
+                    'rules' => "required|min_length[6]|is_unique[customers.phone,id,{$data->id_customer}]",
+                    'errors' => [
+                        'required'      => 'El campo numero de telefono es obligatorio.',
+                        'min_length'    => 'El numero de telefono debe tener al menos 6 caracteres.',
+                        'is_unique'     => 'Este numero de telefono ya está registrado.',
+                    ]
+                ]
+            ];
+            if (!$this->validate($validationRules)) {
+                return $this->respond([
+                    'status'  => 'error',
+                    'errors'  => $this->validator->getErrors(),
+                    $data
+                ]);
+            }
+
+            $data->coordenadas = json_decode($data->coordenadas);
+            $data->coordenadas = "{$data->coordenadas->lat}, {$data->coordenadas->lng}";
+
+            $data_save = [
+                'id'                                => $data->id_customer,
+                'type_customer_id'                  => 1,
+                'type_document_identification_id'   => $data->type_document_identification,
+                'user_origin_id'                    => session('user')->id,
+                'name'                              => $data->name,
+                'email'                             => $data->email,
+                'identification_number'             => $data->identification_number,
+                'phone'                             => $data->phone,
+                'address'                           => $data->address,
+                'discount_percentage'               => $data->discount_percentage,
+                'discount_detail'                   => $data->discount_detail,
+                'address_origin'                    => $data->coordenadas,
+                'status'                            => $data->status
+            ];
+            $this->c_model->save($data_save);
+
+            return $this->respond([
+                'status'    => "success",
+                'title'     => 'Cliente actualizado con exito',
+                'data'      => $data
+            ]);
+        }catch(\Exception $e){
+            return $this->respond(['title' => 'Error en el servidor', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function delete(){
+        try{
+            $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
+            if (is_null($data->id_customer) || !is_numeric($data->id_customer)) {
+                return $this->respond([
+                    'icon' => 'error',
+                    'title' => 'ID inválido o no proporcionado.',
+                ], 400);
+            }
+            $customer = $this->c_model->find($data->id_customer);
+            if (!$customer) {
+                return $this->respond([
+                    'icon' => 'error',
+                    'title' => 'El registro no existe.',
+                ], 404);
+            }
+
+            $this->c_model->delete($data->id_customer);
+            return $this->respond([
+                'icon' => 'success',
+                'title' => 'Cliente eliminado correctamente.',
+            ], 200);
         }catch(\Exception $e){
             return $this->respond(['title' => 'Error en el servidor', 'error' => $e->getMessage()], 500);
         }
