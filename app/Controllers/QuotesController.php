@@ -153,7 +153,7 @@ class QuotesController extends BaseController
         $invoice = $this->invoices->find($id);
         $invoice->line_invoices = $this->i_model->getLineInvoices($invoice->id);
         $invoice->customer = $this->i_model->getCustomer($invoice->customer_id);
-        $invoice->seller = $this->i_model->getCustomer($invoice->seller_id);
+        $invoice->seller = $this->i_model->getSeller($invoice->seller_id);
         return view('quotes/invoice', [
             'invoice' => $invoice
         ]);
