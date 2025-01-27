@@ -190,17 +190,15 @@ class InvoiceController extends BaseController
         $invoice->line_invoices = $this->i_model->getLineInvoices($invoice->id);
         $invoice->customer = $this->i_model->getCustomer($invoice->customer_id);
         $invoice->seller = $this->i_model->getCustomer($invoice->seller_id);
-        // var_dump($invoice); die;
         $page = view('pdf/invoice', [
             'invoice' => $invoice
         ]);
-        // var_dump(base_url(['pdf/invoice.css'])); die;
         $css = file_get_contents(base_url(['pdf/invoice.css']));
-        // $inter = file_get_contents(base_url(['pdf/inter.css']));
-        // $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
-        // $mpdf->WriteHTML($inter, \Mpdf\HTMLParserMode::HEADER_CSS);
-        // $mpdf->WriteHTML($page);
-        // $mpdf->Output("{$invoice->name_document}_{$invoice->resolution}.pdf", 'I');
+        $inter = file_get_contents(base_url(['pdf/inter.css']));
+        $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $mpdf->WriteHTML($inter, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $mpdf->WriteHTML($page);
+        $mpdf->Output("{$invoice->name_document}_{$invoice->resolution}.pdf", 'I');
     }
 
     public function load_order(){
