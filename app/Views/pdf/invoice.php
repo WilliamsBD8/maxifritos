@@ -68,7 +68,7 @@
                     <?php foreach($invoice->line_invoices as $line_invoice): ?>
                     <tr>
                         <td class="text-nowrap text-heading">
-                            <?= "{$line_invoice->product_name}<br>{$line_invoice->product_code}" ?></td>
+                            <?= "{$line_invoice->product_code}<br>{$line_invoice->product_name}" ?></td>
                         <td class="text-nowrap"><?= "{$line_invoice->quantity}" ?></td>
                         <td><?= number_format($line_invoice->value, '2', '.', ',') ?></td>
                         <td><?= number_format($line_invoice->value * $line_invoice->quantity, '2', '.', ',') ?></td>

@@ -160,7 +160,7 @@
                             </div>
                             <hr>
                             <button type="submit" class="btn btn-primary mb-2 d-grid w-100 waves-effect waves-light">Guardar</button>
-                            <button type="reset" class="btn btn-danger mb-2 d-grid w-100 waves-effect waves-light">Reiniciar</button>
+                            <button type="button" class="btn btn-danger mb-2 d-grid w-100 waves-effect waves-light" data-bs-dismiss="offcanvas">Cerrar</button>
                         </form>
                     </div>
             </div>

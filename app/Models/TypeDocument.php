@@ -45,18 +45,36 @@ class TypeDocument extends Model
     public function setAdditionalParams(array $params)
     {
         $this->additionalParams = $params;
+        $params = (object) $this->additionalParams;
+        switch($params->origin){
+            case 'quotes_data':
+                if(session('user')->role_id == 3)
+                    $this->groupStart()
+                        ->where(['user_id' => session('user')->id])
+                        ->orWhere('seller_id', session('user')->id)
+                    ->groupEnd();
+                break;
+            default:
+                break;
+        }
         return $this; // Permite el encadenamiento de métodos
     }
 
     protected function functionBeforeFind(array $data){
         $getData = (object) $_GET;
+        $params = (object) $this->additionalParams;
         log_message('info', json_encode($data));
-        if (!empty($data['method']) && $data['method'] === 'findAll') {
-            if(session('user')->role_id == 3)
-                $this->groupStart()
-                    ->where(['i.user_id' => session('user')->id])
-                    ->orWhere('i.user_id', session('user')->id)
-                ->groupEnd();
+        switch ($params->origin) {
+            case 'home':
+            case 'quotes_index':    
+                break;
+            default:
+                // if(session('user')->role_id == 3)
+                //     $this->groupStart()
+                //         ->where(['i.user_id' => session('user')->id])
+                //         ->orWhere('i.seller_id', session('user')->id)
+                //     ->groupEnd();
+                break;
         }
         return $data;
     }
@@ -65,7 +83,7 @@ class TypeDocument extends Model
         log_message('info', json_encode($data));
         $params = (object) $this->additionalParams;
         switch ($params->origin) {
-            case 'indicadores_cot_rem':
+            case 'quotes_data':
                 $grouped = array_reduce($data['data'], function ($carry, $item) {
                     $doc = $item->document;
                     $id = $item->invoice_id; 

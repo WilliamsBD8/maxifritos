@@ -141,7 +141,7 @@ class TableController extends BaseController
                         $gp_model = new GroupProduct();
                         $group = $gp_model->find($stateParameters->data['group_product_id']);
                         $value = str_replace(",", "", $stateParameters->data['value']);
-                        $code = "$group->code{$stateParameters->data['code_item']}";
+                        $code = "{$stateParameters->data['code_item']}$group->code";
                         $p_model = new Product();
                         $product = $p_model->where(['code' => $code])->first();
                         if(!empty($product)){
@@ -159,7 +159,7 @@ class TableController extends BaseController
                         $gp_model = new GroupProduct();
                         $group = $gp_model->find($stateParameters->data['group_product_id']);
                         $value = str_replace(",", "", $stateParameters->data['value']);
-                        $code = "$group->code{$stateParameters->data['code_item']}";
+                        $code = "{$stateParameters->data['code_item']}$group->code";
                         $p_model = new Product();
                         $product = $p_model->where(['id != ' => $stateParameters->primaryKeyValue, 'code' => $code])->first();
                         if(!empty($product)){

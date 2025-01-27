@@ -234,3 +234,30 @@ function downloadBase64(fileContent, fileName, type){
 
   window.URL.revokeObjectURL(url);
 }
+
+function loadSelectProducts(){
+  $('#products_id').select2({
+    data: productsD.map(item => ({
+        id: item.id,
+        text: `${item.code} - ${item.name}`
+    })),
+    matcher: function(params, data) {
+        if ($.trim(params.term) === '') {
+            return data;
+        }
+
+        // Búsqueda izquierda a derecha
+        if (data.text.toLowerCase().startsWith(params.term.toLowerCase())) {
+            return data;
+        }
+
+        // Si no hay coincidencia, devuelve null
+        return null;
+    },
+    language: {
+        noResults: function() {
+            return "No hay coincidencias desde el inicio";
+        }
+    }
+});
+}

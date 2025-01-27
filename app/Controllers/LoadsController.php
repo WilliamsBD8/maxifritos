@@ -61,7 +61,7 @@ class LoadsController extends BaseController
                     }
                     $data_product = [
                         'group_product_id'  => $grupo,
-                        'code'              => "{$code_group}{$data->B}",
+                        'code'              => "{$data->B}{$code_group}",
                         'code_item'         => $data->B,
                         'name'              => $data->D,
                         'value'             => $precio

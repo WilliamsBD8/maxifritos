@@ -30,8 +30,6 @@ const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'O
 
 const type_documents = typeDocumentData();
 
-console.log(type_documents);
-
 const currentDate = new Date();
 const months = [];
 const series_date = [];
@@ -48,7 +46,7 @@ type_documents.map(td => {
         const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
-        const date_td = td.dates.find(d => (d.month == month && d.year == year));
+        const date_td = td.dates.find(d => (d.month.padStart(2, '0') == month && d.year == year));
         data.push(date_td == undefined ? 0 : date_td.total_invoices)
     }
     series_date.push(
@@ -68,9 +66,7 @@ const info_dc = {
 type_documents.map(i => {
     info_dc.abbr.push(i.code)
     info_dc.total.push(i.total)
-})
-
-console.log(info_dc);
+});
 
 const salesCountryChartEl = document.querySelector("#total_documentos"),
     salesCountryChartConfig = {
@@ -321,4 +317,4 @@ const areaChartEl = document.querySelector('#lineAreaChart'),
     // });
   }
 
-window.initMap()
+// window.initMap()

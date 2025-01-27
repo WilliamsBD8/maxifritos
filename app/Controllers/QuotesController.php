@@ -45,7 +45,7 @@ class QuotesController extends BaseController
         $s_model = new Status();
         $td_model = new TypeDocument();
         $status = $s_model->findAll();
-        $type_documents = $td_model->findAll();
+        $type_documents = $td_model->setAdditionalParams(['origin' => 'quotes_index'])->findAll();
 
         $periods = [
             (object) ['value' => "", 'name' => 'Personalizado', "selected" => false],
@@ -70,6 +70,10 @@ class QuotesController extends BaseController
 
     public function data(){
         $dataPost = (object) $this->request->getGet();
+
+        $this->invoices->setAdditionalParams(['origin' => 'quotes_data']);
+
+        $count_data = $this->invoices->countAllResults(false);
         $data = $this->invoices
             ->select([
                 'invoices.*',
@@ -85,10 +89,11 @@ class QuotesController extends BaseController
         
         $data = $this->dataTable->length == -1 ? $data->findAll() : $data->paginate($this->dataTable->length, 'dataTable', $this->dataTable->page);
 
+        $this->td_model->setAdditionalParams(['origin' => 'quotes_data']);
+
         $indicadores = [];
         if($this->dataTable->length > 0){
             $indicadores = $this->td_model
-                ->setAdditionalParams(['origin' => 'indicadores_cot_rem'])
                 ->select([
                     'type_documents.id as document',
                     'i.id as invoice_id',
@@ -103,8 +108,6 @@ class QuotesController extends BaseController
                 // ->groupBy('type_documents.id', 'i.id', 'li.product_id') // Agrupa por documento
                 ->findAll();
         }
-
-        $count_data = $this->invoices->countAllResults();
         return $this->respond([
             'data'              => $data,
             'draw'              => $this->dataTable->draw,

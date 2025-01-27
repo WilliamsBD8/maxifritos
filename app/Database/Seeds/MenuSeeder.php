@@ -3,6 +3,7 @@
 namespace App\Database\Seeds;
 
 use App\Models\Menu;
+use App\Models\Permission;
 
 use CodeIgniter\Database\Seeder;
 
@@ -25,5 +26,23 @@ class MenuSeeder extends Seeder
         foreach ($menus as $key => $menu) {
             $m_model->save($menu);
         }
+
+        $p_model = new Permission();
+        $permissions = [
+            ['role_id' => '2','menu_id' => '6'],
+            ['role_id' => '2','menu_id' => '1'],
+            ['role_id' => '2','menu_id' => '3'],
+            ['role_id' => '2','menu_id' => '5'],
+            ['role_id' => '2','menu_id' => '4'],
+            ['role_id' => '2','menu_id' => '9'],
+            ['role_id' => '2','menu_id' => '2'],
+            ['role_id' => '2','menu_id' => '7'],
+            ['role_id' => '2','menu_id' => '8'],
+            ['role_id' => '3','menu_id' => '6'],
+            ['role_id' => '3','menu_id' => '1'],
+            ['role_id' => '3','menu_id' => '7']
+        ];
+        foreach($permissions as $permission)
+            $p_model->save($permission);
     }
 }

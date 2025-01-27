@@ -60,7 +60,17 @@ class Invoice extends Model
     public function setAdditionalParams(array $params)
     {
         $this->additionalParams = $params;
-        return $this; // Permite el encadenamiento de métodos
+        $params = (object) $this->additionalParams;
+        switch($params->origin){
+            case 'quotes_data':
+                if(session('user')->role_id == 3)
+                    $this->where(['invoices.user_id' => session('user')->id])
+                        ->orWhere('invoices.seller_id', session('user')->id);
+                break;
+            default:
+                break;
+        }
+        return $this;
     }
 
     public function getLineInvoice($id){
@@ -103,9 +113,9 @@ class Invoice extends Model
     protected function functionBeforeFind(array $data){
         $getData = !empty($_GET) ? (object) $_GET : (object) $_POST;
         if (!empty($data['method']) && $data['method'] === 'findAll') {
-            if(session('user')->role_id == 3 && $data['limit'] == 10)
-                $this->where(['user_id' => session('user')->id])
-                    ->orWhere('user_id', session('user')->id);
+            // if(session('user')->role_id == 3 && $data['limit'] == 10)
+            //     $this->where(['user_id' => session('user')->id])
+            //         ->orWhere('user_id', session('user')->id);
 
             if(isset($getData->date_init) && isset($getData->date_end)){
                 $this->where([

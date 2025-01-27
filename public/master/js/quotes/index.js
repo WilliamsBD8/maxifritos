@@ -25,7 +25,12 @@ async function load_datatable(){
             {title: 'Valor', data: 'payable_amount', render: (v) => formatPrice(parseFloat(v))},
             {title: 'Fecha', data: 'created_at'},
             {title: 'Creado por', data: 'u_name'},
-            user.role_id <= 2 ? {title: "Ubicación", data:"address_origin", render:(coor) => `<a onclick="view_map_detail('${coor}')" href="javascript:void(0)" class="btn btn-sm btn-text-primary rounded-pill btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-info" data-bs-original-title="Ver mapa"><i class="ri-map-pin-line"></i></a>`} : null,
+            {
+                title: "Ubicación",
+                data:"address_origin",
+                render:(coor) => `<a onclick="view_map_detail('${coor}')" href="javascript:void(0)" class="btn btn-sm btn-text-primary rounded-pill btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-info" data-bs-original-title="Ver mapa"><i class="ri-map-pin-line"></i></a>`,
+                visible: user.role_id != 3
+            },
             {title: 'Acciones', data:'id', render: (_, __, c) => {
 
                 let actions = `
@@ -90,7 +95,7 @@ async function load_datatable(){
             {
                 extend: 'excel',
                 text: '<i class="ri-file-excel-line me-1"></i><span class="d-none d-sm-inline-block">Excel</span>',
-                className: 'btn btn-primary waves-effect waves-light mx-2 mt-2',
+                className: `btn btn-primary waves-effect waves-light mx-2 mt-2 ${user.role_id == 3 ? 'd-none' : ''}`,
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4, 5, 6, 7],
                     format: {
@@ -121,7 +126,7 @@ async function load_datatable(){
             },
             {
                 text: '<i class="ri-file-excel-line me-1"></i> <span class="d-none d-sm-inline-block">Pedidos</span>',
-                className: 'btn btn-primary waves-effect waves-light mx-2 mt-2',
+                className: `btn btn-primary waves-effect waves-light mx-2 mt-2  ${user.role_id == 3 ? 'd-none' : ''}`,
                 action: async () => {
                     const {value:data} = await Swal.fire({
                         title: 'Ingrese el rango de busqueda',

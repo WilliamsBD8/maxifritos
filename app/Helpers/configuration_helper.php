@@ -70,6 +70,8 @@ function only_full_group(){
 }
 
 function validUrl(){
+    
+    return !(strpos(base_url(), "localhost") !== false);
     return !strpos(base_url(), "localhost");
 }
 

@@ -11,6 +11,7 @@ async function loadTable(){
             dataSrc: 'data'
         },
         columns: [
+            {title: 'Creado por', data:'origin_name', visible: user.role_id != 3},
             {title: 'Nombre', data:'name'},
             {title: 'email', data:'email'},
             {title: 'tipo de documento', data:'document_identification'},

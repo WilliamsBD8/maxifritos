@@ -27,6 +27,13 @@ async function loadProducts(customer = null){
         let customers = customersData();
         let cust = customers.find(c => c.id == customer);
 
+        let sellers = sellersData();
+        let seller = sellers.find(s => cust.user_origin_id == s.id);
+        if(seller){
+            $('#seller_id').val(seller.id);
+            $('#seller_id').select2();
+        }
+
         const url = base_url(['data/products']);
         const data = { customer }
         const res = await proceso_fetch(url, data, 0);
@@ -35,12 +42,7 @@ async function loadProducts(customer = null){
             let prod = productsD.find(pd => pd.id == p.id)
             p.value = prod.value
         });
-        $('#products_id').select2({
-            data: productsD.map(item => ({
-                id: item.id,
-                text: `${item.name} - ${item.code}`
-            }))
-        });
+        loadSelectProducts();
         if(cust.discount_percentage > 0){
             var aux_customer = `
                 Descuento sugerido del ${cust.discount_percentage}%: ${cust.discount_detail}
@@ -153,7 +155,7 @@ function loadTable(){
     table[0] = $('#table_datatable').DataTable({
         data:products.filter(p => !p.isDelete),
         columns: [
-            {title: 'Producto', data: 'name', render: (n, _, p) => `${n}<br>${p.code}`},
+            {title: 'Producto', data: 'name', render: (n, _, p) => `${p.code}<br>${n}`},
             {title: 'Cantidad', data: 'quantity', render: (q, _, p) => {
                 return `
                     <div class="input-group input-group-merge">
@@ -226,7 +228,7 @@ function loadTable(){
             $('#products_id').val('');
             $('#products_id').removeClass('is-invalid');
             
-            loadSelect();
+            loadSelectProducts();
             let products = table[0].data().toArray();
             if(products.length == 0){
                 $('#discount_amount').val(0);

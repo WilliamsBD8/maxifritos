@@ -17,10 +17,10 @@
 <div class="container-xxl flex-grow-1 container-p-y">
   <div class="row g-6">
     <!-- Gamification Card -->
-    <div class="col-md-12 col-xxl-<?= $user_permit ? '8' : '12' ?>">
+    <div class="col-md-12 col-xxl-<?= $user_permit ? '4' : '8' ?>">
       <div class="card h-100">
         <div class="d-flex align-items-center row">
-          <div class="col-md-8 order-2 order-md-1">
+          <div class="col-md-<?= $user_permit ? '12' : '7' ?> order-2 order-md-1">
             <div class="card-body">
               <h4 class="card-title mb-4">Bienvenido <span class="fw-bold"><?= session('user')->name ?></span> 🎉</h4>
               <!-- <div class=" h-100 p-5">
@@ -31,7 +31,7 @@
               <a href="javascript:;" class="btn btn-primary">View Profile</a> -->
             </div>
           </div>
-          <div class="col-md-4 text-center text-md-end order-1 order-md-2">
+          <div class="col-md-<?= $user_permit ? '12' : '5' ?> text-center text-md-end order-1 order-md-2">
             <div class="card-body pb-0 px-0 pt-2">
               <img
                 src="../../assets/img/illustrations/illustration-john-light.png"
@@ -58,6 +58,7 @@
             <div class="dropdown">
               <a
                 class="btn btn-text-secondary rounded-pill text-muted border-0 p-1"
+                href="<?= base_url(['table/history']) ?>"
                 type="button"
                 id="projectStatus"
                 data-bs-toggle="dropdown"
@@ -125,7 +126,7 @@
     <!--/ Sales Country Chart -->
 
     <!-- Line Area Chart -->
-    <div class="col-12 col-xxl-8 col-md-12">
+    <div class="col-12 col-xxl-12 col-md-12">
       <div class="card">
         <div class="card-header d-flex justify-content-between">
           <div>

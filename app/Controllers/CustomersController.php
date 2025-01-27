@@ -37,12 +37,14 @@ class CustomersController extends BaseController
     }
 
     public function data(){
+        $this->c_model->setAdditionalParams(['origin' => 'customer_index']);
+
+        $count = $this->c_model->countAllResults(false);
+
         $data = $this->c_model
-            
-            
             ->orderBy('id', 'DESC')
             ->paginate($this->dataTable->length, 'dataTable', $this->dataTable->page);
-        $count = $this->c_model->countAllResults();
+
         return $this->respond([
             'data'              => $data,
             'draw'              => $this->dataTable->draw,

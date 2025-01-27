@@ -54,17 +54,40 @@ class Customer extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    protected $additionalParams = ["origin" => ""];
+
+    public function setAdditionalParams(array $params)
+    {
+        $this->additionalParams = $params;
+        $params = (object) $this->additionalParams;
+        switch($params->origin){
+            case 'customer_index':
+                if(session('user')->role_id == 3)
+                    $this->where(['user_origin_id' => session('user')->id]);
+                break;
+            default:
+                break;
+        }
+        return $this; // Permite el encadenamiento de métodos
+    }
+
+
     protected function functionBeforeFind(array $data){
         log_message('info', json_encode($data));
-        if (!empty($data['method']) && $data['method'] === 'findAll') {
-            if(session('user')->role_id == 3 && $data['limit'] == 10)
-                $this->where(['user_origin_id' => session('user')->id]);
-            $this
-                ->select([
-                    'customers.*',
-                    'concat(tdi.name, " - ", tdi.code) as document_identification'
-                ])
-                ->join('type_document_identifications as tdi', 'tdi.id = customers.type_document_identification_id', 'left');
+        $params = (object) $this->additionalParams;
+        switch($params->origin){
+            case 'customer_index':
+                $this
+                    ->select([
+                        'customers.*',
+                        'concat(tdi.name, " - ", tdi.code) as document_identification',
+                        'u.name as origin_name'
+                    ])
+                    ->join('type_document_identifications as tdi', 'tdi.id = customers.type_document_identification_id', 'left')
+                    ->join('users as u', 'u.id = customers.user_origin_id', 'left');
+                break;
+            default:
+                break;
         }
         return $data;
     }

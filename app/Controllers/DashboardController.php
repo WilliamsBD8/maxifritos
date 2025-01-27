@@ -22,7 +22,7 @@ class DashboardController extends BaseController
 
 	public function index()
 	{
-		$type_documents = $this->td_model->findAll();
+		$type_documents = $this->td_model->setAdditionalParams(['origin' => 'home'])->findAll();
 		$fechaEspecifica = new \DateTime(session('user')->password->created_at);
 		$fechaActual = new \DateTime('now');
 		$diferencia = $fechaEspecifica->diff($fechaActual);
@@ -51,7 +51,7 @@ class DashboardController extends BaseController
 		$date_init = (clone $fechaActual)->modify('-1 year')->modify('+1 month')->format('Y-m-d 00:00:00');
 		$date_now = $fechaActual->format('Y-m-d 23:59:59');
 		$inv_dates = $this->i_model
-			->getFilteredInvoices($this->user)
+			// ->getFilteredInvoices($this->user)
 			->select([
 				'YEAR(created_at) as year', 
 				'MONTH(created_at) as month', 
