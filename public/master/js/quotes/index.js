@@ -36,7 +36,7 @@ async function load_datatable(){
                 let actions = `
                     <div class="d-inline-block">
                         <a href="${base_url(['invoices/download', c.id])}" target="_blank" class="btn btn-sm btn-text-secondary rounded-pill btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-warning" data-bs-original-title="Descargar ${c.td_name}"><i class="ri-file-pdf-2-line"></i></a>
-                        ${c.status_id == 1 ? `
+                        ${c.status_id == 1  ? `
                             <a href="javascript:void(0);" class="btn btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-2-line"></i></a>
                             <ul class="dropdown-menu dropdown-menu-end m-0" style="">
                                 <li><a href="${base_url(['dashboard/cotizaciones/editar', c.id])}" class="dropdown-item">Editar</a></li>
@@ -44,11 +44,14 @@ async function load_datatable(){
                                 <li><a href="javascript:void(0);" onclick="decline(${c.id}, ${c.resolution})" class="dropdown-item text-danger">Rechazar</a></li>
                             </ul>                
                         ` : `
-                            <a href="javascript:void(0);" class="btn btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-2-line"></i></a>
-                            <ul class="dropdown-menu dropdown-menu-end m-0" style="">
-                                <li><a href="${base_url(['dashboard/cotizaciones/editar', c.id])}" class="dropdown-item">Editar</a></li>
-                                <li><a href="javascript:void(0);" onclick="decline(${c.id}, ${c.resolution})" class="dropdown-item text-danger">Rechazar</a></li>
-                            </ul>
+                            ${user.role_id != 3 ? `
+                                <a href="javascript:void(0);" class="btn btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-2-line"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end m-0" style="">
+                                    <li><a href="${base_url(['dashboard/cotizaciones/editar', c.id])}" class="dropdown-item">Editar</a></li>
+                                    <li><a href="javascript:void(0);" onclick="decline(${c.id}, ${c.resolution})" class="dropdown-item text-danger">Rechazar</a></li>
+                                </ul>
+                            ` : ''}
+                            
                         `}
                     </div>
                 `
