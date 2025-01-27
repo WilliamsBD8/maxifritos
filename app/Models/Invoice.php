@@ -103,6 +103,12 @@ class Invoice extends Model
         return $data[0];
     }
 
+    public function getSeller($id){
+        $data = $this->builder('users')
+            ->where(['id' => $id])->get()->getResult();
+        return $data[0];
+    }
+
     public function getFilteredInvoices($user_id = null)
     {
         if ($user_id != null) {

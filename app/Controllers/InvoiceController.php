@@ -189,7 +189,7 @@ class InvoiceController extends BaseController
             ->find($id);
         $invoice->line_invoices = $this->i_model->getLineInvoices($invoice->id);
         $invoice->customer = $this->i_model->getCustomer($invoice->customer_id);
-        $invoice->seller = $this->i_model->getCustomer($invoice->seller_id);
+        $invoice->seller = $this->i_model->getSeller($invoice->seller_id);
         $page = view('pdf/invoice', [
             'invoice' => $invoice
         ]);
