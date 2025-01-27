@@ -38,8 +38,10 @@ class DashboardController extends BaseController
 			->join('roles', 'roles.id = users.role_id', 'left')
 		->orderBy('id', 'DESC')->paginate(5);
 
+		$this->i_model->setAdditionalParams(['origin' => 'home']);
+
 		$invoices = $this->i_model
-			->getFilteredInvoices($this->user)
+			// ->getFilteredInvoices($this->user)
 			->select([
 				'invoices.*',
 				'td.name as document_name',
@@ -72,7 +74,7 @@ class DashboardController extends BaseController
 			foreach ($inv_dates as $key => $inv) if($td->id == $inv->type_document_id) $td->dates[] = $inv;
 		}
 
-		// var_dump([$type_documents]); die;
+		// var_dump([$type_documents, $invoices]); die;
 
 	  	return  view('pages/home', [
 			'day' 		=> (90 - $diferencia->days),

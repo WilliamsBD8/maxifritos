@@ -63,6 +63,7 @@ class Invoice extends Model
         $params = (object) $this->additionalParams;
         switch($params->origin){
             case 'quotes_data':
+            case 'home':
                 if(session('user')->role_id == 3)
                     $this->where(['invoices.user_id' => session('user')->id])
                         ->orWhere('invoices.seller_id', session('user')->id);
