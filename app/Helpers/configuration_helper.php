@@ -71,8 +71,7 @@ function only_full_group(){
 
 function validUrl(){
     
-    return !(strpos(base_url(), "localhost") !== false);
-    return !strpos(base_url(), "localhost");
+    return base_url() !== "http://localhost:8080/";
 }
 
 function getColumnLetter($columnNumber) {

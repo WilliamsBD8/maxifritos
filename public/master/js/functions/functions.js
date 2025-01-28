@@ -18,7 +18,7 @@ async function proceso_fetch(url, data, time = 1, method = 'POST') {
     return fetch(url, {
         method: method,
         headers: { 'Content-Type': !url.includes(".will") ? 'application/x-www-form-urlencoded' : 'application/json' },
-        body: !url.includes(".will") ? $.param(data) : JSON.stringify(data)
+        body: url.includes("localhost") ? $.param(data) : JSON.stringify(data)
     }).then(async response => {
         if (!response.ok) {
             const errorData = await response.json();
@@ -246,9 +246,18 @@ function loadSelectProducts(){
             return data;
         }
 
-        // Búsqueda izquierda a derecha
-        if (data.text.toLowerCase().startsWith(params.term.toLowerCase())) {
+        const term = params.term.toLowerCase();
+
+        if (user.role_id <= 2) { 
+          // Solo para el rol específico (por ejemplo, el rol con ID menor a 3), búsqueda izquierda a derecha.
+          if (data.text.toLowerCase().startsWith(term)) {
             return data;
+          }
+        } else { 
+          // Para otros roles, búsqueda más flexible (que contenga el término en cualquier parte).
+          if (data.text.toLowerCase().includes(term)) {
+            return data;
+          }
         }
 
         // Si no hay coincidencia, devuelve null
@@ -259,5 +268,5 @@ function loadSelectProducts(){
             return "No hay coincidencias desde el inicio";
         }
     }
-});
+  });
 }
