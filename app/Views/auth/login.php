@@ -204,7 +204,7 @@
 
     <!-- Page JS -->
     <!-- <script src="<?= base_url(["assets/js/pages-auth.js"]) ?>"></script> -->
-    <script src="<?= base_url(["master/js/functions/functions.js"]) ?>"></script>
+    <script src="<?= base_url(["master/js/functions/functions.js?v=1.0.0"]) ?>"></script>
     <script src="<?= base_url(["master/js/auth/login.js"]) ?>"></script>
 </body>
 
