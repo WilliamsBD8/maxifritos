@@ -53,7 +53,7 @@
                                     <div class="col-sm-12 col-lg-3 col-md-6 mb-2">
                                         <div class="form-floating  form-floating-outline">
                                             <select data-allow-clear="true" class="select2 form-select form-select-lg" id="products_id" name="product" onchange="addProduct(this.value)" data-placeholder="Seleccione un producto">
-                                                <option value="" disabled selected>Seleccione un producto</option>
+                                                <!-- <option value="" disabled selected>Seleccione un producto</option> -->
                                                 <!-- <php foreach($products as $product): ?>
                                                     <option value="<= $product->id ?>"><= "$product->name - $product->code" ?></option>
                                                 <php endforeach ?> -->
@@ -115,5 +115,5 @@
     const customersData = () => <?= json_encode($customers) ?>;
 </script>
 <script src="<?= base_url(['assets/js/forms-selects.js']) ?>"></script>
-<script src="<?= base_url(['master/js/quotes/edit.js?v=1.0.0']) ?>"></script>
+<script src="<?= base_url(['master/js/quotes/edit.js?v='.getCommit()]) ?>"></script>
 <?= $this->endSection(); ?>

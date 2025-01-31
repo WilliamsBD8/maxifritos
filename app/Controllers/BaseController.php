@@ -37,8 +37,11 @@ class BaseController extends Controller
 		parent::initController($request, $response, $logger);
 
 		$valor = env('app.origin', 'produccion');
-		if($valor == 'local')
+		if($valor == 'local'){
 			only_full_group();
+		}
+
+		updatedCommit();
 
 		//--------------------------------------------------------------------
 		// Preload any models, libraries, etc, here.

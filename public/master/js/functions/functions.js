@@ -249,23 +249,16 @@ function downloadBase64(fileContent, fileName, type){
 
 function loadSelectProducts(){
   let $select = $('#products_id');
-  if ($select.data('select2')) {
       $select.select2('destroy');
-  }
   $select.empty();
   if(productsD.length > 0){
-    let data = [{
-        id:"",
-        text:"Seleccione un producto",
-        disabled: true,
-        selected:true
-    }];
-    data = data.concat(productsD.map(item => ({
+    let data = productsD.map(item => ({
       id: item.id,
       text: `${item.code} - ${item.name}`,
-    })));
-    $('#products_id').select2({
+    }));
+    $select.select2({
       data,
+      placeholder: "Seleccione un producto",
       matcher: function(params, data) {
           if ($.trim(params.term) === '') {
               return data;
@@ -289,13 +282,9 @@ function loadSelectProducts(){
       }
     });
   }else{
-    $('#products_id').select2({
-        data: [{
-          id:"",
-          text:"Seleccione un cliente",
-          disabled: true,
-          selected: true
-        }],
+    $select.select2({
+        data: [],
+        placeholder: "Seleccione un cliente",
         language: {
             noResults: function() {
                 return "Seleccione un cliente"; // Mensaje personalizado
@@ -303,5 +292,7 @@ function loadSelectProducts(){
         },
     });
   }
+
+  $select.val(null).trigger('change');
 
 }

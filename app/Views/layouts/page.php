@@ -71,7 +71,7 @@
     <!-- Core CSS -->
     <link rel="stylesheet" href="<?= base_url(["assets/vendor/css/rtl/core.cs"]) ?>s" class="template-customizer-core-css" />
     <link rel="stylesheet" href="<?= base_url(["assets/vendor/css/rtl/theme-default.css"]) ?>" class="template-customizer-theme-css" />
-    <link rel="stylesheet" href="<?= base_url(["assets/css/demo.css"]) ?>" />
+    <link rel="stylesheet" href="<?= base_url(["assets/css/demo.css?v=".getCommit()]) ?>" />
     <link rel="stylesheet" href="<?= base_url(["assets/css/style.css"]) ?>" />
 
     <!-- Vendors CSS -->
@@ -178,7 +178,7 @@
     <script src="<?= base_url(["assets/vendor/libs/swiper/swiper.js"]) ?>"></script>
 
     <!-- Page JS -->
-    <script src="<?= base_url(["master/js/functions/functions.js?v=1.0.0"]) ?>"></script>
+    <script src="<?= base_url(["master/js/functions/functions.js?v=".getCommit()]) ?>"></script>
     
     <?= $this->renderSection('javaScripts') ?>
   </body>

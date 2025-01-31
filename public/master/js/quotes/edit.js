@@ -42,7 +42,6 @@ async function loadProducts(customer = null){
             let prod = productsD.find(pd => pd.id == p.id)
             p.value = prod.value
         });
-        loadSelectProducts();
         if(cust.discount_percentage > 0){
             var aux_customer = `
                 Descuento sugerido del ${cust.discount_percentage}%: ${cust.discount_detail}
@@ -51,16 +50,9 @@ async function loadProducts(customer = null){
             var aux_customer = "";
         $('#address').val(cust.address)
         $('#id_descuento_customer').html(aux_customer)
-    }else{
-        $('#products_id').select2({
-            data: [],
-            language: {
-                noResults: function() {
-                    return "Seleccione un cliente"; // Mensaje personalizado
-                }
-            },
-        });
     }
+    
+    loadSelectProducts();
     if(table[0] == undefined)
         loadTable();
     else reloadTable()
@@ -118,16 +110,19 @@ function changeDiscountValue(type, value){
 }
 
 function addProduct(id){
-    let producto = products.find(p => p.id == id);
-    if(producto){
-        producto.quantity = producto.isDelete ? producto.quantity : parseInt(producto.quantity)+1;
-        producto.isDelete = false;
-    }else{
-        let producto = productsD.find(p => p.id == id)
-        producto = { ...producto, quantity: 1, discount_amount:0, discount_percentage:0, line_invoice_id: null, isDelete: false, discount: products.find(p => p.discount) !== undefined };
-        products.push(producto);
+    if(id.length > 0){
+        let producto = products.find(p => p.id == id);
+        if(producto){
+            producto.quantity = producto.isDelete ? producto.quantity : parseInt(producto.quantity)+1;
+            producto.isDelete = false;
+        }else{
+            let producto = productsD.find(p => p.id == id)
+            producto = { ...producto, quantity: 1, discount_amount:0, discount_percentage:0, line_invoice_id: null, isDelete: false, discount: products.find(p => p.discount) !== undefined };
+            products.push(producto);
+        }
+        reloadTable();
+        $('#products_id').val(null).trigger('change');
     }
-    reloadTable();
 }
 
 function productDelete(id){
@@ -236,10 +231,7 @@ function loadTable(){
             $('div.head-label').html(info);
         },
         drawCallback: () => {
-            $('#products_id').val('');
             $('#products_id').removeClass('is-invalid');
-            
-            loadSelectProducts();
             let products = table[0].data().toArray();
             if(products.length == 0){
                 $('#discount_amount').val(0);

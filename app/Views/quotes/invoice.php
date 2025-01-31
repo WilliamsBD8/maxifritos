@@ -188,6 +188,6 @@
         return data;
     }
 </script>
-<script src="<?= base_url(['master/js/quotes/invoice.js?v=1.0.0']) ?>"></script>
+<script src="<?= base_url(['master/js/quotes/invoice.js?v='.getCommit()]) ?>"></script>
 <!-- <= $this->include('layouts/js_datatables') ?> -->
 <?= $this->endSection(); ?>

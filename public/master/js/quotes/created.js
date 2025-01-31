@@ -34,7 +34,6 @@ async function loadProducts(customer = null){
             let prod = productsD.find(pd => pd.id == p.id)
             p.value = prod.value
         });
-        loadSelectProducts();
         if(cust.discount_percentage > 0){
             var aux_customer = `
                 Descuento sugerido del ${cust.discount_percentage}%: ${cust.discount_detail}
@@ -45,16 +44,9 @@ async function loadProducts(customer = null){
         $('#id_descuento_customer').html(aux_customer)
         reloadTable();
     }else{
-        $('#products_id').select2({
-            data: [],
-            language: {
-                noResults: function() {
-                    return "Seleccione un cliente"; // Mensaje personalizado
-                }
-            },
-        });
         loadTable();
     }
+    loadSelectProducts();
 }
 
 function changeDiscount(value){
@@ -110,15 +102,20 @@ function changeDiscountValue(type, value){
 const table = [];
 
 function addProduct(id){
-    let producto = products.find(p => p.id == id);
-    if(producto){
-        producto.quantity++;
-    }else{
-        let producto = productsD.find(p => p.id == id)
-        producto = { ...producto, quantity: 1, discount_amount:0, discount_percentage:0, discount: false };
-        products.push(producto);
+    if(id.length > 0){
+        let producto = products.find(p => p.id == id);
+        if(producto){
+            producto.quantity++;
+        }else{
+            let producto = productsD.find(p => p.id == id);
+            if(producto){
+                producto = { ...producto, quantity: 1, discount_amount:0, discount_percentage:0, discount: false };
+                products.push(producto);
+            }
+        }
+        reloadTable();
+        $('#products_id').val(null).trigger('change');
     }
-    reloadTable();
 }
 
 function productDelete(id){
@@ -230,9 +227,7 @@ function loadTable(){
             $('div.head-label').html(info);
         },
         drawCallback: () => {
-            $('#products_id').val('');
             $('#products_id').removeClass('is-invalid');
-            loadSelectProducts();
             if(products.length == 0){
                 $('#discount_amount').val(0);
                 $('#discount_percentaje').val(0);
@@ -374,7 +369,7 @@ function reloadTable(){
 
     table[0].clear();
     table[0].rows.add(products.reverse());
-    table[0].draw(true);
+    table[0].draw(false);
 
     // Restaurar la posición del scroll después de actualizar la tabla
     $(window).scrollTop(scrollPos);
