@@ -57,7 +57,7 @@
                                             class="select2 form-select form-select-lg"
                                             id="products_id" name="product" onchange="addProduct(this.value)"
                                             data-allow-clear="true">
-                                                <option value="" disabled selected>Seleccione un producto</option>
+                                                <!-- <option value="" disabled selected>Seleccione un producto</option> -->
                                                 <!-- <php foreach($products as $product): ?>
                                                     <option value="<= $product->id ?>"><= "$product->name - $product->code" ?></option>
                                                 <php endforeach ?> -->
@@ -157,5 +157,5 @@
     const customersData = () => <?= json_encode($customers) ?>;
 </script>
 <script src="<?= base_url(['assets/js/forms-selects.js']) ?>"></script>
-<script src="<?= base_url(['master/js/quotes/created.js']) ?>"></script>
+<script src="<?= base_url(['master/js/quotes/created.js?v1.0.0']) ?>"></script>
 <?= $this->endSection(); ?>

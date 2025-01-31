@@ -157,6 +157,6 @@
     }
   </script>
   
-  <script src="<?= base_url(['master/js/home/index.js']) ?>"></script>
+  <script src="<?= base_url(['master/js/home/index.js?v=1.0.0']) ?>"></script>
   <script src="<?= base_url(["assets/js/dashboards-analytics.js"]) ?>"></script>
 <?= $this->endSection() ?>  

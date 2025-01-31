@@ -70,8 +70,8 @@ function only_full_group(){
 }
 
 function validUrl(){
-    
-    return base_url() !== "http://localhost:8080/";
+    log_message('info', "Url: ".base_url());
+    return !in_array(base_url(), ["http://localhost:8080/", "https://simiplus.com/"]);
 }
 
 function getColumnLetter($columnNumber) {

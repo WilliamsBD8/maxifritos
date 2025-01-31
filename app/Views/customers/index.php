@@ -175,5 +175,5 @@
 
 <?= $this->section('javaScripts'); ?>
 <?= $this->include('layouts/js_datatables') ?>
-<script src="<?= base_url(['master/js/customers/index.js']) ?>"></script>
+<script src="<?= base_url(['master/js/customers/index.js?v=1.0.0']) ?>"></script>
 <?= $this->endSection(); ?>

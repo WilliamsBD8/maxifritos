@@ -152,5 +152,5 @@
     });
     const periods = <?= json_encode($periods) ?>;
 </script>
-<script src="<?= base_url(['master/js/quotes/index.js']) ?>"></script>
+<script src="<?= base_url(['master/js/quotes/index.js?v=1.0.0']) ?>"></script>
 <?= $this->endSection(); ?>

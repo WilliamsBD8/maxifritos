@@ -81,9 +81,20 @@ function changeDiscount(value){
             $('#input_descuento_porcentaje').prop('disabled', false)
             $('#input_descuento_monto').val('')
             break;
-        default:
+        case 'productos':
             products.map(p => {
                 p.discount = true;
+            });
+            $('#discount_amount').val(0)
+            $('#discount_percentaje').val(0)
+            $('#input_descuento_monto').prop('disabled', true)
+            $('#input_descuento_porcentaje').prop('disabled', true)
+            break;
+        default:
+            products.map(p => {
+                p.discount_amount = 0;
+                p.discount_percentage = 0;
+                p.discount = false;
             });
             $('#discount_amount').val(0)
             $('#discount_percentaje').val(0)
@@ -145,7 +156,7 @@ function handleChange(value, id, campo){
 
 function loadTable(){
     table[0] = $('#table_datatable').DataTable({
-        data:products,
+        data:products.reverse(),
         columns: [
             {title: 'Producto', data: 'name', render: (n, _, p) => `${p.code}<br>${n}`},
             {title: 'Cantidad', data: 'quantity', render: (q, _, p) => {
@@ -158,13 +169,13 @@ function loadTable(){
                 `;
             }},
             {title: 'Valor Unitario', data: 'value', render: (v, _, p) => {
-                return `
+                return user.role_id != 3 ? `
                     <div class="input-group input-group-merge">
                         <div class="form-floating form-floating-outline">
                             <input type="text" class="form-control" onkeyup="updateFormattedValue(this)" value="${separador_miles(v)}" onchange="handleChange(this.value, ${p.id}, 'value')">
                         </div>
                     </div>
-                `;
+                ` : formatPrice(v);
             }},
             {title: 'Porcentaje <br> Descuento', data: 'discount_percentage', render: (_, __, p) => { 
                 return !p.discount ? '0%' : `
@@ -250,12 +261,12 @@ function loadTable(){
         buttons: [
             {
                 text: '<i class="ri-add-line ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Crear Cotizacion</span>',
-                className: `btn btn-primary waves-effect waves-light`,
+                className: `btn btn-primary waves-effect waves-light mt-2`,
                 action: () => sendCotizacion()
             },
             {
                 text: '<i class="ri-refund-2-fill"></i> <span class="d-none d-sm-inline-block">Añadir Descuento</span>',
-                className: `btn btn-warning waves-effect waves-light mx-2 btn-discount`,
+                className: `btn btn-warning waves-effect waves-light mx-2 btn-discount mt-2`,
                 action: async () => {
                     const info = {
                         checked_amount: $('#discount_amount').val() != 0 ? true : false,
@@ -263,9 +274,6 @@ function loadTable(){
                         checked_percentaje: $('#discount_percentaje').val() != 0 ? true : false,
                         percentaje: $('#discount_percentaje').val() != 0 ? $('#discount_percentaje').val() : '',
                         checked_products: products.find(p => p.discount) !== undefined
-                    }
-                    if($('#discount_amount')){
-
                     }
 
                     let inputs = `
@@ -321,7 +329,7 @@ function loadTable(){
                             <div class="col-sm-12 mb-3">
                                 <div class="form-check custom-option custom-option-basic">
                                     <label class="form-check-label custom-option-content" for="descuento_producto">
-                                    <input name="descuento" class="form-check-input" type="radio" onchange="changeDiscount(this.value)" value="porductos" id="descuento_producto" ${info.checked_products ? 'checked' : ''}>
+                                    <input name="descuento" class="form-check-input" type="radio" onchange="changeDiscount(this.value)" value="productos" id="descuento_producto" ${info.checked_products ? 'checked' : ''}>
                                     <span class="custom-option-header">
                                         <span class="h6 mb-0">Aplicar descuentos linea por linea en productos especificos</span>
                                     </span>
@@ -331,22 +339,29 @@ function loadTable(){
                         </div>
                     `
 
-                    const {value: data} = await Swal.fire({
+                    Swal.fire({
                         title: 'Descuento',
                         html: inputs,
                         showConfirmButton: true,
+                        showCancelButton: true,
                         allowOutsideClick: false,
+                        cancelButtonText: "Quitar Descuentos",
                         customClass: {
                             htmlContainer: 'd-flex',
-                            confirmButton: 'btn btn-primary waves-effect'
+                            confirmButton: 'btn btn-primary waves-effect',
+                            cancelButton: 'btn btn-danger waves-effect',
                         },
-                    })
-                    reloadTable();
+                    }).then(async (result) => {
+                        if (result.isDismissed) {
+                            changeDiscount('reinit')
+                        }
+                        reloadTable();
+                    });
                 }
             },
             {
                 text: '<i class="ri-arrow-go-back-line"></i> <span class="d-none d-sm-inline-block">Regresar</span>',
-                className: `btn btn-secondary waves-effect waves-light mx-2`,
+                className: `btn btn-secondary waves-effect waves-light mx-2 mt-2`,
                 action: () => window.location.href = base_url(['dashboard/cotizaciones'])
             }
         ]
@@ -354,9 +369,15 @@ function loadTable(){
 }
 
 function reloadTable(){
+    // Guardar la posición del scroll antes de refrescar la tabla
+    let scrollPos = $(window).scrollTop();
+
     table[0].clear();
-    table[0].rows.add(products);
+    table[0].rows.add(products.reverse());
     table[0].draw(true);
+
+    // Restaurar la posición del scroll después de actualizar la tabla
+    $(window).scrollTop(scrollPos);
 }
 
 async function sendCotizacion(){

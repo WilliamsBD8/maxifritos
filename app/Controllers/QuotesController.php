@@ -69,6 +69,7 @@ class QuotesController extends BaseController
     }
 
     public function data(){
+
         $dataPost = (object) $this->request->getGet();
 
         $this->invoices->setAdditionalParams(['origin' => 'quotes_data']);
@@ -160,20 +161,24 @@ class QuotesController extends BaseController
     }
 
     public function products(){
-        $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
-        $products = $this->p_model
-        ->select([
-            'products.*',
-            "COALESCE(
-                (SELECT li.value
-                FROM line_invoices li
-                JOIN invoices i ON i.id = li.invoice_id and i.type_document_id = 2
-                WHERE i.customer_id = {$data->customer}
-                AND li.product_id = products.id
-                ORDER BY li.created_at DESC
-                LIMIT 1), products.value) AS value"
-        ])
-        ->where(['products.status' => 'active'])->findAll();
-        return $this->respond(['data' => $products, 'info'  => $data]);
+        try{
+            $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
+            $products = $this->p_model
+            ->select([
+                'products.*',
+                "COALESCE(
+                    (SELECT li.value
+                    FROM line_invoices li
+                    JOIN invoices i ON i.id = li.invoice_id and i.type_document_id = 2
+                    WHERE i.customer_id = {$data->customer}
+                    AND li.product_id = products.id
+                    ORDER BY li.created_at DESC
+                    LIMIT 1), products.value) AS value"
+            ])
+            ->where(['products.status' => 'active'])->findAll();
+            return $this->respond(['data' => $products, 'info'  => $data]);
+        }catch(\Exception $e){
+			return $this->respond(['title' => 'Error en el servidor', 'error' => $e->getMessage()], 500);
+		}
     }
 }

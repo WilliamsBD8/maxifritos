@@ -90,9 +90,20 @@ function changeDiscount(value){
             $('#input_descuento_porcentaje').prop('disabled', false)
             $('#input_descuento_monto').val('')
             break;
-        default:
+        case 'productos':
             products.map(p => {
                 p.discount = true;
+            });
+            $('#discount_amount').val(0)
+            $('#discount_percentaje').val(0)
+            $('#input_descuento_monto').prop('disabled', true)
+            $('#input_descuento_porcentaje').prop('disabled', true)
+            break;
+        default:
+            products.map(p => {
+                p.discount_amount = 0;
+                p.discount_percentage = 0;
+                p.discount = false;
             });
             $('#discount_amount').val(0)
             $('#discount_percentaje').val(0)
@@ -103,7 +114,7 @@ function changeDiscount(value){
 }
 
 function changeDiscountValue(type, value){
-    $(`#${type == 2 ? 'discount_percentaje' : 'discount_amount'}`).val(type == 2 ? value : value.replace(/,/, ''))
+    $(`#${type == 2 ? 'discount_percentaje' : 'discount_amount'}`).val(type == 2 ? value : format_number(value))
 }
 
 function addProduct(id){
@@ -153,7 +164,7 @@ function handleChange(value, id, campo){
 
 function loadTable(){
     table[0] = $('#table_datatable').DataTable({
-        data:products.filter(p => !p.isDelete),
+        data:products.filter(p => !p.isDelete).reverse(),
         columns: [
             {title: 'Producto', data: 'name', render: (n, _, p) => `${p.code}<br>${n}`},
             {title: 'Cantidad', data: 'quantity', render: (q, _, p) => {
@@ -166,13 +177,13 @@ function loadTable(){
                 `;
             }},
             {title: 'Valor Unitario', data: 'value', render: (v, _, p) => {
-                return `
+                return user.role_id != 3 ? `
                     <div class="input-group input-group-merge">
                         <div class="form-floating form-floating-outline">
                             <input type="text" class="form-control" onkeyup="updateFormattedValue(this)" value="${separador_miles(v)}" onchange="handleChange(this.value, ${p.id}, 'value')">
                         </div>
                     </div>
-                `;
+                ` : formatPrice(v);
             }},
             {title: 'Porcentaje <br> Descuento', data: 'discount_percentage', render: (_, __, p) => { 
                 return !p.discount ? '0 %':`
@@ -245,8 +256,9 @@ function loadTable(){
                     return a + (parseInt(b.quantity) * parseFloat(value));
                 }, 0);
             }else{
-                var value_descount = $('#discount_amount').val() == 0 ? ($('#discount_percentaje').val() / 100) * value_total : format_number($('#discount_amount').val());
+                var value_descount = $('#discount_amount').val() == 0 ? ($('#discount_percentaje').val() / 100) * value_total : $('#discount_amount').val();
             }
+            console.log([value_descount, $('#discount_amount').val()]);
             setTimeout(() => {
                 $('#td_productos').html(formatPrice(parseFloat(value_total)));
                 $('#td_descuentos').html(formatPrice(parseFloat(value_descount)));
@@ -255,13 +267,13 @@ function loadTable(){
         },
         buttons: [
             {
-                text: `<i class="ri-add-line ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Editar ${invoice.type_document_id == 1 ? 'Cotización' : 'Remisión'}</span>`,
-                className: `btn btn-primary waves-effect waves-light`,
+                text: `<i class="ri-edit-line ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Editar ${invoice.type_document_id == 1 ? 'Cotización' : 'Remisión'}</span>`,
+                className: `btn btn-primary waves-effect waves-light mt-2`,
                 action: () => sendCotizacion()
             },
             {
-                text: '<i class="ri-refund-2-fill"></i> <span class="d-none d-sm-inline-block">Añadir Descuento</span>',
-                className: `btn btn-warning waves-effect waves-light mx-2 btn-discount`,
+                text: '<i class="ri-refund-2-fill ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Ajustar Descuento</span>',
+                className: `btn btn-warning waves-effect waves-light mx-2 btn-discount mt-2`,
                 action: async () => {
                     const info = {
                         checked_amount: $('#discount_amount').val() != 0 ? true : false,
@@ -299,7 +311,7 @@ function loadTable(){
                                     </span>
                                     </label>
                                 </div>
-                            </div>
+                            </div> 
                             <div class="col-sm-12 mb-3">
                                 <div class="form-check custom-option custom-option-basic">
                                     <label class="form-check-label custom-option-content" for="descuento_porcentaje">
@@ -337,22 +349,29 @@ function loadTable(){
                         </div>
                     `
 
-                    const {value: data} = await Swal.fire({
+                    Swal.fire({
                         title: 'Descuento',
                         html: inputs,
                         showConfirmButton: true,
+                        showCancelButton: true,
                         allowOutsideClick: false,
+                        cancelButtonText: "Quitar Descuentos",
                         customClass: {
                             htmlContainer: 'd-flex',
-                            confirmButton: 'btn btn-primary waves-effect'
+                            confirmButton: 'btn btn-primary waves-effect',
+                            cancelButton: 'btn btn-danger waves-effect',
                         },
-                    })
-                    reloadTable();
+                    }).then(async (result) => {
+                        if (result.isDismissed) {
+                            changeDiscount('reinit')
+                        }
+                        reloadTable();
+                    });
                 }
             },
             {
-                text: '<i class="ri-arrow-go-back-line"></i> <span class="d-none d-sm-inline-block">Regresar</span>',
-                className: `btn btn-secondary waves-effect waves-light mx-2`,
+                text: '<i class="ri-arrow-go-back-line ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Regresar</span>',
+                className: `btn btn-secondary waves-effect waves-light mx-2 mt-2`,
                 action: () => window.location.href = base_url(['dashboard/cotizaciones'])
             }
         ]
@@ -360,9 +379,11 @@ function loadTable(){
 }
 
 function reloadTable(){
+    let scrollPos = $(window).scrollTop();
     table[0].clear();
-    table[0].rows.add(products.filter(p => !p.isDelete));
+    table[0].rows.add(products.filter(p => !p.isDelete).reverse());
     table[0].draw(true);
+    $(window).scrollTop(scrollPos);
 }
 
 async function sendCotizacion(){

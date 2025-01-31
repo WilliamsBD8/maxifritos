@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <div class="border rounded-4 border-bottom-0">
-                    <table class="table m-0 text-center">
+                    <table class="table m-0 text-center table-sm">
                         <thead>
                             <tr>
                                 <th>Producto</th>
@@ -75,8 +75,8 @@
                             <?php $discount_line = 0 ?>
                             <?php foreach($invoice->line_invoices as $line_invoice): ?>
                             <tr>
-                                <td class="text-nowrap text-heading"><?= "{$line_invoice->product_name}<br>{$line_invoice->product_code}" ?></td>
-                                <td class="text-nowrap"><?= "{$line_invoice->quantity}" ?></td>
+                                <td class="text-heading"><?= "{$line_invoice->product_code}<br>{$line_invoice->product_name}" ?></td>
+                                <td class=""><?= "{$line_invoice->quantity}" ?></td>
                                 <td><?= number_format($line_invoice->value, '2', '.', ',') ?></td>
                                 <td><?= number_format($line_invoice->value * $line_invoice->quantity, '2', '.', ',') ?></td>
                                 <?php
@@ -188,6 +188,6 @@
         return data;
     }
 </script>
-<script src="<?= base_url(['master/js/quotes/invoice.js']) ?>"></script>
+<script src="<?= base_url(['master/js/quotes/invoice.js?v=1.0.0']) ?>"></script>
 <!-- <= $this->include('layouts/js_datatables') ?> -->
 <?= $this->endSection(); ?>

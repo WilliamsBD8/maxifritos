@@ -17,7 +17,7 @@ async function proceso_fetch(url, data, time = 1, method = 'POST') {
     }
     return fetch(url, {
         method: method,
-        headers: { 'Content-Type': !url.includes(".will") ? 'application/x-www-form-urlencoded' : 'application/json' },
+        headers: { 'Content-Type': url.includes("localhost") ? 'application/x-www-form-urlencoded' : 'application/json' },
         body: url.includes("localhost") ? $.param(data) : JSON.stringify(data)
     }).then(async response => {
         if (!response.ok) {
@@ -41,8 +41,20 @@ async function proceso_fetch(url, data, time = 1, method = 'POST') {
         console.log(error_parse);
         return new Promise((_, reject) => {
             setTimeout(() => {
-                Swal.close();
-                alert(error_parse.title, error_parse.msg, 'error');
+                if(error_parse.msg === 'Error desconocido'){
+                  Swal.fire({
+                    icon:'error',
+                    title: error_parse.title,
+                    text: error_parse.error,
+                    allowOutsideClick: false,
+                    customClass: {
+                      confirmButton: 'btn btn-primary waves-effect'
+                    },
+                  })
+                }else{
+                  Swal.close();
+                  alert(error_parse.title, error_parse.msg, 'error');
+                }
                 reject(error_parse);
             }, !valid ? time : 0);
         });
@@ -236,37 +248,60 @@ function downloadBase64(fileContent, fileName, type){
 }
 
 function loadSelectProducts(){
-  $('#products_id').select2({
-    data: productsD.map(item => ({
-        id: item.id,
-        text: `${item.code} - ${item.name}`
-    })),
-    matcher: function(params, data) {
-        if ($.trim(params.term) === '') {
-            return data;
-        }
-
-        const term = params.term.toLowerCase();
-
-        if (user.role_id <= 2) { 
-          // Solo para el rol específico (por ejemplo, el rol con ID menor a 3), búsqueda izquierda a derecha.
-          if (data.text.toLowerCase().startsWith(term)) {
-            return data;
+  let $select = $('#products_id');
+  if ($select.data('select2')) {
+      $select.select2('destroy');
+  }
+  $select.empty();
+  if(productsD.length > 0){
+    let data = [{
+        id:"",
+        text:"Seleccione un producto",
+        disabled: true,
+        selected:true
+    }];
+    data = data.concat(productsD.map(item => ({
+      id: item.id,
+      text: `${item.code} - ${item.name}`,
+    })));
+    $('#products_id').select2({
+      data,
+      matcher: function(params, data) {
+          if ($.trim(params.term) === '') {
+              return data;
           }
-        } else { 
-          // Para otros roles, búsqueda más flexible (que contenga el término en cualquier parte).
-          if (data.text.toLowerCase().includes(term)) {
-            return data;
+          const term = params.term.toLowerCase();
+          if (user.role_id == 3) { // Busqueda por codigo solo para los cotizadores
+            if (data.text.toLowerCase().startsWith(term)) {
+              return data;
+            }
+          } else {
+            if (data.text.toLowerCase().includes(term)) {
+              return data;
+            }
           }
-        }
+          return null;
+      },
+      language: {
+          noResults: function() {
+              return "No hay coincidencias desde el inicio";
+          }
+      }
+    });
+  }else{
+    $('#products_id').select2({
+        data: [{
+          id:"",
+          text:"Seleccione un cliente",
+          disabled: true,
+          selected: true
+        }],
+        language: {
+            noResults: function() {
+                return "Seleccione un cliente"; // Mensaje personalizado
+            }
+        },
+    });
+  }
 
-        // Si no hay coincidencia, devuelve null
-        return null;
-    },
-    language: {
-        noResults: function() {
-            return "No hay coincidencias desde el inicio";
-        }
-    }
-  });
 }

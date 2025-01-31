@@ -115,5 +115,5 @@
     const customersData = () => <?= json_encode($customers) ?>;
 </script>
 <script src="<?= base_url(['assets/js/forms-selects.js']) ?>"></script>
-<script src="<?= base_url(['master/js/quotes/edit.js']) ?>"></script>
+<script src="<?= base_url(['master/js/quotes/edit.js?v=1.0.0']) ?>"></script>
 <?= $this->endSection(); ?>

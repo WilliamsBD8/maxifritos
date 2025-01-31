@@ -101,7 +101,7 @@ class AuthController extends BaseController
                 return $this->respond([
                     'title'     => 'Validación de usuario',
                     'msg'       => $validationCaptcha->message,
-                    'error'     => true,
+                    'error'     => true, 
                     'captcha'   => session('captcha')
 
                 ], $validationCaptcha->code == 1 ? 200 : 403);
