@@ -265,13 +265,13 @@ function loadSelectProducts(){
             }
             const term = params.term.toLowerCase();
             if (user.role_id == 3) { // Busqueda por codigo solo para los cotizadores
-                if (data.text.toLowerCase().startsWith(term)) {
-                    return data;
-                }
+              if (data.text.toLowerCase().includes(term)) {
+                return data;
+              }
             } else {
-                if (data.text.toLowerCase().includes(term)) {
-                    return data;
-                }
+              if (data.text.toLowerCase().startsWith(term)) {
+                  return data;
+              }
             }
             return null;
         },
