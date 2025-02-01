@@ -52,11 +52,11 @@
                                     </div>
                                     <div class="col-sm-12 col-lg-3 col-md-6 mb-2">
                                         <div class="form-floating  form-floating-outline">
-                                            <select data-allow-clear="true" class="select2 form-select form-select-lg" id="products_id" name="product" onchange="addProduct(this.value)" data-placeholder="Seleccione un producto">
-                                                <!-- <option value="" disabled selected>Seleccione un producto</option> -->
-                                                <!-- <php foreach($products as $product): ?>
-                                                    <option value="<= $product->id ?>"><= "$product->name - $product->code" ?></option>
-                                                <php endforeach ?> -->
+                                            <select data-allow-clear="true" class="form-select form-select-lg" id="products_id" name="product" onchange="addProduct(this.value)" data-placeholder="Seleccione un producto">
+                                                <option value="" disabled selected>Seleccione un producto</option>
+                                                <?php foreach($products as $product): ?>
+                                                    <option value="<?= $product->id ?>"><?= "$product->code - $product->name" ?></option>
+                                                <?php endforeach ?>
                                             </select>
                                             <label for="products_id">Añadir Producto</label>
                                             <span class="form-floating-focused"></span>

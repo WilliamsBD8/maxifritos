@@ -6,8 +6,10 @@ const local_coord = {
     lat:0,
     lng:0
 }
+const table = [];
 
 $(() => {
+    loadSelectProducts()
     setTimeout(() => {
         loadProducts();
     }, 1000)
@@ -42,11 +44,12 @@ async function loadProducts(customer = null){
             var aux_customer = "";
         $('#address').val(cust.address)
         $('#id_descuento_customer').html(aux_customer)
+        $('#products_id').attr('disabled', false);
         reloadTable();
     }else{
         loadTable();
     }
-    loadSelectProducts();
+
 }
 
 function changeDiscount(value){
@@ -99,9 +102,9 @@ function changeDiscount(value){
 function changeDiscountValue(type, value){
     $(`#${type == 2 ? 'discount_percentaje' : 'discount_amount'}`).val(type == 2 ? value : format_number(value))
 }
-const table = [];
 
 function addProduct(id){
+    let $select = $('#products_id');
     if(id.length > 0){
         let producto = products.find(p => p.id == id);
         if(producto){
@@ -113,8 +116,8 @@ function addProduct(id){
                 products.push(producto);
             }
         }
+        $select.val(null).trigger('change');
         reloadTable();
-        $('#products_id').val(null).trigger('change');
     }
 }
 

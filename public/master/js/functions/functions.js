@@ -1,3 +1,4 @@
+
 async function proceso_fetch(url, data, time = 1, method = 'POST') {
   console.log([!url.includes(".will"), $.param(data)]);
     toastr.clear();
@@ -248,51 +249,30 @@ function downloadBase64(fileContent, fileName, type){
 }
 
 function loadSelectProducts(){
-  let $select = $('#products_id');
-      $select.select2('destroy');
-  $select.empty();
-  if(productsD.length > 0){
-    let data = productsD.map(item => ({
-      id: item.id,
-      text: `${item.code} - ${item.name}`,
-    }));
-    $select.select2({
-      data,
-      placeholder: "Seleccione un producto",
-      matcher: function(params, data) {
-          if ($.trim(params.term) === '') {
-              return data;
-          }
-          const term = params.term.toLowerCase();
-          if (user.role_id == 3) { // Busqueda por codigo solo para los cotizadores
+
+    $('#products_id').select2({
+        placeholder: "Seleccione un producto",
+        matcher: function(params, data) {
+            if ($.trim(params.term) === '') {
+                return data;
+            }
+            const term = params.term.toLowerCase();
+            if (user.role_id == 3) { // Busqueda por codigo solo para los cotizadores
             if (data.text.toLowerCase().startsWith(term)) {
-              return data;
+                return data;
             }
-          } else {
+            } else {
             if (data.text.toLowerCase().includes(term)) {
-              return data;
+                return data;
             }
-          }
-          return null;
-      },
-      language: {
-          noResults: function() {
-              return "No hay coincidencias desde el inicio";
-          }
-      }
-    });
-  }else{
-    $select.select2({
-        data: [],
-        placeholder: "Seleccione un cliente",
+            }
+            return null;
+        },
         language: {
             noResults: function() {
-                return "Seleccione un cliente"; // Mensaje personalizado
+                return "No hay coincidencias desde el inicio";
             }
-        },
+        }
     });
-  }
-
-  $select.val(null).trigger('change');
 
 }

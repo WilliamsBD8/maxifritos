@@ -5,6 +5,30 @@ const invoice = invoiceData();
 const products = [];
 const table = [];
 $(() => {
+    $('#products_id').select2({
+        placeholder: "Seleccione un producto",
+        matcher: function(params, data) {
+            if ($.trim(params.term) === '') {
+                return data;
+            }
+            const term = params.term.toLowerCase();
+            if (user.role_id == 3) { // Busqueda por codigo solo para los cotizadores
+              if (data.text.toLowerCase().startsWith(term)) {
+                return data;
+              }
+            } else {
+              if (data.text.toLowerCase().includes(term)) {
+                return data;
+              }
+            }
+            return null;
+        },
+        language: {
+            noResults: function() {
+                return "No hay coincidencias desde el inicio";
+            }
+        }
+    });
     setTimeout(async () => {
         await loadProducts(invoice.customer_id);
         invoice.line_invoice.map((line) => {
@@ -52,7 +76,6 @@ async function loadProducts(customer = null){
         $('#id_descuento_customer').html(aux_customer)
     }
     
-    loadSelectProducts();
     if(table[0] == undefined)
         loadTable();
     else reloadTable()
@@ -120,8 +143,8 @@ function addProduct(id){
             producto = { ...producto, quantity: 1, discount_amount:0, discount_percentage:0, line_invoice_id: null, isDelete: false, discount: products.find(p => p.discount) !== undefined };
             products.push(producto);
         }
-        reloadTable();
         $('#products_id').val(null).trigger('change');
+        reloadTable();
     }
 }
 
