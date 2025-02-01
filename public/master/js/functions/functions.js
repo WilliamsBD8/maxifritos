@@ -249,8 +249,9 @@ function downloadBase64(fileContent, fileName, type){
 }
 
 function loadSelectProducts(){
-
-    $('#products_id').select2({
+    var $this = $('#products_id');
+    select2Focus($this);
+    $this.wrap('<div class="position-relative"></div>').select2({
         placeholder: "Seleccione un producto",
         matcher: function(params, data) {
             if ($.trim(params.term) === '') {
@@ -258,13 +259,13 @@ function loadSelectProducts(){
             }
             const term = params.term.toLowerCase();
             if (user.role_id == 3) { // Busqueda por codigo solo para los cotizadores
-            if (data.text.toLowerCase().startsWith(term)) {
-                return data;
-            }
+                if (data.text.toLowerCase().startsWith(term)) {
+                    return data;
+                }
             } else {
-            if (data.text.toLowerCase().includes(term)) {
-                return data;
-            }
+                if (data.text.toLowerCase().includes(term)) {
+                    return data;
+                }
             }
             return null;
         },
@@ -272,7 +273,7 @@ function loadSelectProducts(){
             noResults: function() {
                 return "No hay coincidencias desde el inicio";
             }
-        }
+        },
+        dropdownParent: $this.parent()
     });
-
 }

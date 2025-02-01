@@ -148,4 +148,55 @@ class LoadsController extends BaseController
             die('Error al leer el archivo Excel: ' . $e->getMessage());
         } 
     }
+
+    public function env(){
+        try {
+            // Usar cURL para obtener los commits desde la API de GitHub (con autenticación si es necesario)
+            $ch = curl_init();
+
+            // Configuración de cURL para obtener los commits
+            curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/WilliamsBD8/maxifritos/commits");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0");  // GitHub requiere un User-Agent
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Accept: application/vnd.github.v3+json',
+                // Si es necesario, puedes incluir un token de autenticación aquí
+                // 'Authorization: token YOUR_GITHUB_TOKEN'
+            ]);
+
+            $response = curl_exec($ch);
+            curl_close($ch);
+
+            // Decodificar la respuesta JSON de GitHub
+            $commits = json_decode($response);
+
+            // Crear un objeto con el último commit
+            $commit = $commits[0]->sha;
+
+            // Retornar la respuesta
+            // return $this->respond($commit);
+
+            $envFile = APPPATH . '../.env';
+            $envContents = file_get_contents($envFile);
+            $pattern = '/^GIT_COMMIT_HASH=(.*)$/m';
+            preg_match($pattern, $envContents, $matches);
+            if (!empty($matches)) {
+                $storedCommitHash = $matches[1];
+            } else {
+                $storedCommitHash = '';
+            }
+            if ($commit !== $storedCommitHash) {
+                if ($storedCommitHash) {
+                    $envContents = preg_replace($pattern, "GIT_COMMIT_HASH={$commit}", $envContents);
+                } else {
+                    $envContents .= "\nGIT_COMMIT_HASH={$commit}\n";
+                }
+                file_put_contents($envFile, $envContents);
+            }
+            log_message('info', "Env: ".$envContents);
+            return $this->respond([$commit]);
+        } catch (\Exception $th) {
+            die('Error: ' . $th->getMessage());
+        }
+    }
 }

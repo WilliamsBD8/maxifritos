@@ -100,6 +100,7 @@ $routes->get('/table/(:segment)/(:segment)', 'TableController::detail/$1/$2');
 $routes->group('load', function($routes){
 	$routes->get('products', 'LoadsController::products');
 	$routes->get('customers', 'LoadsController::customers');
+	$routes->get('env', 'LoadsController::env');
 });
 
 /**

@@ -9,10 +9,4 @@ deployment:
     - /bin/cp * $DEPLOYPATH
 
     - |
-      if grep -q "GIT_COMMIT" $DEPLOYPATH/.env; then
-        # Si existe, actualizarla con el nuevo valor
-        sed -i "s/^GIT_COMMIT=.*/GIT_COMMIT=$(curl -s https://api.github.com/repos/WilliamsBD8/maxifritos/commits | jq -r '.[0].sha')/" $DEPLOYPATH/.env
-      else
-        # Si no existe, agregarla al final del archivo
-        echo "GIT_COMMIT=$(curl -s https://api.github.com/repos/WilliamsBD8/maxifritos/commits | jq -r '.[0].sha')" >> $DEPLOYPATH/.env
-      fi
+      curl -X GET "https://simiplus.com/load/env"
