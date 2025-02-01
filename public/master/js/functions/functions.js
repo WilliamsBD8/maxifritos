@@ -1,3 +1,9 @@
+$(document).on("focus", "input", function () {
+    setTimeout(() => {
+        this.scrollIntoView({ block: "center", behavior: "smooth" });
+    }, 300);
+});
+
 
 async function proceso_fetch(url, data, time = 1, method = 'POST') {
   console.log([!url.includes(".will"), $.param(data)]);
