@@ -396,7 +396,7 @@ function loadTable(){
 function reloadTable(){
     let scrollPos = $(window).scrollTop();
     table[0].clear();
-    table[0].rows.add(products.filter(p => !p.isDelete).reverse());
+    table[0].rows.add(products.filter(p => !p.isDelete).slice().reverse());
     table[0].draw(true);
     $(window).scrollTop(scrollPos);
 }

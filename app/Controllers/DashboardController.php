@@ -52,6 +52,9 @@ class DashboardController extends BaseController
 
 		$date_init = (clone $fechaActual)->modify('-1 year')->modify('+1 month')->format('Y-m-d 00:00:00');
 		$date_now = $fechaActual->format('Y-m-d 23:59:59');
+
+		$this->i_model->setAdditionalParams(['origin' => 'home']);
+
 		$inv_dates = $this->i_model
 			// ->getFilteredInvoices($this->user)
 			->select([

@@ -371,7 +371,7 @@ function reloadTable(){
     let scrollPos = $(window).scrollTop();
 
     table[0].clear();
-    table[0].rows.add(products.reverse());
+    table[0].rows.add(products.slice().reverse());
     table[0].draw(false);
 
     // Restaurar la posición del scroll después de actualizar la tabla
