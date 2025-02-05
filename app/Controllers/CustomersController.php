@@ -8,17 +8,20 @@ use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\API\ResponseTrait;
 
 use App\Models\Customer;
+use App\Models\User;
 use App\Models\TypeDocumentIdentifications;
 
 class CustomersController extends BaseController
 {
     use ResponseTrait;
     private $c_model;
+    private $u_model;
     private $tdi_model;
     private $dataTable;
 
     public function __construct(){
         $this->c_model      = new Customer();
+        $this->u_model      = new User();
         $this->tdi_model    = new TypeDocumentIdentifications();
         $this->dataTable    = (object) [
             'draw'      => $_GET['draw'] ?? 1,
@@ -31,8 +34,10 @@ class CustomersController extends BaseController
     public function index()
     {
         $type_documents_identifications = $this->tdi_model->findAll();
+        $sellers = session('user')->role_id == 3 ? [] : $this->u_model->where(['role_id' => 3])->findAll();
         return view('customers/index',[
-            'type_documents_identifications'    => $type_documents_identifications
+            'type_documents_identifications'    => $type_documents_identifications,
+            "sellers"                           => $sellers
         ]);
     }
 
@@ -94,7 +99,7 @@ class CustomersController extends BaseController
             $data_save = [
                 'type_customer_id'                  => 1,
                 'type_document_identification_id'   => $data->type_document_identification,
-                'user_origin_id'                    => session('user')->id,
+                'user_origin_id'                    => !empty($data->user_origin) ? $data->user_origin : session('user')->id,
                 'name'                              => $data->name,
                 'email'                             => $data->email,
                 'identification_number'             => $data->identification_number,
@@ -160,7 +165,7 @@ class CustomersController extends BaseController
                 'id'                                => $data->id_customer,
                 'type_customer_id'                  => 1,
                 'type_document_identification_id'   => $data->type_document_identification,
-                'user_origin_id'                    => session('user')->id,
+                'user_origin_id'                    => !empty($data->user_origin) ? $data->user_origin : session('user')->id,
                 'name'                              => $data->name,
                 'email'                             => $data->email,
                 'identification_number'             => $data->identification_number,

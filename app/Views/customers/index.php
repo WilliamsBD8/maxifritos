@@ -45,22 +45,31 @@
                     <div class="offcanvas-body mx-0 flex-grow-0">
                         <form action="" id="formFilter" onsubmit="sendFilter(event)">
                             <div class="row">
-                                <div class="col-sm-12 col-md-6 mb-2">
+                                <div class="col-sm-12 mb-2">
                                     <div class="input-group input-group-floating">
                                         <div class="form-floating">
-                                            <input type="date" class="form-control" id="date_init" value="<?= date('Y-m-d') ?>" readonly>
-                                            <label for="date_init">Fecha Inicio</label>
+                                            <input type="text" class="form-control" id="name_filter" name="name_filter">
+                                            <label for="name_filter">Cliente</label>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-md-6 mb-2">
-                                    <div class="input-group input-group-floating">
+                                <?php if(!empty($sellers)): ?>
+                                    <div class="col-sm-12 mb-2">
                                         <div class="form-floating">
-                                            <input type="date" class="form-control" id="date_end" value="<?= date('Y-m-d') ?>" readonly>
-                                            <label for="date_end">Fecha Fin</label>
+                                            <select class="form-select" id="user_origin_filter" name="user_origin_filter">
+                                                <option value="">Todos</option>
+                                                <option value="<?= session('user')->id ?>"><?= session('user')->name ?></option>
+                                                <?php foreach($sellers as $seller): ?>
+                                                    <option value="<?= $seller->id ?>"><?= "{$seller->name}" ?></option>
+                                                <?php endforeach ?>
+                                            </select>
+                                            <label for="user_origin_filter">Vendedor</label>
+                                            <span class="form-floating-focused"></span>
                                         </div>
                                     </div>
-                                </div>
+                                <?php else: ?>
+                                    <input type="hidden" name="user_origin_filter" id="user_origin_filter" value="<?= session('user')->id ?>">
+                                <?php endif ?>
                             </div>
                             <button type="submit" class="btn btn-primary mb-2 d-grid w-100 waves-effect waves-light">Filtrar</button>
                             <button type="reset" class="btn btn-danger mb-2 d-grid w-100 waves-effect waves-light">Reiniciar</button>
@@ -145,6 +154,27 @@
                                         <!-- <input type="number" class="form-control" name="address" id="address" placeholder=""> -->
                                     </div>
                                 </div>
+
+                                <?php if(!empty($sellers)): ?>
+                                    
+
+                                    <div class="col-sm-12 mb-2">
+                                        
+                                        <div class="form-floating">
+                                            <select class="form-select" id="user_origin" name="user_origin">
+                                                <option value=""></option>
+                                                <?php foreach($sellers as $seller): ?>
+                                                    <option value="<?= $seller->id ?>"><?= "{$seller->name}" ?></option>
+                                                <?php endforeach ?>
+                                            </select>
+                                            <label for="user_origin">Vendedor</label>
+                                            <span class="form-floating-focused"></span>
+                                        </div>
+                                    </div>
+                                <?php else: ?>
+                                    <input type="hidden" name="user_origin" id="user_origin" value="<?= session('user')->id ?>">
+                                <?php endif ?>
+
                                 <div class="col-sm-12 mb-2 status">
                                     
                                     <div class="form-floating">
@@ -156,6 +186,7 @@
                                         <span class="form-floating-focused"></span>
                                     </div>
                                 </div>
+
                                 <input type="hidden" name="id_customer" id="id_customer">
                             </div>
                             <hr>

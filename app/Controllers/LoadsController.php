@@ -176,9 +176,9 @@ class LoadsController extends BaseController
             // Retornar la respuesta
             // return $this->respond($commit);
 
-            $envFile = APPPATH . '../.env';
+            $envFile = env('DEPLOYPATH_ENV', APPPATH . '../.env') ;
             $envContent = file_get_contents($envFile);
-            $key = "GIT_COMMIT_HASH";
+            $key = 'GIT_COMMIT_HASH';
             $pattern = "/^" . preg_quote($key, '/') . "=.*/m";
 
             if (preg_match($pattern, $envContent)) {
@@ -186,12 +186,13 @@ class LoadsController extends BaseController
                 $envContent = preg_replace($pattern, "{$key}={$commit}", $envContent);
             } else {
                 // Si no existe, la agregamos al final
-                $envContent .= PHP_EOL . "{$key}={$commit}";
+                $envContent .="\n{$key}={$commit}";
             }
-
-            log_message('info', "Env: ".$envContents);
+            file_put_contents($envFile, $envContent);
+            log_message('info', "Env: ".$envContent);
             return $this->respond([$commit]);
         } catch (\Exception $th) {
+            echo $envFile;
             die('Error: ' . $th->getMessage());
         }
     }

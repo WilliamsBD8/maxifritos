@@ -219,7 +219,11 @@ class InvoiceController extends BaseController
                 ->join('customers as c', 'c.id = invoices.customer_id', 'left')
                 ->join('line_invoices as li', 'li.invoice_id = invoices.id', 'left')
                 ->join('products as p', 'li.product_id = p.id', 'left')
-                ->where(['invoices.type_document_id' => 2])
+                ->where([
+                    'invoices.type_document_id' => 2,
+                    'invoices.created_at >='    => "{$dataPost->date_init} 00:00:00",
+                    'invoices.created_at <='    => "{$dataPost->date_end} 23:59:59"  
+                ])
                 ->findAll();
             if(!empty($data['data'])){
 

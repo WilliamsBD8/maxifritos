@@ -8,6 +8,10 @@ async function loadTable(){
     table[0] = $(`#table_datatable`).DataTable({
         ajax: {
             url: base_url(['dashboard/clientes/data']),
+            data: (d) => {
+                d.name = $('#name_filter').val().trim();
+                d.user_origin = $('#user_origin_filter').val();
+            },
             dataSrc: 'data'
         },
         columns: [
@@ -61,15 +65,15 @@ async function loadTable(){
                     local_coord.lng = lat_lng.lng
                 }
             },       
-            // {
-            //     text: '<i class="ri-filter-3-fill ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Filtrar</span>',
-            //     className: 'btn btn-primary waves-effect waves-light',
-            //     action: () => {
-            //         const offCanvasElement = document.querySelector('#canvasFilter');
-            //         let offCanvasEl = new bootstrap.Offcanvas(offCanvasElement);
-            //         offCanvasEl.show();
-            //     }
-            // }
+            {
+                text: '<i class="ri-filter-3-fill ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Filtrar</span>',
+                className: 'btn btn-primary waves-effect waves-light',
+                action: () => {
+                    const offCanvasElement = document.querySelector('#canvasFilter');
+                    let offCanvasEl = new bootstrap.Offcanvas(offCanvasElement);
+                    offCanvasEl.show();
+                }
+            }
         ]
     })
 }
@@ -274,6 +278,11 @@ async function deleteCustomer(id_customer){
             });
         }
     });
+}
+
+function sendFilter(e){
+    e.preventDefault();
+    reloadTable();
 }
 
 function reloadTable(){

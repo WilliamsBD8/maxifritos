@@ -59,15 +59,22 @@ class Customer extends Model
     public function setAdditionalParams(array $params)
     {
         $this->additionalParams = $params;
+        $dataGet = isset($_GET) ? (object) $_GET : (object) $_POST;
         $params = (object) $this->additionalParams;
-        switch($params->origin){
-            case 'customer_index':
-                if(session('user')->role_id == 3)
-                    $this->where(['user_origin_id' => session('user')->id]);
-                break;
-            default:
-                break;
-        }
+        // switch($params->origin){
+        //     case 'customer_index':
+        //         if(session('user')->role_id == 3)
+        //             $this->where(['user_origin_id' => session('user')->id]);
+        //         break;
+        //     default:
+        //         break;
+        // }
+        
+        if(isset($dataGet->name) && !empty($dataGet->name))
+            $this->like("customers.name", "%{$dataGet->name}%");
+
+        if(isset($dataGet->user_origin) && !empty($dataGet->user_origin))
+            $this->where("customers.user_origin_id", $dataGet->user_origin);
         return $this; // Permite el encadenamiento de métodos
     }
 
@@ -89,6 +96,9 @@ class Customer extends Model
             default:
                 break;
         }
+
+
+
         return $data;
     }
 
