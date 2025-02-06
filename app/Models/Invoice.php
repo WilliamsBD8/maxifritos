@@ -119,6 +119,7 @@ class Invoice extends Model
 
     protected function functionBeforeFind(array $data){
         $getData = !empty($_GET) ? (object) $_GET : (object) $_POST;
+        log_message('info', json_encode($getData));
         if (!empty($data['method']) && $data['method'] === 'findAll') {
             // if(session('user')->role_id == 3 && $data['limit'] == 10)
             //     $this->where(['user_id' => session('user')->id])
@@ -127,7 +128,7 @@ class Invoice extends Model
             if(isset($getData->date_init) && isset($getData->date_end)){
                 $this->where([
                     'invoices.created_at >=' => "{$getData->date_init} 00:00:00",
-                    'invoices.created_at <=' => "{$getData->date_end} 23:59:59" 
+                    'invoices.created_at <=' => "{$getData->date_end} 23:59:59"  
                 ]);
             }
         }

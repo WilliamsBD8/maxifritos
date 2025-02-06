@@ -75,6 +75,7 @@ class QuotesController extends BaseController
         $this->invoices->setAdditionalParams(['origin' => 'quotes_data']);
 
         $count_data = $this->invoices->countAllResults(false);
+        
         $data = $this->invoices
             ->select([
                 'invoices.*',

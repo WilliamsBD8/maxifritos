@@ -69,28 +69,6 @@ function only_full_group(){
     $db->query("SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
 }
 
-function updatedCommit(){
-    $commitHash = exec('git log -1 --format=%H');
-    $envFile = APPPATH . '../.env';
-    $envContents = file_get_contents($envFile);
-    $pattern = '/^GIT_COMMIT_HASH=(.*)$/m';
-    preg_match($pattern, $envContents, $matches);
-    if (!empty($matches)) {
-        $storedCommitHash = $matches[1];
-    } else {
-        $storedCommitHash = '';
-    }
-    if ($commitHash !== $storedCommitHash) {
-        if ($storedCommitHash) {
-            $envContents = preg_replace($pattern, "GIT_COMMIT_HASH={$commitHash}", $envContents);
-        } else {
-            $envContents .= "\nGIT_COMMIT_HASH={$commitHash}\n";
-        }
-        file_put_contents($envFile, $envContents);
-    }
-    log_message('info', ",env: ".$envFile);
-}
-
 function getCommit(){
     return env('GIT_COMMIT_HASH', '1.0.0');
 }

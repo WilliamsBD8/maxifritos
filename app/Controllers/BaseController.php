@@ -41,8 +41,6 @@ class BaseController extends Controller
 			only_full_group();
 		}
 
-		updatedCommit();
-
 		//--------------------------------------------------------------------
 		// Preload any models, libraries, etc, here.
 		//--------------------------------------------------------------------

@@ -55,10 +55,9 @@
             <table class="table table-custom">
                 <thead>
                     <tr>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
+                        <th>Cant.</th>
+                        <th>Descripción</th>
                         <th>Valor Unitario</th>
-                        <th>Valor </th>
                         <th>Descuento</th>
                         <th>Total</th>
                     </tr>
@@ -67,11 +66,10 @@
                     <?php $discount_line = 0 ?>
                     <?php foreach($invoice->line_invoices as $line_invoice): ?>
                     <tr>
-                        <td class="text-nowrap text-heading">
-                            <?= "{$line_invoice->product_code}<br>{$line_invoice->product_name}" ?></td>
-                        <td class="text-nowrap"><?= "{$line_invoice->quantity}" ?></td>
+                        <td><?= "{$line_invoice->quantity}" ?></td>
+                        <td class="text-heading">
+                            <?= "{$line_invoice->product_code} {$line_invoice->product_name}" ?></td>
                         <td><?= number_format($line_invoice->value, '2', '.', ',') ?></td>
-                        <td><?= number_format($line_invoice->value * $line_invoice->quantity, '2', '.', ',') ?></td>
                         <?php
                             $discount = 0;
                             if($line_invoice->discount_percentage != 0) $discount = ($line_invoice->discount_percentage / 100) * ($line_invoice->value * $line_invoice->quantity);
