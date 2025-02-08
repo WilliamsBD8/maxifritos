@@ -9,7 +9,8 @@ async function load_datatable(){
             url: base_url(['dashboard/cotizaciones/data']),
             data: function(d) {
                 d.date_init =  $('#date_init').val();
-                d.date_end = $('#date_end').val()
+                d.date_end = $('#date_end').val();
+                d.resolution = $('#resolution_filter').val().trim()
             },
             dataSrc: 'data'
         },

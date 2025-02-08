@@ -8,9 +8,9 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <div class="d-flex svg-illustration align-items-center gap-2 mb-6">
+                                    <!-- <div class="d-flex svg-illustration align-items-center gap-2 mb-6">
                                         <span class="name-app"><?= isset(configInfo()['name_app']) ? configInfo()['name_app'] : 'Name' ?></span>
-                                    </div>
+                                    </div> -->
                                 </td>
                                 <td class="text-rigth">
                                     <h3 class="mb-6"><?= $invoice->name_document ?> #<?= $invoice->resolution ?></h3>
@@ -122,7 +122,7 @@
                                         $descuento = $discount_line;
                                     }
                                 ?>
-                                <p class="fw-medium mb-1"><?= number_format($descuento, 2, '.', ',') ?></p>
+                                <p class="fw-medium mb-1"><?= number_format($descuento, 2, '.', ',') ?> <?= $invoice->discount_percentage > 0 ? "($invoice->discount_percentage  %)" : ""?></p>
                                 <p class="fw-medium mb-0 pt-2"><?= number_format($invoice->payable_amount, 2, '.', ',') ?></p>
                             </td>
                         </tr>

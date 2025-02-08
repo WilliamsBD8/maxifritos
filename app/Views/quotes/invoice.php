@@ -18,9 +18,9 @@
                     <div
                         class="d-flex justify-content-between flex-xl-row flex-md-column flex-sm-row flex-column text-heading align-items-xl-center align-items-md-start align-items-sm-center flex-wrap gap-6">
                         <div>
-                            <div class="d-flex svg-illustration align-items-center gap-2 mb-6">
+                            <!-- <div class="d-flex svg-illustration align-items-center gap-2 mb-6">
                                 <span class="mb-0 app-brand-text fw-semibold demo"><?= isset(configInfo()['name_app']) ? configInfo()['name_app'] : 'Name' ?></span>
-                            </div>
+                            </div> -->
                             <!-- <p class="mb-1">Office 149, 450 South Brand Brooklyn</p>
                             <p class="mb-1">San Diego County, CA 91905, USA</p>
                             <p class="mb-0">+1 (123) 456 7891, +44 (876) 543 2198</p> -->

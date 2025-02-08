@@ -121,6 +121,14 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-12 mb-2">
+                            <div class="input-group input-group-floating">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="resolution_filter" placeholder="">
+                                    <label for="resolution_filter">N° Resolución</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary mb-2 d-grid w-100 waves-effect waves-light">Filtrar</button>
                     <button type="reset" class="btn btn-danger mb-2 d-grid w-100 waves-effect waves-light">Reiniciar</button>

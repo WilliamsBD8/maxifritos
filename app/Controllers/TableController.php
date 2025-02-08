@@ -140,7 +140,7 @@ class TableController extends BaseController
                     $this->crud->callbackBeforeInsert(function ($stateParameters) {
                         $gp_model = new GroupProduct();
                         $group = $gp_model->find($stateParameters->data['group_product_id']);
-                        $value = str_replace(",", "", $stateParameters->data['value']);
+                        $value = str_replace(".", "", $stateParameters->data['value']);
                         $code = "{$stateParameters->data['code_item']}$group->code";
                         $p_model = new Product();
                         $product = $p_model->where(['code' => $code])->first();
@@ -158,7 +158,7 @@ class TableController extends BaseController
                     $this->crud->callbackBeforeUpdate(function ($stateParameters) {
                         $gp_model = new GroupProduct();
                         $group = $gp_model->find($stateParameters->data['group_product_id']);
-                        $value = str_replace(",", "", $stateParameters->data['value']);
+                        $value = str_replace(".", "", $stateParameters->data['value']);
                         $code = "{$stateParameters->data['code_item']}$group->code";
                         $p_model = new Product();
                         $product = $p_model->where(['id != ' => $stateParameters->primaryKeyValue, 'code' => $code])->first();
@@ -181,11 +181,11 @@ class TableController extends BaseController
                         return '<input class="form-control" name="' . $fieldName . '" onkeyup="updateFormattedValue(this)" type="text" value="" placeholder="0.00" required="true">';
                     });
                     $this->crud->callbackEditField('value', function($fieldValue, $primaryKeyValue, $rowData){
-                        return '<input class="form-control" name="value" onkeyup="updateFormattedValue(this)" type="text" value="'.number_format($fieldValue, '2', '.', ',').'" placeholder="0.00" required="true">';
+                        return '<input class="form-control" name="value" onkeyup="updateFormattedValue(this)" type="text" value="'.number_format($fieldValue,'2', ',', '.').'" placeholder="0.00" required="true">';
                     });
                     $this->crud->requiredFields(['code_item', 'group_product_id', 'name']);
                     $this->crud->callbackColumn('value', function ($value, $row) {
-                        return number_format($value, '2', '.', ',');
+                        return number_format($value, '2', ',', '.');
                     });
                     break;
 

@@ -59,6 +59,7 @@ class Invoice extends Model
 
     public function setAdditionalParams(array $params)
     {
+        $getData = !empty($_GET) ? (object) $_GET : (object) $_POST;
         $this->additionalParams = $params;
         $params = (object) $this->additionalParams;
         switch($params->origin){
@@ -71,6 +72,18 @@ class Invoice extends Model
             default:
                 break;
         }
+        if(isset($getData->date_init) && isset($getData->date_end)){
+            $this->where([
+                'invoices.created_at >=' => "{$getData->date_init} 00:00:00",
+                'invoices.created_at <=' => "{$getData->date_end} 23:59:59"  
+            ]);
+        }
+
+        if(isset($getData->resolution))
+            $this->where([
+                'invoices.resolution' => $getData->resolution,
+            ]);
+
         return $this;
     }
 
@@ -125,12 +138,7 @@ class Invoice extends Model
             //     $this->where(['user_id' => session('user')->id])
             //         ->orWhere('user_id', session('user')->id);
 
-            if(isset($getData->date_init) && isset($getData->date_end)){
-                $this->where([
-                    'invoices.created_at >=' => "{$getData->date_init} 00:00:00",
-                    'invoices.created_at <=' => "{$getData->date_end} 23:59:59"  
-                ]);
-            }
+            
         }
         return $data;
     }
