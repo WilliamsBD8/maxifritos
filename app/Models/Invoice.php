@@ -79,7 +79,7 @@ class Invoice extends Model
             ]);
         }
 
-        if(isset($getData->resolution))
+        if(isset($getData->resolution) && !empty($getData->resolution))
             $this->where([
                 'invoices.resolution' => $getData->resolution,
             ]);

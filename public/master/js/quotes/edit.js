@@ -113,6 +113,7 @@ function changeDiscount(value){
             $('#discount_percentaje').val(0)
             $('#input_descuento_monto').prop('disabled', true)
             $('#input_descuento_porcentaje').prop('disabled', true)
+            console.log('hola');
             break;
         default:
             products.map(p => {
@@ -237,15 +238,15 @@ function loadTable(){
                 <table>
                     <tbody>
                         <tr>
-                            <td><b>Total Base: </b></td>
-                            <td id="td_productos">$0.00</td>
-                        </tr>
-                        <tr>
-                            <td><b>Descuentos: </b></td>
+                            <td><b>Total Descuentos: </b></td>
                             <td id="td_descuentos">$0.00</td>
                         </tr>
                         <tr>
-                            <td><b>Total: </b></td>
+                            <td><b>Total Productos: </b></td>
+                            <td id="td_productos">$0.00</td>
+                        </tr>
+                        <tr>
+                            <td><b>Total Cotización: </b></td>
                             <td id="td_cotizacion">$0.00</td>
                         </tr>
                     </tbody>
@@ -276,7 +277,7 @@ function loadTable(){
             console.log([value_descount, $('#discount_amount').val()]);
             setTimeout(() => {
                 $('#td_productos').html(formatPrice(parseFloat(value_total)));
-                $('#td_descuentos').html(formatPrice(parseFloat(value_descount)));
+                $('#td_descuentos').html(`${formatPrice(parseFloat(value_descount))} ${$('#discount_percentaje').val() != 0 ? `(${$('#discount_percentaje').val()}%)` : ""}`);
                 $('#td_cotizacion').html(formatPrice(parseFloat(value_total) - parseFloat(value_descount)));
             }, 1)
         },
@@ -318,7 +319,7 @@ function loadTable(){
                                                     <span class="input-group-text">$</span>
                                                     <div class="form-floating">
                                                         <input ${info.checked_amount ? '' : 'disabled'} type="text" value="${info.checked_amount ? separador_miles(parseFloat(info.amount)) : ''}" onchange="changeDiscountValue(1, this.value)" onkeyup="updateFormattedValue(this)" id="input_descuento_monto" class="form-control" placeholder="">
-                                                        <label>Monto del descuento</label>
+                                                        <label for="input_descuento_monto">Monto del descuento</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -342,7 +343,7 @@ function loadTable(){
                                                     <span class="input-group-text">%</span>
                                                     <div class="form-floating">
                                                         <input ${info.checked_percentaje ? '' : 'disabled'} type="number" value="${info.percentaje}" onchange="changeDiscountValue(2, this.value)" class="form-control" id="input_descuento_porcentaje" placeholder="">
-                                                        <label>Porcentaje del descuento</label>
+                                                        <label for="input_descuento_porcentaje">Porcentaje del descuento</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -354,7 +355,7 @@ function loadTable(){
                             <div class="col-sm-12 mb-3">
                                 <div class="form-check custom-option custom-option-basic">
                                     <label class="form-check-label custom-option-content" for="descuento_producto">
-                                    <input name="descuento" class="form-check-input" type="radio" onchange="changeDiscount(this.value)" value="porductos" id="descuento_producto" ${info.checked_products ? 'checked' : ''}>
+                                    <input name="descuento" class="form-check-input" type="radio" onchange="changeDiscount(this.value)" value="productos" id="descuento_producto" ${info.checked_products ? 'checked' : ''}>
                                     <span class="custom-option-header">
                                         <span class="h6 mb-0">Aplicar descuentos linea por linea en productos especificos</span>
                                     </span>

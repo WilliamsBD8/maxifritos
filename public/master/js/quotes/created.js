@@ -129,6 +129,7 @@ function productDelete(id){
 }
 
 function handleChange(value, id, campo){
+
     let producto = products.find(p => p.id == id);
     value = campo == 'value' || campo == 'discount_amount' ? format_number(value) : value;
     if(campo == 'discount_amount'){
@@ -163,7 +164,7 @@ function loadTable(){
                 return `
                     <div class="input-group input-group-merge">
                         <div class="form-floating form-floating-outline">
-                            <input type="number" class="form-control" value="${q}" onchange="handleChange(this.value, ${p.id}, 'quantity')">
+                            <input type="number" class="form-control" min="1" value="${q}" onchange="handleChange(this.value, ${p.id}, 'quantity')">
                         </div>
                     </div>
                 `;
@@ -172,7 +173,7 @@ function loadTable(){
                 return user.role_id != 3 ? `
                     <div class="input-group input-group-merge">
                         <div class="form-floating form-floating-outline">
-                            <input type="text" class="form-control" onkeyup="updateFormattedValue(this)" value="${separador_miles(v)}" onchange="handleChange(this.value, ${p.id}, 'value')">
+                            <input type="text" class="form-control" min="1" onkeyup="updateFormattedValue(this)" value="${separador_miles(v)}" onchange="handleChange(this.value, ${p.id}, 'value')">
                         </div>
                     </div>
                 ` : formatPrice(v);
@@ -249,7 +250,7 @@ function loadTable(){
                 var value_descount = $('#discount_amount').val() == 0 ? ($('#discount_percentaje').val() / 100) * value_total : format_number($('#discount_amount').val());
             }
             $('#td_productos').html(formatPrice(parseFloat(value_total)));
-            $('#td_descuentos').html(formatPrice(parseFloat(value_descount)));
+            $('#td_descuentos').html(`${formatPrice(parseFloat(value_descount))} ${$('#discount_percentaje').val() != 0 ? `(${$('#discount_percentaje').val()}%)` : ""}`);
             $('#td_cotizacion').html(formatPrice(parseFloat(value_total) - parseFloat(value_descount)));
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -291,7 +292,7 @@ function loadTable(){
                                                     <span class="input-group-text">$</span>
                                                     <div class="form-floating">
                                                         <input ${info.checked_amount ? '' : 'disabled'} type="text" value="${info.checked_amount ? separador_miles(parseFloat(info.amount)) : ''}" onchange="changeDiscountValue(1, this.value)" onkeyup="updateFormattedValue(this)" id="input_descuento_monto" class="form-control">
-                                                        <label>Monto del descuento</label>
+                                                        <label for="input_descuento_monto">Monto del descuento</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -315,7 +316,7 @@ function loadTable(){
                                                     <span class="input-group-text">%</span>
                                                     <div class="form-floating">
                                                         <input ${info.checked_percentaje ? '' : 'disabled'} type="number" value="${info.percentaje}" onchange="changeDiscountValue(2, this.value)" class="form-control" id="input_descuento_porcentaje">
-                                                        <label>Porcentaje del descuento</label>
+                                                        <label for="input_descuento_porcentaje">Porcentaje del descuento</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -401,6 +402,7 @@ async function sendCotizacion(){
     if(!isValid){
         return alert('Campos obligatorios', 'Por favor llenar los campos rerqueridos.', 'warning', 5000)
     }
+
     const lat_lng = await coordenadas();
     local_coord.lat = lat_lng.lat
     local_coord.lng = lat_lng.lng
@@ -408,9 +410,11 @@ async function sendCotizacion(){
 
     data.products = products;
     data.type_document = 1;
+
     data.value_invoice = products.reduce((a, b) => {
         return a + (parseInt(b.quantity) * parseFloat(b.value));
     }, 0);
+    
     let valid_descount = products.find(p => p.discount) !== undefined;
     if(valid_descount){
         data.value_descount = products.reduce((a, b) => {

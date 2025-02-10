@@ -45,6 +45,7 @@ class TypeDocument extends Model
     public function setAdditionalParams(array $params)
     {
         $this->additionalParams = $params;
+        $getData = !empty($_GET) ? (object) $_GET : (object) $_POST;
         $params = (object) $this->additionalParams;
         switch($params->origin){
             case 'quotes_data':
@@ -57,6 +58,17 @@ class TypeDocument extends Model
             default:
                 break;
         }
+        if(isset($getData->date_init) && isset($getData->date_end)){
+            $this->where([
+                'i.created_at >=' => "{$getData->date_init} 00:00:00",
+                'i.created_at <=' => "{$getData->date_end} 23:59:59"  
+            ]);
+        }
+
+        if(isset($getData->resolution) && !empty($getData->resolution))
+            $this->where([
+                'i.resolution' => $getData->resolution,
+            ]);
         return $this; // Permite el encadenamiento de métodos
     }
 
