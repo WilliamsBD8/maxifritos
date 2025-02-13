@@ -96,6 +96,9 @@ table {
     border-right: 1px solid black;
 }
 
+.table-custom td.text-left{
+    text-align: center ip !important;
+}
 
 .table-custom tbody tr:nth-child(odd) {
     background-color: #f2f2f2;
