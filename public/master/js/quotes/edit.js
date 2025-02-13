@@ -429,19 +429,10 @@ async function sendCotizacion(){
     data.discount_amount = format_number(data.discount_amount);
     data.id = invoice.id;
     data.status_id = invoice.status_id;
-    let products_aux = table[0].data().toArray();
-    data.value_invoice = products_aux.reduce((a, b) => {
-        return a + (parseInt(b.quantity) * parseFloat(b.value));
-    }, 0);
-    let valid_descount = $('#discount_amount').val() == 0 && $('#discount_percentaje').val() == 0 ? true : false;
-    if(valid_descount){
-        data.value_descount = products_aux.reduce((a, b) => {
-            let value = b.discount_percentage == 0 ? b.discount_amount : (parseFloat(b.discount_percentage) / 100) * b.value
-            return a + (parseInt(b.quantity) * parseFloat(value));
-        }, 0);
-    }else{
-        data.value_descount = $('#discount_amount').val() == 0 ? (data.discount_percentaje / 100) * data.value_total : data.discount_amount;
-    }
+
+    data.discount_amount = $('#discount_amount').val();
+    data.discount_percentage = $('#discount_percentaje').val();
+    
     let url = base_url(['invoices/edit']);
     const res = await proceso_fetch(url, data);
     Swal.fire({

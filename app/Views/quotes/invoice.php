@@ -26,7 +26,7 @@
                             <p class="mb-0">+1 (123) 456 7891, +44 (876) 543 2198</p> -->
                         </div>
                         <div>
-                            <h5 class="mb-6">Cotización #<?= $invoice->resolution ?></h5>
+                            <h5 class="mb-6"><?= "$invoice->name_document # $invoice->resolution" ?></h5>
                             <div>
                                 <span><?= format_date($invoice->created_at) ?></span>
                             </div>
@@ -141,7 +141,18 @@
                     <div class="row">
                         <div class="col-12">
                             <span class="fw-medium text-heading">Notas:</span>
-                            <span><?= $invoice->note ?></span>
+                            <ul>
+                                <?= !empty($invoice->note) ? "<li>$invoice->note</li>" : "" ?>
+                                <?php
+                                    if($invoice->discount_amount > 0)
+                                        echo "<li>La {$invoice->name_document} cuenta con un descuento de {number_format($invoice->discount_amount, 2, '.', ',')}.</li>";
+                                    else if($invoice->discount_percentage > 0)
+                                        echo "<li>La {$invoice->name_document} cuenta con un descuento de $invoice->discount_percentage %.</li>";
+                                    else if($discount_line > 0){
+                                        echo "<li>La {$invoice->name_document} cuenta con un descuento por linea en productos especificaos.</li>";
+                                    }
+                                ?>
+                            </ul>
                         </div>
                     </div>
                 </div>

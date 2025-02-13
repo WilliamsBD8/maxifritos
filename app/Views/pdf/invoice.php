@@ -13,7 +13,7 @@
                                     </div> -->
                                 </td>
                                 <td class="text-rigth">
-                                    <h3 class="mb-6"><?= $invoice->name_document ?> #<?= $invoice->resolution ?></h3>
+                                    <h3 class="mb-6"><?= "$invoice->name_document # $invoice->resolution" ?></h3>
                                     <div>
                                         <span><?= $invoice->created_at ?></span>
                                     </div>
@@ -135,7 +135,18 @@
                 <div class="row">
                     <div class="col-12">
                         <span class="fw-medium text-heading">Notas:</span>
-                        <span><?= $invoice->note ?></span>
+                        <ul>
+                                <?= !empty($invoice->note) ? "<li>$invoice->note</li>" : "" ?>
+                                <?php
+                                    if($invoice->discount_amount > 0)
+                                        echo "<li>La {$invoice->name_document} cuenta con un descuento de {number_format($invoice->discount_amount, 2, '.', ',')}.</li>";
+                                    else if($invoice->discount_percentage > 0)
+                                        echo "<li>La {$invoice->name_document} cuenta con un descuento de $invoice->discount_percentage %.</li>";
+                                    else if($discount_line > 0){
+                                        echo "<li>La {$invoice->name_document} cuenta con un descuento por linea en productos especificaos.</li>";
+                                    }
+                                ?>
+                            </ul>
                     </div>
                 </div>
             </div>

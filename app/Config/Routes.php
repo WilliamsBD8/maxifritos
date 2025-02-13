@@ -101,6 +101,7 @@ $routes->group('load', function($routes){
 	$routes->get('products', 'LoadsController::products');
 	$routes->get('customers', 'LoadsController::customers');
 	$routes->get('env', 'LoadsController::env');
+	$routes->get('updated/invoices', 'LoadsController::updatedInvoices');
 });
 
 /**

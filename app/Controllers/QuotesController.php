@@ -152,7 +152,12 @@ class QuotesController extends BaseController
     }
 
     public function invoice($id){
-        $invoice = $this->invoices->find($id);
+        $invoice = $this->invoices
+            ->select([
+                'invoices.*',
+                'type_documents.name as name_document'
+            ])
+            ->join('type_documents', 'type_documents.id = invoices.type_document_id', 'left')->find($id);
         $invoice->line_invoices = $this->i_model->getLineInvoices($invoice->id);
         $invoice->customer = $this->i_model->getCustomer($invoice->customer_id);
         $invoice->seller = $this->i_model->getSeller($invoice->seller_id);

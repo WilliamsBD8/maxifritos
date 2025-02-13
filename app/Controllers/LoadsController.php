@@ -11,6 +11,7 @@ use CodeIgniter\API\ResponseTrait;
 use App\Models\GroupProduct;
 use App\Models\Product;
 use App\Models\Customer;
+use App\Models\Invoice;
 
 class LoadsController extends BaseController
 {
@@ -19,11 +20,13 @@ class LoadsController extends BaseController
     private $gp_model;
     private $p_model;
     private $c_model;
+    private $i_model;
 
     public function __construct(){
         $this->gp_model = new GroupProduct();
         $this->p_model = new Product();
         $this->c_model = new Customer();
+        $this->i_model = new Invoice();
     }
 
     public function products()
@@ -194,6 +197,35 @@ class LoadsController extends BaseController
         } catch (\Exception $th) {
             echo $envFile;
             die('Error: ' . $th->getMessage());
+        }
+    }
+
+    public function updatedInvoices(){
+        $invoices = $this->i_model->findAll();
+        foreach ($invoices as $key => $invoice) {
+            $invoice->line_invoices = $this->i_model->getLineInvoice($invoice->id);
+
+            $value_total = array_reduce($invoice->line_invoices, function($carry, $product){
+                $product = (object) $product;
+                return $carry += $product->quantity * $product->value;
+            }, 0);
+
+            if($invoice->discount_amount > 0)
+                $discount = $invoice->discount_amount;
+            else if($invoice->discount_percentage > 0)
+                $discount = ($invoice->discount_percentage / 100) * $value_total;
+            else
+                $discount = array_reduce($invoice->line_invoices, function($carry, $product){
+                    $product = (object) $product;
+                    $value = $product->discount_percentage == 0 ? $carry : ($product->discount_percentage / 100) * $product->value;
+                    return $carry += $product->quantity * $value;
+                }, 0);
+            
+            $this->i_model->save([
+                'id'                => $invoice->id,
+                'invoice_amount'    => $value_total,
+                'payable_amount'    => $value_total - $discount,
+            ]);
         }
     }
 }

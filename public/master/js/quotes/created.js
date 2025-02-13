@@ -410,20 +410,10 @@ async function sendCotizacion(){
 
     data.products = products;
     data.type_document = 1;
-
-    data.value_invoice = products.reduce((a, b) => {
-        return a + (parseInt(b.quantity) * parseFloat(b.value));
-    }, 0);
     
-    let valid_descount = products.find(p => p.discount) !== undefined;
-    if(valid_descount){
-        data.value_descount = products.reduce((a, b) => {
-            let value = b.discount_percentage == 0 ? b.discount_amount : (parseFloat(b.discount_percentage) / 100) * b.value
-            return a + (parseInt(b.quantity) * parseFloat(value));
-        }, 0);
-    }else{
-        data.value_descount = $('#discount_amount').val() == 0 ? ($('#discount_percentaje').val() / 100) * data.value_invoice : format_number($('#discount_amount').val());
-    }
+    data.discount_amount = $('#discount_amount').val();
+    data.discount_percentage = $('#discount_percentaje').val();
+    
     let url = base_url(['invoices/created']);
     const res = await proceso_fetch(url, data);
     Swal.fire({

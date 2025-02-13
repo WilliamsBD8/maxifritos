@@ -35,6 +35,22 @@ class InvoiceController extends BaseController
             $data->coordenadas = json_decode($data->coordenadas);
             $data->coordenadas = "{$data->coordenadas->lat}, {$data->coordenadas->lng}";
 
+            $value_total = array_reduce($data->products, function($carry, $product){
+                $product = (object) $product;
+                return $carry += $product->quantity * $product->value;
+            }, 0);
+
+            if($data->discount_amount > 0)
+                $discount = $data->discount_amount;
+            else if($data->discount_percentage > 0)
+                $discount = ($data->discount_percentage / 100) * $value_total;
+            else
+                $discount = array_reduce($data->products, function($carry, $product){
+                    $product = (object) $product;
+                    $value = $product->discount_percentage == 0 ? $carry : ($product->discount_percentage / 100) * $product->value;
+                    return $carry += $product->quantity * $value;
+                }, 0);
+
             $dataInvoice = [
                 'customer_id'           => $data->customer_id,
                 'seller_id'             => $data->seller_id,
@@ -46,10 +62,10 @@ class InvoiceController extends BaseController
                 'resolution'            => !empty($invoice) ? $invoice->resolution + 1 : 1,
                 'resolution_reference'  => isset($data->resolution_reference) ? $data->resolution_reference : null,
                 'description'           => null,
-                'invoice_amount'        => isset($data->invoice_amount) ? $data->invoice_amount:$data->value_invoice,
-                'payable_amount'        => isset($data->payable_amount) ? $data->payable_amount : ($data->value_invoice - $data->value_descount),
+                'invoice_amount'        => $value_total,
+                'payable_amount'        => $value_total - $discount,
                 'discount_amount'       => $data->discount_amount,
-                'discount_percentage'   => isset($data->discount_percentage) ? $data->discount_percentage:$data->discount_percentaje,
+                'discount_percentage'   => $data->discount_percentage,
                 'address_origin'        => $data->coordenadas
             ];
             if($this->i_model->save($dataInvoice)){
@@ -92,6 +108,23 @@ class InvoiceController extends BaseController
     public function edit(){
         try{
             $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
+
+            $value_total = array_reduce($data->products, function($carry, $product){
+                $product = (object) $product;
+                return $carry += $product->quantity * $product->value;
+            }, 0);
+
+            if($data->discount_amount > 0)
+                $discount = $data->discount_amount;
+            else if($data->discount_percentage > 0)
+                $discount = ($data->discount_percentage / 100) * $value_total;
+            else
+                $discount = array_reduce($data->products, function($carry, $product){
+                    $product = (object) $product;
+                    $value = $product->discount_percentage == 0 ? $carry : ($product->discount_percentage / 100) * $product->value;
+                    return $carry += $product->quantity * $value;
+                }, 0);
+
             $dataInvoice = [
                 'id'                    => $data->id,
                 'customer_id'           => $data->customer_id,
@@ -100,8 +133,8 @@ class InvoiceController extends BaseController
                 'status_id'             => $data->status_id,
                 'address'               => $data->address,
                 'note'                  => $data->notes,
-                'invoice_amount'        => $data->value_invoice,
-                'payable_amount'        => $data->value_invoice - $data->value_descount,
+                'invoice_amount'        => $value_total,
+                'payable_amount'        => $value_total - $discount,
                 'discount_amount'       => $data->discount_amount,
                 'discount_percentage'   => $data->discount_percentaje
             ];
