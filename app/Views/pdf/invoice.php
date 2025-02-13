@@ -139,11 +139,11 @@
                                 <?= !empty($invoice->note) ? "<li>$invoice->note</li>" : "" ?>
                                 <?php
                                     if($invoice->discount_amount > 0)
-                                        echo "<li>La {$invoice->name_document} cuenta con un descuento de {number_format($invoice->discount_amount, 2, '.', ',')}.</li>";
+                                        echo "<li>La {$invoice->name_document} cuenta con un descuento de $ ".number_format($invoice->discount_amount, 2, '.', ',').".</li>";
                                     else if($invoice->discount_percentage > 0)
-                                        echo "<li>La {$invoice->name_document} cuenta con un descuento de $invoice->discount_percentage %.</li>";
+                                        echo "<li>La {$invoice->name_document} cuenta con un descuento del $invoice->discount_percentage %.</li>";
                                     else if($discount_line > 0){
-                                        echo "<li>La {$invoice->name_document} cuenta con un descuento por linea en productos especificaos.</li>";
+                                        echo "<li>La {$invoice->name_document} cuenta con un descuento por linea en productos especificos.</li>";
                                     }
                                 ?>
                             </ul>
