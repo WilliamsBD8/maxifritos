@@ -60,9 +60,9 @@
                     </div>
                 </div>
                 <div class="border rounded-4 border-bottom-0">
-                    <table class="table m-0 text-center table-sm">
+                    <table class="table m-0 table-sm">
                         <thead>
-                            <tr>
+                            <tr class="text-center">
                                 <th>Cant.</th>
                                 <th>Descripción</th>
                                 <th>Precio Unitario</th>
@@ -74,16 +74,16 @@
                             <?php $discount_line = 0 ?>
                             <?php foreach($invoice->line_invoices as $line_invoice): ?>
                             <tr>
-                                <td class=""><?= "{$line_invoice->quantity}" ?></td>
-                                <td class="text-heading text-left"><?= "{$line_invoice->product_code} {$line_invoice->product_name}" ?></td>
-                                <td><?= number_format($line_invoice->value, '2', '.', ',') ?></td>
+                                <td class="text-center"><?= "{$line_invoice->quantity}" ?></td>
+                                <td class="text-left"><?= "{$line_invoice->product_code} {$line_invoice->product_name}" ?></td>
+                                <td class="text-center"><?= number_format($line_invoice->value, '2', '.', ',') ?></td>
                                 <?php
                                     $discount = 0;
                                     if($line_invoice->discount_percentage != 0) $discount = ($line_invoice->discount_percentage / 100) * ($line_invoice->value * $line_invoice->quantity);
                                     if($line_invoice->discount_amount != 0) $discount = $line_invoice->discount_amount;
                                     $discount_line += $discount;
                                 ?>
-                                <td><?= number_format($discount, '2', '.', ',')?><?= $line_invoice->discount_percentage != 0 ? "<br>($line_invoice->discount_percentage %)" : ""  ?></td>
+                                <td class="text-center"><?= number_format($discount, '2', '.', ',')?><?= $line_invoice->discount_percentage != 0 ? "<br>($line_invoice->discount_percentage %)" : ""  ?></td>
                                 <?php 
                                     $value = 0;
                                     if($line_invoice->discount_percentage != 0){
@@ -92,7 +92,7 @@
                                         $value = $line_invoice->discount_amount;
                                     }
                                 ?>
-                                <td><?= number_format(($line_invoice->value * $line_invoice->quantity) - ($value * $line_invoice->quantity), '2', '.', ',') ?></td>
+                                <td class="text-center"><?= number_format(($line_invoice->value * $line_invoice->quantity) - ($value * $line_invoice->quantity), '2', '.', ',') ?></td>
                             </tr>
                             <?php endforeach ?>
                         </tbody>

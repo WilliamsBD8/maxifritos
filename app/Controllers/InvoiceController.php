@@ -37,18 +37,18 @@ class InvoiceController extends BaseController
 
             $value_total = array_reduce($data->products, function($carry, $product){
                 $product = (object) $product;
-                return $carry += $product->quantity * $product->value;
+                return $carry += (int) $product->quantity * (float)  $product->value;
             }, 0);
 
             if($data->discount_amount > 0)
-                $discount = $data->discount_amount;
+                $discount = (float) $data->discount_amount;
             else if($data->discount_percentage > 0)
                 $discount = ($data->discount_percentage / 100) * $value_total;
             else
                 $discount = array_reduce($data->products, function($carry, $product){
                     $product = (object) $product;
-                    $value = $product->discount_percentage == 0 ? $carry : ($product->discount_percentage / 100) * $product->value;
-                    return $carry += $product->quantity * $value;
+                    $value = $product->discount_percentage == 0 ? 0 : ($product->discount_percentage / 100) * (float) $product->value;
+                    return $carry += (int) $product->quantity * $value;
                 }, 0);
 
             $dataInvoice = [
@@ -121,7 +121,7 @@ class InvoiceController extends BaseController
             else
                 $discount = array_reduce($data->products, function($carry, $product){
                     $product = (object) $product;
-                    $value = $product->discount_percentage == 0 ? $carry : ($product->discount_percentage / 100) * $product->value;
+                    $value = $product->discount_percentage == 0 ? 0 : ($product->discount_percentage / 100) * $product->value;
                     return $carry += $product->quantity * $value;
                 }, 0);
 
