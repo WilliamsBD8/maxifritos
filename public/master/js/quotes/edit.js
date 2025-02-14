@@ -30,15 +30,15 @@ $(() => {
         }
     });
     setTimeout(async () => {
+        let validador = invoice.line_invoice.some(l => l.discount_percentage != 0);
         await loadProducts(invoice.customer_id);
         invoice.line_invoice.map((line) => {
             console.log(line);
             line.line_invoice_id = line.id;
             line.isDelete = false;
             var product = productsD.find(p => p.id == line.product_id);
-            console.log(productsD);
             product.value = line.value;
-            line.discount = parseFloat(line.discount_amount) == 0 && parseFloat(line.discount_percentage) == 0 ? false : true;
+            line.discount = validador;
             let combined = $.extend({}, line, product);
             products.push(combined)
         });
@@ -204,7 +204,8 @@ function loadTable(){
                     </div>
                 ` : formatPrice(v);
             }},
-            {title: 'Porcentaje <br> Descuento', data: 'discount_percentage', render: (_, __, p) => { 
+            {title: 'Porcentaje <br> Descuento', data: 'discount_percentage', render: (_, __, p) => {
+                
                 return !p.discount ? '0 %':`
                     <div class="input-group input-group-merge">
                         <div class="form-floating form-floating-outline">
