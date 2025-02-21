@@ -21,6 +21,11 @@ async function load_datatable(){
         columns: [
             {title: '# Resolución', data:'resolution'},
             {title: 'Tipo Documento', data:'td_name'},
+            {
+                title: '# Resolución <br> Referencia',
+                data:'inv_resolution',
+                visible: user.role_id == 1
+            },
             {title: 'Cliente', data:'customer'},
             {title: 'Vendedor', data:'seller'},
             {title: 'Estado', data:'status_id', render:(status_id) => {
@@ -98,6 +103,7 @@ async function load_datatable(){
                 })
             }
         },
+
         buttons: [
             {
                 text: '<i class="ri-add-line ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Crear Nueva Cotizacion</span>',

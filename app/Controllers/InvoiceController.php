@@ -111,7 +111,9 @@ class InvoiceController extends BaseController
 
             $value_total = array_reduce($data->products, function($carry, $product){
                 $product = (object) $product;
-                return $carry += $product->quantity * $product->value;
+                $product->isDelete = validUrl() ? $product->isDelete : filter_var($product->isDelete, FILTER_VALIDATE_BOOLEAN);
+                $quantity = !$product->isDelete ? $product->quantity : 0;
+                return $carry += $quantity * $product->value;
             }, 0);
 
             if($data->discount_amount > 0)
@@ -121,8 +123,10 @@ class InvoiceController extends BaseController
             else
                 $discount = array_reduce($data->products, function($carry, $product){
                     $product = (object) $product;
+                    $product->isDelete = validUrl() ? $product->isDelete : filter_var($product->isDelete, FILTER_VALIDATE_BOOLEAN);
                     $value = $product->discount_percentage == 0 ? 0 : ($product->discount_percentage / 100) * $product->value;
-                    return $carry += $product->quantity * $value;
+                    $quantity = !$product->isDelete ? $product->quantity : 0;
+                    return $carry += $quantity * $value;
                 }, 0);
 
             $dataInvoice = [

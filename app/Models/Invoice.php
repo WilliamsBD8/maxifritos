@@ -154,7 +154,7 @@ class Invoice extends Model
     }
 
     protected function functionAfterFind(array $data){
-        log_message('info', json_encode($data));
+        log_message('info', "Data index: ".json_encode($data));
         $params = (object) $this->additionalParams;
         switch ($params->origin) {
             case 'load_order':
@@ -180,6 +180,12 @@ class Invoice extends Model
 
                 $data['data']['products'] = array_values($products);
                 $data['data']['customers'] = array_values($customers);
+                break;
+            case 'quotes_data':
+                foreach ($data['data'] as $key => $inv) {
+                    $ref = $this->builder('invoices')->where(['id' => $inv->resolution_reference])->get()->getResult();
+                    $inv->inv_resolution = !empty($ref) ? $ref[0]->resolution : 'No Aplica';
+                }
                 break;
             
             default:

@@ -86,7 +86,7 @@ class QuotesController extends BaseController
                 'c.name as customer',
                 's.name as seller',
                 'td.name as td_name',
-                'u.name as u_name',
+                'u.name as u_name'
             ])
             ->join('type_documents as td', 'td.id = invoices.type_document_id', 'left')
             ->join('customers as c', 'c.id = invoices.customer_id', 'left')
