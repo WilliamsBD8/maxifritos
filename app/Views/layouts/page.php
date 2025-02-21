@@ -35,6 +35,8 @@
     ?>
     
     <link rel="stylesheet" href="<?= base_url(['assets/vendor/libs/toastr/toastr.css']) ?>" />
+    
+    <link rel="stylesheet" href="<?= base_url(['assets/vendor/libs/select2/select2.css']) ?>" />
 
     <style>
       :root {
@@ -176,6 +178,7 @@
     <!-- Vendors JS -->
     <script src="<?= base_url(["assets/vendor/libs/apex-charts/apexcharts.js"]) ?>"></script>
     <script src="<?= base_url(["assets/vendor/libs/swiper/swiper.js"]) ?>"></script>
+    <script src="<?= base_url(["assets/vendor/libs/select2/select2.js"]) ?>"></script>
 
     <!-- Page JS -->
     <script src="<?= base_url(["master/js/functions/functions.js?v=".getCommit()]) ?>"></script>

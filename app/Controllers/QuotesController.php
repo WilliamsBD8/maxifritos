@@ -43,6 +43,7 @@ class QuotesController extends BaseController
     
     public function index(){
         $s_model = new Status();
+        $c_model = new Customer();
         $td_model = new TypeDocument();
         $status = $s_model->findAll();
         $type_documents = $td_model->setAdditionalParams(['origin' => 'quotes_index'])->findAll();
@@ -61,10 +62,13 @@ class QuotesController extends BaseController
             $period->dates = getPeriodDate($period->value);
         }
 
+        $customers = $c_model->where(['type_customer_id' => 1, 'customers.status' => 'active'])->findAll();
+
         return view('quotes/index', [
             'status'            => $status,
             'type_documents'    => $type_documents,
-            'periods'           => $periods
+            'periods'           => $periods,
+            'customers'         => $customers
         ]);
     }
 
@@ -105,7 +109,7 @@ class QuotesController extends BaseController
                     // 'COALESCE(SUM(i.payable_amount), 0) as payable_amount', // Devuelve 0 si no hay monto
                     // 'COALESCE(SUM(li.quantity), 0) as products' // Devuelve 0 si no hay monto
                 ])
-                ->join('invoices i', "i.type_document_id = type_documents.id AND i.created_at BETWEEN '{$dataPost->date_init} 00:00:00' AND '{$dataPost->date_end} 23:59:59'", 'left') // LEFT JOIN para incluir todos los documentos
+                ->join('invoices i', "i.type_document_id = type_documents.id", 'left') // LEFT JOIN para incluir todos los documentos
                 ->join('line_invoices li', "li.invoice_id = i.id", 'left') // LEFT JOIN para incluir todos los documentos
                 // ->groupBy('type_documents.id', 'i.id', 'li.product_id') // Agrupa por documento
                 ->findAll();

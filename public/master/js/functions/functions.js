@@ -27,6 +27,8 @@ async function proceso_fetch(url, data, time = 1, method = 'POST') {
         headers: { 'Content-Type': url.includes("localhost") ? 'application/x-www-form-urlencoded' : 'application/json' },
         body: url.includes("localhost") ? $.param(data) : JSON.stringify(data)
     }).then(async response => {
+        if (response.redirected)
+          window.location.href = response.url;
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(JSON.stringify({

@@ -24,6 +24,10 @@
       $secondary_color = isset(configInfo()['secundary_color']) && !empty(configInfo()['secundary_color']) ? configInfo()['secundary_color'] : 'ff6e40';
     ?>
 
+    
+    <link rel="stylesheet" href="<?= base_url(['assets/vendor/libs/toastr/toastr.css']) ?>" />
+    <link rel="stylesheet" href="<?= base_url(['assets/vendor/libs/select2/select2.css']) ?>" />
+
     <style>
       :root {
         --primary-color: #<?= $color_primary ?>;
@@ -103,7 +107,7 @@
             <div class="card-body">
               <h4 class="mb-1">Recuperar Contraseña</h4>
               <p class="mb-5">Para restablecer la contraseña, por favor ingrese el correo electrónico registrado.</p>
-              <form id="formAuthentication" class="mb-5" action="auth-login-basic.html" method="GET" onsubmit="onSubmit(event)">
+              <form id="formAuthentication" class="mb-5" onsubmit="onSubmit(event)">
                 <div class="form-floating form-floating-outline mb-5">
                     <input type="email" class="form-control" id="email" name="email"
                         placeholder="Ingrese su email" autofocus />
@@ -139,6 +143,7 @@
     <script src="<?= base_url(["assets/vendor/libs/i18n/i18n.js"]) ?>"></script>
     <script src="<?= base_url(["assets/vendor/libs/typeahead-js/typeahead.js"]) ?>"></script>
     <script src="<?= base_url(["assets/vendor/js/menu.js"]) ?>"></script>
+    <script src="<?= base_url(['assets/vendor/libs/sweetalert2/sweetalert2.js']) ?>"></script>
 
     <!-- endbuild -->
 
@@ -147,12 +152,13 @@
     <script src="<?= base_url(["assets/vendor/libs/@form-validation/bootstrap5.js"]) ?>"></script>
     <script src="<?= base_url(["assets/vendor/libs/@form-validation/auto-focus.js"]) ?>"></script>
 
+    <script src="<?= base_url(['assets/vendor/libs/toastr/toastr.js']) ?>"></script>
     <!-- Main JS -->
     <script src="<?= base_url(["assets/js/main.js"]) ?>"></script>
 
     <!-- Page JS -->
     <!-- <script src="<?= base_url(["assets/js/pages-auth.js"]) ?>"></script> -->
-    <script src="<?= base_url(["master/js/functions/functions.js"]) ?>"></script>
-    <script src="<?= base_url(["master/js/auth/resetPassword.js"]) ?>"></script>
+    <script src="<?= base_url(["master/js/functions/functions.js?v=".getCommit()]) ?>"></script>
+    <script src="<?= base_url(["master/js/auth/resetPassword.js?v=".getCommit()]) ?>"></script>
   </body>
 </html>

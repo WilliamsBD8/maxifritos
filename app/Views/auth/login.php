@@ -205,7 +205,7 @@
     <!-- Page JS -->
     <!-- <script src="<?= base_url(["assets/js/pages-auth.js"]) ?>"></script> -->
     <script src="<?= base_url(["master/js/functions/functions.js?v=".getCommit()]) ?>"></script>
-    <script src="<?= base_url(["master/js/auth/login.js"]) ?>"></script>
+    <script src="<?= base_url(["master/js/auth/login.js?v=".getCommit()]) ?>"></script>
 </body>
 
 </html>

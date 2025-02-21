@@ -1,4 +1,6 @@
 const table = [];
+const type_documents = type_documents_data();
+
 $(() => {
     load_datatable();
 })
@@ -8,9 +10,11 @@ async function load_datatable(){
         ajax: {
             url: base_url(['dashboard/cotizaciones/data']),
             data: function(d) {
-                d.date_init =  $('#date_init').val();
-                d.date_end = $('#date_end').val();
-                d.resolution = $('#resolution_filter').val().trim()
+                d.date_init     = $('#date_init').val();
+                d.date_end      = $('#date_end').val();
+                d.resolution    = $('#resolution_filter').val().trim();
+                d.customer_id   = $('#customer_filter').val();
+                d.type_document = $('#type_document_filter').val();
             },
             dataSrc: 'data'
         },
@@ -77,10 +81,16 @@ async function load_datatable(){
                 let val_period = periods.find(p => p.value == $('#period').val());
 
                 let dates = val_period.value == "" ? `Desde <b>${$("#date_init").val()}</b> hasta <b>${$("#date_end").val()}</b>` : val_period.name;
-                $('.text-date').html(dates)
+                $('.text-date').html(dates);
+
+                type_documents.map(td => {
+                    $(`#div_${td.id} h2`).html(formatPrice(0));
+
+                    $(`#div_${td.id} .inv`).html(`Documentos: <b>0</b>`);
+                    $(`#div_${td.id} .pro`).html(`Productos: <b> 0</b>`);
+                })
 
                 indicadores.map(i => {
-                    console.log(i);
                     $(`#div_${i.document} h2`).html(formatPrice(parseFloat(i.payable_amount)));
 
                     $(`#div_${i.document} .inv`).html(`Documentos: <b>${parseInt(i.count)}</b>`);
@@ -194,10 +204,23 @@ async function load_datatable(){
                     const offCanvasElement = document.querySelector('#canvasFilter');
                     let offCanvasEl = new bootstrap.Offcanvas(offCanvasElement);
                     offCanvasEl.show();
+                    $(`#customer_filter`).select2({
+                        dropdownParent: $('#canvasFilter')
+                    });
+                    $(`#type_document_filter`).select2({
+                        dropdownParent: $('#canvasFilter')
+                    })
                 }
             }
         ]
     });
+}
+
+function resetFilter(){
+    $('#formFilter')[0].reset();
+    $('#customer_filter').val(null).trigger('change'); // Limpia Select2
+    $('#type_document_filter').val(null).trigger('change'); // Limpia Select2
+    reloadTable()
 }
 
 
@@ -219,8 +242,9 @@ function sendFilter(e){
     reloadTable();
 }
 
-function reloadTable(){
-    table[0].ajax.reload();
+async function reloadTable(){
+    await table[0].ajax.reload();
+    $('#canvasFilter .btn-close').click();
 }
 
 function decline(id, resolution){

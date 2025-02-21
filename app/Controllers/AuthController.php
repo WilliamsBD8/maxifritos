@@ -187,7 +187,7 @@ class AuthController extends BaseController
 
     public function resetPassword()
     {
-        return view('auth\reset_password');
+        return view('auth/reset_password');
     }
 
     public function forgotPassword()
@@ -200,7 +200,7 @@ class AuthController extends BaseController
             $email = new EmailController();
             $password = $this->encript();
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
-            $response = $email->send('wabox324@gmail.com', 'wabox', $request->getPost('email'), 'Recuperacion de contraseña', password($password));
+            $response = $email->send('wabox324@gmail.com', 'wabox', $info->email, 'Recuperacion de contraseña', password($password));
             if($response->status){
                 $p_model = new Password();
                 if($p_model->set(['status' => 'inactive'])->where(['user_id' => $data->id, 'status' => 'active'])->update()){

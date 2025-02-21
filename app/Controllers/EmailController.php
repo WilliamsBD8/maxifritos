@@ -31,6 +31,7 @@ class EmailController extends BaseController
 		else 
 		{
             $data = $email->printDebugger(['headers']);
+            log_message('info', "Error de envio de email: ".json_encode($data));
             return (object)[
                 'status'    => false,
                 'message'   => 'Error al enviar el correo'

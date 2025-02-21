@@ -68,7 +68,7 @@
                     <tr>
                         <td><?= "{$line_invoice->quantity}" ?></td>
                         <td class="text-heading text-left">
-                            <?= "{$line_invoice->product_code} {$line_invoice->product_name}" ?></td>
+                            <?= "{$line_invoice->product_name} {$line_invoice->product_code}" ?></td>
                         <td><?= number_format($line_invoice->value, '2', '.', ',') ?></td>
                         <?php
                             $discount = 0;

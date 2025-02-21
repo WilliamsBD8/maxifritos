@@ -58,6 +58,7 @@ class TypeDocument extends Model
             default:
                 break;
         }
+
         if(isset($getData->date_init) && isset($getData->date_end)){
             $this->where([
                 'i.created_at >=' => "{$getData->date_init} 00:00:00",
@@ -68,6 +69,16 @@ class TypeDocument extends Model
         if(isset($getData->resolution) && !empty($getData->resolution))
             $this->where([
                 'i.resolution' => $getData->resolution,
+            ]);
+
+        if(isset($getData->customer_id) && !empty($getData->customer_id))
+            $this->where([
+                'i.customer_id' => $getData->customer_id,
+            ]);
+
+        if(isset($getData->type_document) && !empty($getData->type_document))
+            $this->where([
+                'i.type_document_id' => $getData->type_document,
             ]);
         return $this; // Permite el encadenamiento de métodos
     }

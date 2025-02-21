@@ -129,9 +129,34 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-sm-12 mb-2">
+                            <div class="form-floating form-floating-outline">
+                                <select class="select2 form-select" data-allow-clear="true" id="customer_filter" name="customer_filter" data-placeholder="Seleccione un cliente">
+                                    <option value=""></option>
+                                    <?php foreach($customers as $customer): ?>
+                                        <option value="<?= $customer->id ?>"><?= $customer->name ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                                <label for="customer_filter">Cliente</label>
+                                <span class="form-floating-focused"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mb-2">
+                            <div class="form-floating form-floating-outline">
+                                <select class="select2 form-select" data-allow-clear="true" id="type_document_filter" name="type_document_filter" data-placeholder="Seleccione un cliente">
+                                    <option value=""></option>
+                                    <?php foreach($type_documents as $key => $td): ?>
+                                        <option value="<?= $td->id ?>"><?= $td->name ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                                <label for="type_document_filter">Tipo de documento</label>
+                                <span class="form-floating-focused"></span>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary mb-2 d-grid w-100 waves-effect waves-light">Filtrar</button>
-                    <button type="reset" class="btn btn-danger mb-2 d-grid w-100 waves-effect waves-light">Reiniciar</button>
+                    <button type="button" onclick="resetFilter()" class="btn btn-danger mb-2 d-grid w-100 waves-effect waves-light">Reiniciar</button>
                 </form>
             </div>
         </div>
@@ -159,6 +184,7 @@
         }
     });
     const periods = <?= json_encode($periods) ?>;
+    const type_documents_data = () => (<?= json_encode($type_documents) ?>);
 </script>
 <script src="<?= base_url(['master/js/quotes/index.js?v='.getCommit()]) ?>"></script>
 <?= $this->endSection(); ?>

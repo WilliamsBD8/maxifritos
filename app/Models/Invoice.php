@@ -84,6 +84,16 @@ class Invoice extends Model
                 'invoices.resolution' => $getData->resolution,
             ]);
 
+        if(isset($getData->customer_id) && !empty($getData->customer_id))
+            $this->where([
+                'invoices.customer_id' => $getData->customer_id,
+            ]);
+
+        if(isset($getData->type_document) && !empty($getData->type_document))
+            $this->where([
+                'invoices.type_document_id' => $getData->type_document,
+            ]);
+
         return $this;
     }
 
