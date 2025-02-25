@@ -57,11 +57,6 @@ class AuthController extends BaseController
                                 }
                                 $session = session();
                                 $session->set('user', $data);
-                                return $this->respond([
-                                    'title'     => 'Validación de éxitosa',
-                                    'msg'   => "Redirigiendo página",
-                                    'url'       => base_url(['dashboard'])
-                                ]);
                                 return redirect()->to(base_url(['dashboard']));
                             } else {
                                 $p_model = new Password();
@@ -92,7 +87,7 @@ class AuthController extends BaseController
                 } else {
                     return $this->respond([
                         'title'     => 'Validación de usuario',
-                        'msg'   => 'Las credenciales no concuerdan 1.'
+                        'msg'   => 'Las credenciales no concuerdan.'
                     ], 403);
                     // return redirect()->to(base_url(['login']))->with('errors', 'Las credenciales no concuerdan.');
                 }

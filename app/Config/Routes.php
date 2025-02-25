@@ -64,6 +64,11 @@ $routes->group('dashboard', function ($routes){
 		$routes->post('delete', 'CustomersController::delete');
 	});
 
+	$routes->group('productos', function($routes){
+		$routes->get('history', 'ProductsController::history');
+		$routes->get('history/data', 'ProductsController::historyData');
+	});
+
 });
 
 $routes->group('invoices', function($routes){

@@ -128,3 +128,7 @@
   width: 100% !important;
   height: 100%;
 }
+
+.chosen-container-single .chosen-single{
+  width: 100%;
+}

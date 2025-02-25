@@ -24,6 +24,7 @@ class Invoices extends Migration
             'discount_amount'           => ['type' => 'DECIMAL(20,2)', 'default' => 0],
             'discount_percentage'       => ['type' => 'INT', 'default' => 0],
             'address_origin'  			    => ['type' => 'TEXT', 'null' => TRUE],
+            'delivery_date'             => ['type' => 'DATE', 'null' => FALSE],
             'created_at'                => ['type' => 'DATETIME', 'null' => TRUE],
             'updated_at'                => ['type' => 'DATETIME', 'null' => TRUE]
         ]);

@@ -108,6 +108,7 @@
               <h4 class="mb-1">Recuperar Contraseña</h4>
               <p class="mb-5">Para restablecer la contraseña, por favor ingrese el correo electrónico registrado.</p>
               <form id="formAuthentication" class="mb-5" onsubmit="onSubmit(event)">
+                
                 <div class="form-floating form-floating-outline mb-5">
                     <input type="email" class="form-control" id="email" name="email"
                         placeholder="Ingrese su email" autofocus />

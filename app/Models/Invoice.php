@@ -26,7 +26,8 @@ class Invoice extends Model
         'payable_amount',
         'discount_amount',
         'discount_percentage',
-        'address_origin'
+        'address_origin',
+        'delivery_date'
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -93,6 +94,16 @@ class Invoice extends Model
             $this->where([
                 'invoices.type_document_id' => $getData->type_document,
             ]);
+        if(isset($getData->delivery_date) && !empty($getData->delivery_date))
+            $this->where([
+                'invoices.delivery_date' => $getData->delivery_date,
+            ]);
+            
+        if(isset($getData->product_id) && !empty($getData->product_id)){
+            $this->where([
+                'line_invoices.product_id' => $getData->product_id,
+            ]);
+        }
 
         return $this;
     }
@@ -142,7 +153,6 @@ class Invoice extends Model
 
     protected function functionBeforeFind(array $data){
         $getData = !empty($_GET) ? (object) $_GET : (object) $_POST;
-        log_message('info', json_encode($getData));
         if (!empty($data['method']) && $data['method'] === 'findAll') {
             // if(session('user')->role_id == 3 && $data['limit'] == 10)
             //     $this->where(['user_id' => session('user')->id])
@@ -154,7 +164,6 @@ class Invoice extends Model
     }
 
     protected function functionAfterFind(array $data){
-        log_message('info', "Data index: ".json_encode($data));
         $params = (object) $this->additionalParams;
         switch ($params->origin) {
             case 'load_order':

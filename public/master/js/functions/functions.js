@@ -4,7 +4,6 @@ $(document).on("focus", "input", function () {
     }, 300);
 });
 
-
 async function proceso_fetch(url, data, time = 1, method = 'POST') {
   console.log([!url.includes(".will"), $.param(data)]);
     toastr.clear();
@@ -105,8 +104,7 @@ function alert(title = 'Alert', msg = 'Alert', icon = 'success', time=0, maxOpen
 
 function base_url(array = []) {
   var url = localStorage.getItem('url');
-  if (array.length == 0) return `${url}`;
-  else return `${url}${array.join('/')}`;
+  return array.length == 0 ? `${url}` : `${url}${array.join('/')}`;
 }
 
 const separador_miles = (numero) => {
@@ -218,6 +216,10 @@ async function coordenadas(){
 
 async function view_map_detail(coord){
   coord = coord.split(',');
+  const lat = parseFloat(coord[0].trim());
+  const lng = parseFloat(coord[1].trim());
+  const googleMapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+
   Swal.fire({
       title: 'Ubicación',
       html:`
@@ -225,18 +227,28 @@ async function view_map_detail(coord){
       `,
       customClass: {
           confirmButton: "btn btn-primary",
+          denyButton: "btn btn-secondary"
       },
+      denyButtonText: "Copiar dirección",
       didOpen: () => {
           map = new google.maps.Map(document.getElementById('map'), {
-              center: {lat: parseFloat(coord[0].trim()), lng: parseFloat(coord[1].trim())},
+              center: {lat, lng},
               zoom: 20,
           });
           marker = new google.maps.Marker({
-              position: {lat: parseFloat(coord[0].trim()), lng: parseFloat(coord[1].trim())},
+              position: {lat, lng},
               map: map,
-              draggable: false, // Permitir arrastrar el marcador
+              draggable: false,
           });
       }
+  }).then(result => {
+    if(result.isDenied){
+      navigator.clipboard.writeText(googleMapsLink).then(() => {
+        alert("Copiado", "El enlace de la ubicación ha sido copiado al portapapeles.", "success", 5000);
+      }).catch(err => {
+          console.error("Error al copiar: ", err);
+      });
+    }
   });
 }
 
