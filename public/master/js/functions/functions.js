@@ -110,7 +110,7 @@ function base_url(array = [], get = {}) {
       .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) // Codificar valores
       .join('&');
 
-  return getData ? `${url}/${path}?${getData}` : `${url}/${path}`;
+  return getData ? `${url}${path}?${getData}` : `${url}${path}`;
 }
 
 const separador_miles = (numero) => {

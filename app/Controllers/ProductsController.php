@@ -92,18 +92,20 @@ class ProductsController extends BaseController
         $this->i_model
         ->join('line_invoices', 'line_invoices.invoice_id = invoices.id', 'left')
         ->join('products', 'line_invoices.product_id = products.id', 'left')
-        ->join('customers', 'customers.id = invoices.customer_id', 'left');
+        ->join('customers', 'customers.id = invoices.customer_id', 'left')
+        ->join('type_documents', 'type_documents.id = invoices.type_document_id', 'left');
         $data_count_total = $this->i_model->countAllResults(false);
         $this->i_model->setAdditionalParams(['origin' => ""]);
         $data_count = $this->i_model->countAllResults(false);
         $this->i_model->select([
-            'invoices.*',
-            'products.name as product_name',
-            'customers.name as customer_name',
-            'line_invoices.quantity',
-            'line_invoices.value',
-            'line_invoices.discount_percentage',
-            'line_invoices.product_id',
+                'invoices.*',
+                'products.name as product_name',
+                'customers.name as customer_name',
+                'line_invoices.quantity',
+                'line_invoices.value',
+                'line_invoices.discount_percentage',
+                'line_invoices.product_id',
+                'CONCAT(type_documents.name, " - ", type_documents.code) as type_document_name'
             ])
             ->orderBy('invoices.id', 'DESC');
         $inv_model = clone $this->i_model;

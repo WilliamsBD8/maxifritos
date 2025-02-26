@@ -31,18 +31,6 @@
                                     </div>
                                     <div class="col-sm-12 col-lg-4 col-md-6 mb-2">
                                         <div class="form-floating form-floating-outline">
-                                            <select class="select2 form-select form-select-lg" id="seller_id" name="seller" required>
-                                                <option value="" disabled selected>Seleccione un vendedor</option>
-                                                <?php foreach($sellers as $seller): ?>
-                                                    <option value="<?= $seller->id ?>" <?= $seller->id == $invoice->seller_id ? 'selected' : '' ?>><?= $seller->name ?></option>
-                                                <?php endforeach ?>
-                                            </select>
-                                            <label for="seller_id">* Vendedor</label>
-                                            <span class="form-floating-focused"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-lg-6 col-md-6 mb-2">
-                                        <div class="form-floating form-floating-outline">
                                             <select
                                                 onchange="loadProducts(this.value)"
                                                 class="select2 form-select form-select-lg" id="customer_id" name="customer" required>
@@ -58,6 +46,18 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-lg-6 col-md-6 mb-2">
+                                        <div class="form-floating form-floating-outline">
+                                            <select class="select2 form-select form-select-lg" id="seller_id" name="seller" required>
+                                                <option value="" disabled selected>Seleccione un vendedor</option>
+                                                <?php foreach($sellers as $seller): ?>
+                                                    <option value="<?= $seller->id ?>" <?= $seller->id == $invoice->seller_id ? 'selected' : '' ?>><?= $seller->name ?></option>
+                                                <?php endforeach ?>
+                                            </select>
+                                            <label for="seller_id">* Vendedor</label>
+                                            <span class="form-floating-focused"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-lg-6 col-md-12 mb-2">
                                         <div class="form-floating  form-floating-outline">
                                             <select data-allow-clear="true" class="form-select form-select-lg" id="products_id" name="product" onchange="addProduct(this.value)" data-placeholder="Seleccione un producto">
                                                 <option value="" disabled selected>Seleccione un producto</option>

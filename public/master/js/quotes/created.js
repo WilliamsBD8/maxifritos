@@ -404,6 +404,7 @@ async function sendCotizacion(){
         }
         data[input.attr('id')] = value;
     });
+    
     if(!isValid){
         return alert('Campos obligatorios', 'Por favor llenar los campos rerqueridos.', 'warning', 5000)
     }
@@ -421,16 +422,27 @@ async function sendCotizacion(){
     
     let url = base_url(['invoices/created']);
     const res = await proceso_fetch(url, data);
-    Swal.fire({
-        icon: 'success',
-        title: res.title,
-        showConfirmButton: false,
-        allowOutsideClick: false,
-        customClass: {},
-        willOpen: function () {
-            Swal.showLoading();
-        }
-    });
-    window.location.href = base_url(['dashboard/cotizaciones']);
-    console.log(res);
+    if(res.status == 'error'){
+        console.log(res.errors);
+        $.each(res.errors, function (key, message) {
+            let input = $(`[name="${key}"]`);
+            if (input.length) {
+                input.addClass('is-invalid');
+                alert('Campos obligatorio', message, 'warning', 0, res.errors.length)
+            }
+        });
+    }else{
+        Swal.fire({
+            icon: 'success',
+            title: res.title,
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            customClass: {},
+            willOpen: function () {
+                Swal.showLoading();
+            }
+        });
+        window.location.href = base_url(['dashboard/cotizaciones']);
+        console.log(res);
+    }
 }

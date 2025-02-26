@@ -30,6 +30,23 @@ class InvoiceController extends BaseController
     {
         try{
             $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
+            $validationRules = [
+                'delivery_date' => [
+                    'rules' => "required",
+                    'errors' => [
+                        'required'    => 'El campo correo electrónico es obligatorio.',
+                    ]
+                ]
+            ];
+            if (!$this->validate($validationRules)) {
+                return $this->respond([
+                    'status'  => 'error',
+                    'errors'  => $this->validator->getErrors(),
+                    $data
+                ]);
+            }
+
+
             $invoice = $this->i_model->where(['type_document_id' => $data->type_document])->orderBy('id', 'DESC')->first();
 
             $data->coordenadas = json_decode($data->coordenadas);

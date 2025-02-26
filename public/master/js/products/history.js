@@ -20,6 +20,7 @@ function loadTable(){
             {title: 'Fecha Creación', data: 'created_at'},
             {title: 'Fecha Entrega', data: 'delivery_date'},
             {title: '# Resolución', data: 'resolution'},
+            {title: 'Tipo Documento', data: 'type_document_name'},
             {title: 'Producto', data: 'product_name'},
             {title: 'Cliente', data: 'customer_name'},
             {title: 'Cantidad', data: 'quantity'},
@@ -40,7 +41,7 @@ function loadTable(){
                 text: '<i class="ri-file-excel-line me-1"></i><span class="d-none d-sm-inline-block">Excel</span>',
                 className: `btn rounded-pill btn-label-success waves-effect mx-2 mt-2 ${user.role_id == 3 ? 'd-none' : ''}`,
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7],
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8],
                     format: {
                         body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;

@@ -26,25 +26,11 @@
                                     </div>
                                     <div class="col-sm-12 col-lg-4 col-md-6 mb-2">
                                         <div class="form-floating form-floating-outline">
-                                            <input type="text" class="form-control" required placeholder="YYYY-MM-DD" id="delivery_date">
+                                            <input type="text" class="form-control" required placeholder="YYYY-MM-DD" name="delivery_date" id="delivery_date">
                                             <label for="delivery_date">* Fecha de entrega</label>
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-lg-4 col-md-6 mb-2">
-                                        <div class="form-floating form-floating-outline">
-                                            <select
-                                            class="select2 form-select form-select-lg"
-                                            id="seller_id" name="seller" required
-                                            data-allow-clear="false" data-placeholder="Seleccione un vendedor">
-                                                <option value="" disabled selected>Seleccione un vendedor</option>
-                                                <?php foreach($sellers as $seller): ?>
-                                                    <option value="<?= $seller->id ?>"><?= $seller->name ?></option>
-                                                <?php endforeach ?>
-                                            </select>
-                                            <label for="seller_id">* Vendedor</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-lg-6 col-md-6 mb-2">
                                         <div class="form-floating form-floating-outline">
                                             <select
                                             onchange="loadProducts(this.value)"
@@ -60,6 +46,20 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-lg-6 col-md-6 mb-2">
+                                        <div class="form-floating form-floating-outline">
+                                            <select
+                                            class="select2 form-select form-select-lg"
+                                            id="seller_id" name="seller" required
+                                            data-allow-clear="false" data-placeholder="Seleccione un vendedor">
+                                                <option value="" disabled selected>Seleccione un vendedor</option>
+                                                <?php foreach($sellers as $seller): ?>
+                                                    <option value="<?= $seller->id ?>"><?= $seller->name ?></option>
+                                                <?php endforeach ?>
+                                            </select>
+                                            <label for="seller_id">* Vendedor</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-lg-6 col-md-12 mb-2">
                                         <div class="form-floating form-floating-outline">
                                             <select
                                             class="form-select form-select-lg"
