@@ -1,5 +1,8 @@
-const table = [];
-const periods = periodsData();
+const table             = [];
+const periods           = periodsData();
+const type_documents    = typeDocumentData();
+const customers         = customersData();
+const products          = productsData();
 function loadTable(){
     table[0] = $(`#table_datatable`).DataTable({
         ajax: {
@@ -9,6 +12,7 @@ function loadTable(){
                 d.date_end      = $('#date_end').val();
                 d.customer_id   = $('#customer_filter').val();
                 d.product_id    = $('#product_filter').val();
+                d.type_document = $('#type_document_filter').val();
             },
             dataSrc: 'data'
         },
@@ -56,7 +60,16 @@ function loadTable(){
                     }
                 },
                 action: async function (e, dt, button, config) {
-                    const exportData = await proceso_fetch_get(`${table[0].ajax.url()}?length=-1&date_init=${table[0].ajax.params().date_init}&&date_end=${table[0].ajax.params().date_end}`).then(res => res.data);
+                    let getData = {
+                        length:         -1,
+                        date_init:      $('#date_init').val(),
+                        date_end:       $('#date_end').val(),
+                        customer_id:    $('#customer_filter').val(),
+                        product_id:     $('#product_filter').val(),
+                        type_document:  $('#type_document_filter').val(),
+                    }
+                    const url_data = base_url(['dashboard/productos/history/data'], getData);
+                    const exportData = await proceso_fetch_get(url_data).then(res => res.data);
                     dt.clear();
                     dt.rows.add(exportData);
                     dt.draw();
@@ -89,7 +102,70 @@ function loadTable(){
                 }
             }
         ],
-        drawCallback: () => {
+        drawCallback: (setting) => {
+
+            if(setting.json != undefined){
+                let indicadores     = setting.json.indicadores;
+                
+                let type_document   = type_documents.find(td => td.id == $('#type_document_filter').val());
+                let customer        = customers.find(c => c.id == $('#customer_filter').val());
+                let product         = products.find(p => p.id == $('#product_filter').val());
+
+                let rowData = [{
+                    type_document_name: type_document ? type_document.name : "", 
+                    type_document_code: type_document ? type_document.code : "", 
+                    customer_name: customer ? customer.name : "", 
+                    product_name: product ? product.name : "", 
+                    product_code: product ? product.code : "", 
+                }];
+
+                console.log(rowData);
+                
+                if(!$.fn.DataTable.isDataTable("#table_data_filter")){
+                    table[1] = $("#table_data_filter").DataTable({
+                        data: rowData,
+                        columns: [
+                            {
+                                title: "Tipo Documento",
+                                data:null, render: (_,__,_data) => `${_data.type_document_name} - ${_data.type_document_code}`
+                            },
+                            {
+                                title: "Producto",
+                                data:null, render: (_,__,_data) => `${_data.product_name} - ${_data.product_code}`,
+                                visible: false
+                            },
+                            {title: "Cliente", data:'customer_name', visible: false}
+                        ],
+                        paging: false, // Evita paginación innecesaria
+                        searching: false, // Desactiva la búsqueda,
+                        info: false,        // Sin información adicional
+                        ordering: false,
+                        scrollX: true,
+                    })
+                }else{
+                    table[1].clear().rows.add(rowData).draw(false);
+                }
+
+                table[1].column(1).visible(!!product);  // Muestra la columna de "Producto" si product no es undefined
+                table[1].column(2).visible(!!customer);
+                
+                $('#indicadores').html(
+                    Object.entries(indicadores).map(([key, value]) => `
+                        <div class="col-sm-12 col-md-6 col-lg-6 border-end">
+                            <div class="d-flex justify-content-between align-items-start card-widget-1 pb-4 pb-sm-0">
+                                <div class="card-body py-0">
+                                    <div class="d-flex align-items-center justify-content-center mb-2">
+                                        <h2 class="mb-0">${key == 'total_value' ? formatPrice(parseFloat(value)) : value}</h2>
+                                    </div>
+                                    <h6 class="mb-0 fw-normal text-center"><b>${key == 'total_value' ? 'Valor Total' : 'Cantidad Productos'}</b></h6>
+                                </div>
+                            </div>
+                            <hr class="d-none d-sm-block d-md-none d-lg-none me-6 my-0">
+                        </div>
+                    `).join('')
+                );
+            }
+
             $('#canvasFilter .btn-close').click();
         }
     })

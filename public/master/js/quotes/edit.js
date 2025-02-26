@@ -43,7 +43,13 @@ $(() => {
             products.push(combined)
         });
         reloadTable()
-    }, 1000)
+    }, 1000);
+    $('#delivery_date').flatpickr({
+        locale:             "es",
+        monthSelectorType:  'static',
+        minDate:            new Date(new Date().setDate(new Date().getDate() + 1)),
+        onClose: (_, dateStr, instance) => (dateStr === "" && invoice.delivery_date ? instance.setDate(invoice.delivery_date, true) : null)
+    });
 });
 
 async function loadProducts(customer = null){

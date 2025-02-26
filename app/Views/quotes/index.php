@@ -4,6 +4,7 @@
 
 <?= $this->section('styles'); ?>
 <?= $this->include('layouts/css_datatables') ?>
+<link rel="stylesheet" href="<?= base_url(['assets/vendor/libs/flatpickr/flatpickr.css']) ?>" />
 <?= $this->endSection(); ?>
 
 <?= $this->section('content'); ?>
@@ -124,6 +125,14 @@
                         <div class="col-sm-12 mb-2">
                             <div class="input-group input-group-floating">
                                 <div class="form-floating">
+                                    <input type="text" class="form-control" id="delivery_date_filter" placeholder="YYYY-MM-DD">
+                                    <label for="delivery_date_filter">Fecha de Entrega</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mb-2">
+                            <div class="input-group input-group-floating">
+                                <div class="form-floating">
                                     <input type="number" class="form-control" id="resolution_filter" placeholder="">
                                     <label for="resolution_filter">N° Resolución</label>
                                 </div>
@@ -167,6 +176,8 @@
 
 <?= $this->section('javaScripts'); ?>
 <?= $this->include('layouts/js_datatables') ?>
+<script src="<?= base_url(['assets/vendor/libs/flatpickr/flatpickr.js']) ?>"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
 <script>
     const status_data = <?= json_encode($status)?>;
     status_data.map(s => {

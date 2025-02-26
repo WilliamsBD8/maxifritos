@@ -15,6 +15,7 @@ async function load_datatable(){
                 d.resolution    = $('#resolution_filter').val().trim();
                 d.customer_id   = $('#customer_filter').val();
                 d.type_document = $('#type_document_filter').val();
+                d.delivery_date = $('#delivery_date_filter').val();
             },
             dataSrc: 'data'
         },
@@ -34,6 +35,7 @@ async function load_datatable(){
             }},
             {title: 'Valor', data: 'payable_amount', render: (v) => formatPrice(parseFloat(v))},
             {title: 'Fecha', data: 'created_at'},
+            {title: 'Fecha de Entrega', data: 'delivery_date'},
             {title: 'Creado por', data: 'u_name'},
             {
                 title: "Ubicación",
@@ -102,6 +104,7 @@ async function load_datatable(){
                     $(`#div_${i.document} .pro`).html(`Productos: <b> ${parseInt(i.products)}</b>`);
                 })
             }
+            $('#canvasFilter .btn-close').click();
         },
 
         buttons: [
@@ -115,7 +118,7 @@ async function load_datatable(){
             {
                 extend: 'excel',
                 text: '<i class="ri-file-excel-line me-1"></i><span class="d-none d-sm-inline-block">Excel</span>',
-                className: `btn btn-primary waves-effect waves-light mx-2 mt-2 ${user.role_id == 3 ? 'd-none' : ''}`,
+                className: `btn rounded-pill btn-label-success waves-effect mx-2 mt-2 ${user.role_id == 3 ? 'd-none' : ''}`,
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4, 5, 6, 7],
                     format: {
@@ -146,7 +149,7 @@ async function load_datatable(){
             },
             {
                 text: '<i class="ri-file-excel-line me-1"></i> <span class="d-none d-sm-inline-block">Pedidos</span>',
-                className: `btn btn-primary waves-effect waves-light mx-2 mt-2  ${user.role_id == 3 ? 'd-none' : ''}`,
+                className: `btn btn-label-danger waves-effect waves-light mx-2 mt-2  ${user.role_id == 3 ? 'd-none' : ''}`,
                 action: async () => {
                     const {value:data} = await Swal.fire({
                         title: 'Ingrese el rango de busqueda',
@@ -205,7 +208,7 @@ async function load_datatable(){
             },     
             {
                 text: '<i class="ri-filter-3-fill ri-16px me-2"></i> <span class="d-none d-sm-inline-block">Filtrar</span>',
-                className: 'btn btn-primary waves-effect waves-light mx-2 mt-2',
+                className: 'btn btn-label-secondary waves-effect waves-light mx-2 mt-2',
                 action: () => {
                     const offCanvasElement = document.querySelector('#canvasFilter');
                     let offCanvasEl = new bootstrap.Offcanvas(offCanvasElement);
@@ -215,7 +218,11 @@ async function load_datatable(){
                     });
                     $(`#type_document_filter`).select2({
                         dropdownParent: $('#canvasFilter')
-                    })
+                    });
+                    $('#delivery_date_filter').flatpickr({
+                        locale:             "es",
+                        monthSelectorType:  'static',
+                    });
                 }
             }
         ]
@@ -250,7 +257,6 @@ function sendFilter(e){
 
 async function reloadTable(){
     await table[0].ajax.reload();
-    $('#canvasFilter .btn-close').click();
 }
 
 function decline(id, resolution){

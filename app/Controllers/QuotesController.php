@@ -62,7 +62,13 @@ class QuotesController extends BaseController
             $period->dates = getPeriodDate($period->value);
         }
 
-        $customers = $c_model->where(['type_customer_id' => 1, 'customers.status' => 'active'])->findAll();
+        $customers  = $this->i_model->distinct('invoices.customer_id')
+            ->select([
+                'customers.id',
+                'customers.name'
+            ])
+            ->join('customers', 'customers.id = invoices.customer_id', 'left')
+            ->findAll();
 
         return view('quotes/index', [
             'status'            => $status,

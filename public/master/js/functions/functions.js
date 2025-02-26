@@ -102,9 +102,15 @@ function alert(title = 'Alert', msg = 'Alert', icon = 'success', time=0, maxOpen
   }
 }
 
-function base_url(array = []) {
-  var url = localStorage.getItem('url');
-  return array.length == 0 ? `${url}` : `${url}${array.join('/')}`;
+function base_url(array = [], get = {}) {
+  var url = localStorage.getItem('url') || ''; // Asegurar que haya una URL base
+  var path = array.length > 0 ? array.join('/') : ''; // Construir el path
+  var getData = Object.entries(get)
+      .filter(([_, value]) => value !== undefined && value !== null && value !== '') // Filtrar valores vacíos
+      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) // Codificar valores
+      .join('&');
+
+  return getData ? `${url}/${path}?${getData}` : `${url}/${path}`;
 }
 
 const separador_miles = (numero) => {

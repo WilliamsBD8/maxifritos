@@ -132,3 +132,7 @@
 .chosen-container-single .chosen-single{
   width: 100%;
 }
+
+#table_data_filter {
+  min-height: inherit !important;
+}

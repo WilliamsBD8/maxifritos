@@ -66,7 +66,8 @@ class InvoiceController extends BaseController
                 'payable_amount'        => $value_total - $discount,
                 'discount_amount'       => $data->discount_amount,
                 'discount_percentage'   => $data->discount_percentage,
-                'address_origin'        => $data->coordenadas
+                'address_origin'        => $data->coordenadas,
+                'delivery_date'         => $data->delivery_date
             ];
             if($this->i_model->save($dataInvoice)){
                 $invoice_id = $this->i_model->insertID();
@@ -140,7 +141,8 @@ class InvoiceController extends BaseController
                 'invoice_amount'        => $value_total,
                 'payable_amount'        => $value_total - $discount,
                 'discount_amount'       => $data->discount_amount,
-                'discount_percentage'   => $data->discount_percentaje
+                'discount_percentage'   => $data->discount_percentaje,
+                'delivery_date'         => $data->delivery_date
             ];
             if($this->i_model->save($dataInvoice)){
                 foreach($data->products as $product){

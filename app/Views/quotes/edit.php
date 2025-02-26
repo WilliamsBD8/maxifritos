@@ -2,6 +2,7 @@
 
 <?= $this->section('styles'); ?>
 <link rel="stylesheet" href="<?= base_url(['assets/vendor/libs/select2/select2.css']) ?>" />
+<link rel="stylesheet" href="<?= base_url(['assets/vendor/libs/flatpickr/flatpickr.css']) ?>" />
 <?= $this->include('layouts/css_datatables') ?>
 <?= $this->endSection(); ?>
 
@@ -16,13 +17,31 @@
                         <div class="card-body">
                             <form action="javascript:void(0);" id="form_cotizacion">
                                 <div class="row">
-                                    <div class="col-sm-12 col-lg-3 col-md-6 mb-2">
+                                    <div class="col-sm-12 col-lg-4 col-md-6 mb-2">
                                         <div class="form-floating form-floating-outline">
                                             <input type="text" class="form-control flatpickr-input" value="<?= date('Y-m-d', strtotime($invoice->created_at)) ?>" placeholder="YYYY-MM-DD" id="date" readonly>
                                             <label for="date">Fecha</label>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 col-lg-3 col-md-6 mb-2">
+                                    <div class="col-sm-12 col-lg-4 col-md-6 mb-2">
+                                        <div class="form-floating form-floating-outline">
+                                            <input type="text" class="form-control" required placeholder="YYYY-MM-DD" id="delivery_date" value="<?= $invoice->delivery_date ?>">
+                                            <label for="delivery_date">* Fecha de entrega</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-lg-4 col-md-6 mb-2">
+                                        <div class="form-floating form-floating-outline">
+                                            <select class="select2 form-select form-select-lg" id="seller_id" name="seller" required>
+                                                <option value="" disabled selected>Seleccione un vendedor</option>
+                                                <?php foreach($sellers as $seller): ?>
+                                                    <option value="<?= $seller->id ?>" <?= $seller->id == $invoice->seller_id ? 'selected' : '' ?>><?= $seller->name ?></option>
+                                                <?php endforeach ?>
+                                            </select>
+                                            <label for="seller_id">* Vendedor</label>
+                                            <span class="form-floating-focused"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-lg-6 col-md-6 mb-2">
                                         <div class="form-floating form-floating-outline">
                                             <select
                                                 onchange="loadProducts(this.value)"
@@ -38,19 +57,7 @@
                                             <span class="form-floating-focused"></span>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 col-lg-3 col-md-6 mb-2">
-                                        <div class="form-floating form-floating-outline">
-                                            <select class="select2 form-select form-select-lg" id="seller_id" name="seller" required>
-                                                <option value="" disabled selected>Seleccione un vendedor</option>
-                                                <?php foreach($sellers as $seller): ?>
-                                                    <option value="<?= $seller->id ?>" <?= $seller->id == $invoice->seller_id ? 'selected' : '' ?>><?= $seller->name ?></option>
-                                                <?php endforeach ?>
-                                            </select>
-                                            <label for="seller_id">* Vendedor</label>
-                                            <span class="form-floating-focused"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-lg-3 col-md-6 mb-2">
+                                    <div class="col-sm-12 col-lg-6 col-md-6 mb-2">
                                         <div class="form-floating  form-floating-outline">
                                             <select data-allow-clear="true" class="form-select form-select-lg" id="products_id" name="product" onchange="addProduct(this.value)" data-placeholder="Seleccione un producto">
                                                 <option value="" disabled selected>Seleccione un producto</option>
@@ -104,6 +111,8 @@
 <script src="<?= base_url(['assets/vendor/libs/bootstrap-select/bootstrap-select.js']) ?>"></script>
 <script src="<?= base_url(['assets/vendor/libs/typeahead-js/typeahead.js']) ?>"></script>
 <script src="<?= base_url(['assets/vendor/libs/bloodhound/bloodhound.js']) ?>"></script>
+<script src="<?= base_url(['assets/vendor/libs/flatpickr/flatpickr.js']) ?>"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
 <?= $this->include('layouts/js_datatables') ?>
 <script>
     const productsData = () => <?= json_encode($products) ?>;

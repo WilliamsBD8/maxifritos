@@ -12,7 +12,12 @@ $(() => {
     loadSelectProducts()
     setTimeout(() => {
         loadProducts();
-    }, 1000)
+    }, 1000);
+    $('#delivery_date').flatpickr({
+        locale:             "es",
+        monthSelectorType:  'static',
+        minDate:            new Date(new Date().setDate(new Date().getDate() + 1)),
+    });
 });
 
 async function loadProducts(customer = null){
@@ -403,13 +408,13 @@ async function sendCotizacion(){
         return alert('Campos obligatorios', 'Por favor llenar los campos rerqueridos.', 'warning', 5000)
     }
 
-    const lat_lng = await coordenadas();
-    local_coord.lat = lat_lng.lat
-    local_coord.lng = lat_lng.lng
-    data.coordenadas = JSON.stringify(local_coord);
+    const lat_lng       = await coordenadas();
+    local_coord.lat     = lat_lng.lat
+    local_coord.lng     = lat_lng.lng
+    data.coordenadas    = JSON.stringify(local_coord);
 
-    data.products = products;
-    data.type_document = 1;
+    data.products       = products;
+    data.type_document  = 1;
     
     data.discount_amount = $('#discount_amount').val();
     data.discount_percentage = $('#discount_percentaje').val();

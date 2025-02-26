@@ -26,7 +26,12 @@
                             <div class="card-body">
                                 <div class="row gy-4 gy-sm-1">
 
-                                <h3 class="m-0 text-center text-date"><?= $date_period->name ?> <span class="text-muted fs-5">Remisiones</span></h3>
+                                <h3 class="m-0 text-center text-date"><?= $date_period->name ?></h3>
+                                <div class="col s12 card-datatable card-datatable-filter">
+                                    <table class="datatables-basic table table-bordered text-center h-100" id="table_data_filter"></table>
+                                </div>
+                                
+                                <div id="indicadores" class="row gy-4 gy-sm-1"></div>
 
                                 <!--     <php foreach ($type_documents as $key => $td): ?>
 
@@ -96,6 +101,17 @@
                     <div class="row">
                         <div class="col-sm-12 mb-2">
                             <div class="form-floating">
+                                <select class="form-select" id="type_document_filter" name="type_document_filter">
+                                    <?php foreach($type_documents as $type_document): ?>
+                                        <option value="<?= $type_document->id ?>" <?= $type_document->id == 2 ? "selected" : "" ?>><?= "$type_document->name [$type_document->code]" ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                                <label for="type_document_filter">Tipo de Documento</label>
+                                <span class="form-floating-focused"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mb-2">
+                            <div class="form-floating">
                                 <select class="form-select" id="period" name="period" onchange="changePeriod(this.value)">
                                     <?php foreach($periods as $period): ?>
                                         <option value="<?= $period->value ?>" <?= $period->selected ? "selected" : "" ?>><?= $period->name ?></option>
@@ -163,7 +179,10 @@
 <script src="<?= base_url(['assets/vendor/libs/flatpickr/flatpickr.js']) ?>"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
 <script>
-    const periodsData = () => <?= json_encode($periods) ?>;
+    const periodsData       = () => <?= json_encode($periods) ?>;
+    const typeDocumentData  = () => <?= json_encode($type_documents) ?>;
+    const customersData     = () => <?= json_encode($customers) ?>;
+    const productsData      = () => <?= json_encode($products) ?>;
 </script>
 <script src="<?= base_url(['master/js/products/history.js?v='.getCommit()]) ?>"></script>
 <?= $this->endSection(); ?>
