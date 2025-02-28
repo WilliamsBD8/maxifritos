@@ -140,7 +140,19 @@ async function load_datatable(){
                     }
                 },
                 action: async function (e, dt, button, config) {
-                    const exportData = await proceso_fetch_get(`${table[0].ajax.url()}?length=-1&date_init=${table[0].ajax.params().date_init}&&date_end=${table[0].ajax.params().date_end}`).then(res => res.data);
+
+                    const getData = {
+                        date_init:      $('#date_init').val(),
+                        date_end:       $('#date_end').val(),
+                        resolution:     $('#resolution_filter').val().trim(),
+                        customer_id:    $('#customer_filter').val(),
+                        type_document:  $('#type_document_filter').val(),
+                        delivery_date:  $('#delivery_date_filter').val(),
+                    }
+
+                    const url = base_url(['dashboard/cotizaciones/data'], getData);
+
+                    const exportData = await proceso_fetch_get(url).then(res => res.data);
                     dt.clear();
                     dt.rows.add(exportData);
                     dt.draw();
