@@ -57,6 +57,8 @@ async function loadTable(){
                     $('#formCustomer')[0].reset();
                     $('#formCustomer .status').hide();
 
+                    $("#formCustomer").find('button[type="submit"]').prop('disabled', false);
+
                     const offCanvasElement = document.querySelector('#canvasCustomer');
                     let offCanvasEl = new bootstrap.Offcanvas(offCanvasElement);
                     offCanvasEl.show();
@@ -81,6 +83,7 @@ async function loadTable(){
 async function saveCustomer(e){
     e.preventDefault();
     const form = $("#formCustomer");
+    form.find('button[type="submit"]').prop('disabled', true);
     const inputs = form.find('input, select, textarea');
     const data = {};
     let isValid = true;
@@ -102,6 +105,7 @@ async function saveCustomer(e){
     console.log(local_coord);
     const url = base_url(['dashboard/clientes/created']);
     const res = await proceso_fetch(url, data);
+    form.find('button[type="submit"]').prop('disabled', false);
     if(res.status == 'error'){
         console.log(res.errors);
         $.each(res.errors, function (key, message) {
@@ -124,7 +128,7 @@ async function saveCustomer(e){
             }
         })
     }
-    console.log(res);
+    
 }
 
 async function viewMap(){
@@ -202,6 +206,7 @@ async function edit(id_customer){
 async function editCustomer(e){
     e.preventDefault();
     const form = $("#formCustomer");
+    form.find('button[type="submit"]').prop('disabled', true);
     const inputs = form.find('input, select, textarea');
     const data = {};
     let isValid = true;
@@ -223,6 +228,8 @@ async function editCustomer(e){
     console.log(data);
     const url = base_url(['dashboard/clientes/edit']);
     const res = await proceso_fetch(url, data);
+    
+    form.find('button[type="submit"]').prop('disabled', false);
     if(res.status == 'error'){
         console.log(res.errors);
         $.each(res.errors, function (key, message) {

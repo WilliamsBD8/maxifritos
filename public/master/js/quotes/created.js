@@ -15,8 +15,8 @@ $(() => {
     }, 1000);
     $('#delivery_date').flatpickr({
         locale:             "es",
-        monthSelectorType:  'static',
-        minDate:            new Date(new Date().setDate(new Date().getDate() + 1)),
+        monthSelectorType:  'dropdown',
+        minDate: new Date().fp_incr(1),
     });
 });
 
@@ -265,8 +265,17 @@ function loadTable(){
         buttons: [
             {
                 text: '<i class="ri-add-line ri-16px me-sm-2"></i> <span class="d-none d-sm-inline-block">Crear Cotizacion</span>',
-                className: `btn btn-primary waves-effect waves-light mt-2`,
-                action: () => sendCotizacion()
+                className: `btn btn-primary waves-effect waves-light mt-2 btn-send-cotizacion`,
+                action: async (e, dt, node, config) => {
+                    node.attr('disabled', true);
+                    try {
+                        await sendCotizacion(); // Llama a la función asíncrona
+                    } catch (error) {
+                        console.error("Error al enviar cotización:", error);
+                    } finally {
+                        node.attr('disabled', false); // 🔓 Reactiva el botón siempre, incluso si hay error
+                    }
+                }
             },
             {
                 text: '<i class="ri-refund-2-fill"></i> <span class="d-none d-sm-inline-block">Añadir Descuento</span>',
@@ -408,6 +417,8 @@ async function sendCotizacion(){
     if(!isValid){
         return alert('Campos obligatorios', 'Por favor llenar los campos rerqueridos.', 'warning', 5000)
     }
+
+    // return console.log(data);
 
     const lat_lng       = await coordenadas();
     local_coord.lat     = lat_lng.lat

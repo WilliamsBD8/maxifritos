@@ -47,7 +47,7 @@ $(() => {
     $('#delivery_date').flatpickr({
         locale:             "es",
         monthSelectorType:  'static',
-        minDate:            new Date(new Date().setDate(new Date().getDate() + 1)),
+        minDate:            new Date().fp_incr(1),
         onClose: (_, dateStr, instance) => (dateStr === "" && invoice.delivery_date ? instance.setDate(invoice.delivery_date, true) : null)
     });
 });
