@@ -1,6 +1,6 @@
 
 
-const productsD = [];
+const productsD = productsData();
 const products = [];
 const local_coord = {
     lat:0,
@@ -16,11 +16,11 @@ $(() => {
     $('#delivery_date').flatpickr({
         locale:             "es",
         monthSelectorType:  'dropdown',
-        minDate: new Date().fp_incr(1),
+        minDate: new Date(),
     });
 });
 
-async function loadProducts(customer = null){
+async function loadProducts(customer = null){ // Funcion para traer los productos segun el cliente
     if(customer != null){
         let customers = customersData();
         let cust = customers.find(c => c.id == customer);
@@ -31,16 +31,17 @@ async function loadProducts(customer = null){
             $('#seller_id').select2();
         }
 
-        const url = base_url(['data/products']);
-        const data = {
-            customer
-        }
-        const res = await proceso_fetch(url, data, 0);
-        productsD.splice(0, productsD.length, ...res.data);
-        products.map(p => {
-            let prod = productsD.find(pd => pd.id == p.id)
-            p.value = prod.value
-        });
+        // const url = base_url(['data/products']);
+        // const data = {
+        //     customer
+        // }
+        // const res = await proceso_fetch(url, data, 0);
+        // productsD.splice(0, productsD.length, ...res.data);
+        // products.map(p => {
+        //     let prod = productsD.find(pd => pd.id == p.id)
+        //     p.value = prod.value
+        // });
+        
         if(cust.discount_percentage > 0){
             var aux_customer = `
                 Descuento sugerido del ${cust.discount_percentage}%: ${cust.discount_detail}

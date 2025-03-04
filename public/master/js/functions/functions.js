@@ -279,22 +279,22 @@ function loadSelectProducts(){
     select2Focus($this);
     $this.wrap('<div class="position-relative"></div>').select2({
         placeholder: "Seleccione un producto",
-        matcher: function(params, data) {
-            if ($.trim(params.term) === '') {
-                return data;
-            }
-            const term = params.term.toLowerCase();
-            if (user.role_id == 3) { // Busqueda por codigo solo para los cotizadores
-              if (data.text.toLowerCase().includes(term)) {
-                return data;
-              }
-            } else {
-              if (data.text.toLowerCase().startsWith(term)) {
-                  return data;
-              }
-            }
-            return null;
-        },
+        // matcher: function(params, data) {
+        //     if ($.trim(params.term) === '') {
+        //         return data;
+        //     }
+        //     const term = params.term.toLowerCase();
+        //     if (user.role_id == 3) { // Busqueda por codigo solo para los cotizadores
+        //       if (data.text.toLowerCase().includes(term)) {
+        //         return data;
+        //       }
+        //     } else {
+        //       if (data.text.toLowerCase().startsWith(term)) {
+        //           return data;
+        //       }
+        //     }
+        //     return null;
+        // },
         language: {
             noResults: function() {
                 return "No hay coincidencias desde el inicio";

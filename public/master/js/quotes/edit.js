@@ -1,6 +1,6 @@
 
-const productsD = [];
-// const productsD = productsData();
+// const productsD = [];
+const productsD = productsData();
 const invoice = invoiceData();
 const products = [];
 const table = [];
@@ -47,7 +47,7 @@ $(() => {
     $('#delivery_date').flatpickr({
         locale:             "es",
         monthSelectorType:  'static',
-        minDate:            new Date().fp_incr(1),
+        minDate:            new Date(),
         onClose: (_, dateStr, instance) => (dateStr === "" && invoice.delivery_date ? instance.setDate(invoice.delivery_date, true) : null)
     });
 });
@@ -64,14 +64,15 @@ async function loadProducts(customer = null){
             $('#seller_id').select2();
         }
 
-        const url = base_url(['data/products']);
-        const data = { customer }
-        const res = await proceso_fetch(url, data, 0);
-        productsD.splice(0, productsD.length, ...res.data);
-        products.map(p => {
-            let prod = productsD.find(pd => pd.id == p.id)
-            p.value = prod.value
-        });
+        // const url = base_url(['data/products']);
+        // const data = { customer }
+        // const res = await proceso_fetch(url, data, 0);
+        // productsD.splice(0, productsD.length, ...res.data);
+        // products.map(p => {
+        //     let prod = productsD.find(pd => pd.id == p.id)
+        //     p.value = prod.value
+        // });
+
         if(cust.discount_percentage > 0){
             var aux_customer = `
                 Descuento sugerido del ${cust.discount_percentage}%: ${cust.discount_detail}
