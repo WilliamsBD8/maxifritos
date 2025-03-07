@@ -417,6 +417,7 @@ function loadBranch(branches = [], valid = true){
     $this.wrap('<div class="position-relative"></div>').select2({
         placeholder: "Seleccione una sucursal",
         tags: true,
+        allowClear: true,
         language: {
             noResults: function() {
                 return "No hay coincidencias desde el inicio";
