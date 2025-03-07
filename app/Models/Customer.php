@@ -111,7 +111,7 @@ class Customer extends Model
                     case 'quotes':
                         $customer->branches = $this->builder('invoices')
                             ->select('branch_office')
-                            ->distinct('branch_office')->where(['customer_id' => $customer->id])->get()->getResult();
+                            ->distinct('branch_office')->where(['customer_id' => $customer->id, 'branch_office !=' => NULL])->get()->getResult();
                         break;
                     default:
                         break;
