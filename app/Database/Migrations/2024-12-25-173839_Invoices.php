@@ -9,7 +9,7 @@ class Invoices extends Migration
     public function up()
     {
         $this->forge->addField([
-            'id'        			          => ['type' => 'INT', 'constraint' => 11, 'unsigned' => TRUE, 'auto_increment'  => TRUE],
+            'id'        			    => ['type' => 'INT', 'constraint' => 11, 'unsigned' => TRUE, 'auto_increment'  => TRUE],
             'customer_id'               => ['type' => 'INT', 'constraint' => 11, 'unsigned' => TRUE],
             'seller_id'                 => ['type' => 'INT', 'constraint' => 11, 'unsigned' => TRUE, 'null' => TRUE],
             'user_id'                   => ['type' => 'INT', 'constraint' => 11, 'unsigned' => TRUE],
@@ -17,13 +17,14 @@ class Invoices extends Migration
             'status_id'                 => ['type' => 'INT', 'constraint' => 11, 'unsigned' => TRUE],
             'resolution'                => ['type' => 'INT', 'constraint' => 11],
             'resolution_reference'      => ['type' => 'INT', 'constraint' => 11, 'unsigned' => TRUE, 'null' => TRUE],
-            'address'  			            => ['type' => 'TEXT', 'null' => TRUE],
-            'note'  			              => ['type' => 'TEXT', 'null' => TRUE],
+            'address'  			        => ['type' => 'TEXT', 'null' => TRUE],
+            'note'  			        => ['type' => 'TEXT', 'null' => TRUE],
+            'branch_office'             => ['type' => 'TEXT', 'null' => TRUE],
             'invoice_amount'            => ['type' => 'DECIMAL(20,2)', 'default' => 0],
             'payable_amount'            => ['type' => 'DECIMAL(20,2)', 'default' => 0],
             'discount_amount'           => ['type' => 'DECIMAL(20,2)', 'default' => 0],
             'discount_percentage'       => ['type' => 'INT', 'default' => 0],
-            'address_origin'  			    => ['type' => 'TEXT', 'null' => TRUE],
+            'address_origin'  			=> ['type' => 'TEXT', 'null' => TRUE],
             'delivery_date'             => ['type' => 'DATE', 'null' => FALSE],
             'created_at'                => ['type' => 'DATETIME', 'null' => TRUE],
             'updated_at'                => ['type' => 'DATETIME', 'null' => TRUE]

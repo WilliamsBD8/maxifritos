@@ -134,6 +134,7 @@ class QuotesController extends BaseController
         $c_model = new Customer();
         $p_model = new Product();
         $u_model = new User();
+        $c_model->setAdditionalParams(['origin' => 'quotes']);
         $customers = $c_model->where(['type_customer_id' => 1, 'customers.status' => 'active'])->findAll();
         $products = $p_model->where(['status' => 'active'])->findAll();
         $sellers    = $u_model->where(['role_id' => 3, 'status' => 'active'])->findAll();
@@ -148,6 +149,8 @@ class QuotesController extends BaseController
         $c_model = new Customer();
         $p_model = new Product();
         $u_model = new User();
+        
+        $c_model->setAdditionalParams(['origin' => 'quotes']);
         $customers = $c_model->where(['type_customer_id' => 1, 'customers.status' => 'active'])->findAll();
         $products = $p_model->where(['status' => 'active'])->findAll();
         $invoice = $this->invoices->find($id);

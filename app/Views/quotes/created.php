@@ -45,7 +45,16 @@
                                             <label for="customer_id">* Cliente de cotización</label>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 col-lg-6 col-md-6 mb-2">
+                                    <div class="col-sm-12 col-lg-4 col-md-6 mb-2">
+                                        <div class="form-floating form-floating-outline">
+                                            <select
+                                                class="form-select form-select-lg"
+                                                id="branch_office" name="branch_office">
+                                            </select>
+                                            <label for="branch_office">Seleccione Sucursal</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-lg-4 col-md-6 mb-2">
                                         <div class="form-floating form-floating-outline">
                                             <select
                                             class="select2 form-select form-select-lg"
@@ -59,7 +68,7 @@
                                             <label for="seller_id">* Vendedor</label>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 col-lg-6 col-md-12 mb-2">
+                                    <div class="col-sm-12 col-lg-4 col-md-6 mb-2">
                                         <div class="form-floating form-floating-outline">
                                             <select
                                             class="form-select form-select-lg"

@@ -9,10 +9,13 @@ const local_coord = {
 const table = [];
 
 $(() => {
-    loadSelectProducts()
+    loadSelectProducts();
+    loadBranch();
+
     setTimeout(() => {
         loadProducts();
     }, 1000);
+
     $('#delivery_date').flatpickr({
         locale:             "es",
         monthSelectorType:  'dropdown',
@@ -30,6 +33,8 @@ async function loadProducts(customer = null){ // Funcion para traer los producto
             $('#seller_id').val(seller.id);
             $('#seller_id').select2();
         }
+        loadBranch(cust.branches, false)
+
 
         // const url = base_url(['data/products']);
         // const data = {
@@ -394,6 +399,33 @@ function reloadTable(){
     $(window).scrollTop(scrollPos);
 }
 
+function loadBranch(branches = [], valid = true){
+    var $this = $('#branch_office');
+    if(branches.length > 0 || !valid){
+        $this.select2('destroy').empty();
+    }
+    $this.attr('disabled', valid)
+    var newOption = new Option("", "", false, false);
+    $this.append(newOption)
+
+    branches.forEach(item => {
+        var newOption = new Option(item.branch_office, item.branch_office, false, false);
+        $this.append(newOption);
+    });
+
+    select2Focus($this);
+    $this.wrap('<div class="position-relative"></div>').select2({
+        placeholder: "Seleccione una sucursal",
+        tags: true,
+        language: {
+            noResults: function() {
+                return "No hay coincidencias desde el inicio";
+            }
+        },
+        dropdownParent: $this.parent()
+    });
+}
+
 async function sendCotizacion(){
     if(products.length == 0){
         $('#products_id').addClass('is-invalid');
@@ -405,7 +437,7 @@ async function sendCotizacion(){
     let isValid = true;
     inputs.each(function () {
         const input = $(this);
-        const value = input.val()
+        const value = input.val() ? input.val().trim() : "";
         if (!value && input.attr('required') != undefined) {
             isValid = false;
             input.addClass('is-invalid');

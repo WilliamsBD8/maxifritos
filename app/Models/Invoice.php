@@ -22,6 +22,7 @@ class Invoice extends Model
         'resolution_reference',
         'address',
         'note',
+        'branch_office',
         'invoice_amount',
         'payable_amount',
         'discount_amount',

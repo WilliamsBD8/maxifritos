@@ -29,11 +29,11 @@ $(() => {
             }
         }
     });
+    loadBranch();
     setTimeout(async () => {
         let validador = invoice.line_invoice.some(l => l.discount_percentage != 0);
         await loadProducts(invoice.customer_id);
         invoice.line_invoice.map((line) => {
-            console.log(line);
             line.line_invoice_id = line.id;
             line.isDelete = false;
             var product = productsD.find(p => p.id == line.product_id);
@@ -50,6 +50,7 @@ $(() => {
         minDate:            new Date(),
         onClose: (_, dateStr, instance) => (dateStr === "" && invoice.delivery_date ? instance.setDate(invoice.delivery_date, true) : null)
     });
+
 });
 
 async function loadProducts(customer = null){
@@ -63,6 +64,12 @@ async function loadProducts(customer = null){
             $('#seller_id').val(seller.id);
             $('#seller_id').select2();
         }
+
+        console.log(cust);
+
+        loadBranch(cust.branches, false)
+
+        $('#branch_office').val(invoice.branch_office).trigger('change');
 
         // const url = base_url(['data/products']);
         // const data = { customer }
@@ -410,6 +417,33 @@ function reloadTable(){
     $(window).scrollTop(scrollPos);
 }
 
+function loadBranch(branches = [], valid = true){
+    var $this = $('#branch_office');
+    if(branches.length > 0 || !valid){
+        $this.select2('destroy').empty();
+    }
+    $this.attr('disabled', valid)
+    var newOption = new Option("", "", false, false);
+    $this.append(newOption)
+
+    branches.forEach(item => {
+        var newOption = new Option(item.branch_office, item.branch_office, false, false);
+        $this.append(newOption);
+    });
+
+    select2Focus($this);
+    $this.wrap('<div class="position-relative"></div>').select2({
+        placeholder: "Seleccione una sucursal",
+        tags: true,
+        language: {
+            noResults: function() {
+                return "No hay coincidencias desde el inicio";
+            }
+        },
+        dropdownParent: $this.parent()
+    });
+}
+
 async function sendCotizacion(){
     if(products.length == 0){
         $('#products_id').addClass('is-invalid');
@@ -421,7 +455,7 @@ async function sendCotizacion(){
     let isValid = true;
     inputs.each(function () {
         const input = $(this);
-        const value = input.val()
+        const value = input.val() ? input.val().trim() : "";
         if (!value && input.attr('required') != undefined) {
             isValid = false;
             input.addClass('is-invalid');

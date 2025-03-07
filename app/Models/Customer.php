@@ -50,7 +50,7 @@ class Customer extends Model
     protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
     protected $beforeFind     = ['functionBeforeFind'];
-    protected $afterFind      = [];//'functionAfterFind'
+    protected $afterFind      = ['functionAfterFind'];//
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
@@ -102,14 +102,24 @@ class Customer extends Model
         return $data;
     }
 
-    // protected function functionAfterFind(array $data){
-    //     log_message('info', json_encode($data));
-    //     if (isset($data['data']) && is_array($data['data'])) {
-    //         foreach ($data['data'] as &$customer) {
-    //             // Agregar un campo calculado, por ejemplo, un precio con descuento
-    //             // $customer->document_identification = $product->value * 0.9; // 10% de descuento
-    //         }
-    //     }
-    //     return $data;
-    // }
+    protected function functionAfterFind(array $data){
+        log_message('info', json_encode($data));
+        if (isset($data['data']) && is_array($data['data'])) {
+            $params = (object) $this->additionalParams;
+            foreach ($data['data'] as &$customer) {
+                switch($params->origin){
+                    case 'quotes':
+                        $customer->branches = $this->builder('invoices')
+                            ->select('branch_office')
+                            ->distinct('branch_office')->where(['customer_id' => $customer->id])->get()->getResult();
+                        break;
+                    default:
+                        break;
+                }
+                // Agregar un campo calculado, por ejemplo, un precio con descuento
+                // $customer->document_identification = $product->value * 0.9; // 10% de descuento
+            }
+        }
+        return $data;
+    }
 }
