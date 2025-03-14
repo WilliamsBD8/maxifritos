@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/page'); ?>
 
-<?= $this->section('title'); ?> - Reporte Cliente<?= $this->endSection(); ?>
+<?= $this->section('title'); ?> - Informe Cliente<?= $this->endSection(); ?>
 
 <?= $this->section('styles'); ?>
 <?= $this->include('layouts/css_datatables') ?>
@@ -25,7 +25,7 @@
                         <div class="card-widget-separator-wrapper">
                             <div class="card-body">
                                 <div class="row gy-4 gy-sm-1">
-                                <h4 class="card-title text-center">Reporte de Clientes - Productos
+                                <h4 class="card-title text-center">Informe de Clientes - Productos
                                     <br>
                                     <span class="m-0 text-muted text-center text-date"><?= $date_period->name ?></span>
                                 </h4>

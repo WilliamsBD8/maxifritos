@@ -40,13 +40,13 @@ function loadTable(){
                 extend: 'excel',
                 text: '<i class="ri-file-excel-line me-1"></i><span class="d-none d-sm-inline-block">Excel</span>',
                 className: `btn rounded-pill btn-label-success waves-effect mx-2 mt-2 ${user.role_id == 3 ? 'd-none' : ''}`,
-                filename: 'Reporte_Clientes', // 🔹 Define aquí el nombre del archivo
+                filename: 'Informe_Clientes', // 🔹 Define aquí el nombre del archivo
                 title: function () {
                     let type_document   = type_documents.find(td => td.id == $('#type_document_filter').val());
                     let customer        = customers.find(c => c.id == $('#customer_filter').val());
                     let dates = `Desde ${$("#date_init").val()} hasta ${$("#date_end").val()}`;
 
-                    let title = !!customer ? `Reporte Cliente: ${customer.name}` : "Reporte Clientes";
+                    let title = !!customer ? `Informe Cliente: ${customer.name}` : "Informe Clientes";
                     title += !!type_document ? ` | ${type_document.name} - ${type_document.code}` : "";
                     title += ` | ${dates}`;
                     return title;
