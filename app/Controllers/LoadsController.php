@@ -217,7 +217,7 @@ class LoadsController extends BaseController
             else
                 $discount = array_reduce($invoice->line_invoices, function($carry, $product){
                     $product = (object) $product;
-                    $value = $product->discount_percentage == 0 ? 0 : ($product->discount_percentage / 100) * $product->value;
+                    $value = $product->discount_percentage == 0 ? ($product->discount_amount != 0 ? $product->discount_amount : 0) : ($product->discount_percentage / 100) * $product->value;
                     return $carry += $product->quantity * $value;
                 }, 0);
             

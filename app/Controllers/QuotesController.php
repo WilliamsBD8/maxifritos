@@ -70,11 +70,20 @@ class QuotesController extends BaseController
             ->join('customers', 'customers.id = invoices.customer_id', 'left')
             ->findAll();
 
+        $sellers    = $this->i_model->distinct('invoices.seller_id')
+            ->select([
+                'users.id',
+                'users.name'
+            ])
+            ->join('users', 'users.id = invoices.seller_id', 'left')
+            ->findAll();
+
         return view('quotes/index', [
             'status'            => $status,
             'type_documents'    => $type_documents,
             'periods'           => $periods,
-            'customers'         => $customers
+            'customers'         => $customers,
+            'sellers'           => $sellers
         ]);
     }
 

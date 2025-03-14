@@ -106,6 +106,12 @@ class Invoice extends Model
             ]);
         }
 
+        if(isset($getData->seller_id) && !empty($getData->seller_id)){
+            $this->where([
+                'invoices.seller_id' => $getData->seller_id,
+            ]);
+        }
+
         return $this;
     }
 
@@ -178,7 +184,6 @@ class Invoice extends Model
                     ];
                     return $carry;
                 }, []);
-
                 $customers = array_reduce($data['data']['data'], function ($carry, $item) {
                     $id = $item->id_customer;
                     $carry[$id] = [
@@ -187,7 +192,6 @@ class Invoice extends Model
                     ];
                     return $carry;
                 }, []);
-
                 $data['data']['products'] = array_values($products);
                 $data['data']['customers'] = array_values($customers);
                 break;

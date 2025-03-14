@@ -28,6 +28,24 @@ function format_date($date) {
     return $formattedDate;
 }
 
+function getPeriod(){
+    $periods = [
+        (object) ['value' => "", 'name' => 'Personalizado', "selected" => false],
+        (object) ['value' => "day", 'name' => 'Hoy', "selected" => false],
+        (object) ['value' => "yesterday", 'name' => 'Ayer', "selected" => false],
+        (object) ['value' => "weekend", 'name' => 'Esta semana', "selected" => false],
+        (object) ['value' => "last_weekend", 'name' => 'Semana Pasada', "selected" => false],
+        (object) ['value' => "month", 'name' => 'Este mes', "selected" => !false],
+        (object) ['value' => "last_month", 'name' => 'Mes pasado', "selected" => false],
+    ];
+
+    foreach ($periods as $key => $period) {
+        $period->dates = getPeriodDate($period->value);
+    }
+
+    return $periods;
+}
+
 function getPeriodDate($period){
     switch ($period) {
         case 'day':

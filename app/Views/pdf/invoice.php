@@ -45,6 +45,8 @@
                                 <tr>
                                     <td class="pe-4">Correo:</td>
                                     <td><?= $invoice->customer->email ?></td>
+                                    <td class="pe-4">Fecha Entrega:</td>
+                                    <td><?= $invoice->delivery_date ?></td>
                                 </tr>
                             </tbody>
                         </table>

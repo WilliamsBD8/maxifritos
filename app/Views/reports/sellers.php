@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/page'); ?>
 
-<?= $this->section('title'); ?> - Historial Productos<?= $this->endSection(); ?>
+<?= $this->section('title'); ?> - Reporte Vendedores<?= $this->endSection(); ?>
 
 <?= $this->section('styles'); ?>
 <?= $this->include('layouts/css_datatables') ?>
@@ -26,7 +26,10 @@
                             <div class="card-body">
                                 <div class="row gy-4 gy-sm-1">
 
-                                <h3 class="m-0 text-center text-date"><?= $date_period->name ?></h3>
+                                <h4 class="card-title text-center">Reporte de Vendedores - Productos
+                                    <br>
+                                    <span class="m-0 text-muted text-center text-date"><?= $date_period->name ?></span>
+                                </h4>
                                 <div class="col s12 card-datatable card-datatable-filter">
                                     <table class="datatables-basic table table-bordered text-center h-100" id="table_data_filter"></table>
                                 </div>
@@ -139,16 +142,17 @@
                         </div>
                         <div class="col-sm-12 mb-2">
                             <div class="form-floating form-floating-outline">
-                                <select class="select2 form-select" data-allow-clear="true" id="customer_filter" name="customer_filter" data-placeholder="Seleccione un cliente">
+                                <select class="select2 form-select" data-allow-clear="true" id="seller_filter" name="seller_filter" data-placeholder="Seleccione un cliente">
                                     <option value=""></option>
-                                    <?php foreach($customers as $customer): ?>
-                                        <option value="<?= $customer->id ?>"><?= $customer->name ?></option>
+                                    <?php foreach($sellers as $seller): ?>
+                                        <option value="<?= $seller->id ?>"><?= $seller->name ?></option>
                                     <?php endforeach ?>
                                 </select>
-                                <label for="customer_filter">Cliente</label>
+                                <label for="seller_filter">Vendedor</label>
                                 <span class="form-floating-focused"></span>
                             </div>
                         </div>
+
                         <div class="col-sm-12 mb-2">
                             <div class="form-floating form-floating-outline">
                                 <select class="select2 form-select" data-allow-clear="true" id="product_filter" name="product_filter" data-placeholder="Seleccione un producto">
@@ -181,8 +185,8 @@
 <script>
     const periodsData       = () => <?= json_encode($periods) ?>;
     const typeDocumentData  = () => <?= json_encode($type_documents) ?>;
-    const customersData     = () => <?= json_encode($customers) ?>;
+    const sellersData       = () => <?= json_encode($sellers) ?>;
     const productsData      = () => <?= json_encode($products) ?>;
 </script>
-<script src="<?= base_url(['master/js/products/history.js?v='.getCommit()]) ?>"></script>
+<script src="<?= base_url(['master/js/reports/sellers.js?v='.getCommit()]) ?>"></script>
 <?= $this->endSection(); ?>

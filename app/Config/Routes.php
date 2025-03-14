@@ -62,11 +62,19 @@ $routes->group('dashboard', function ($routes){
 		$routes->post('created', 'CustomersController::created');
 		$routes->post('edit', 'CustomersController::edit');
 		$routes->post('delete', 'CustomersController::delete');
+
+		$routes->group('sucursales', function($routes){
+			$routes->get('(:num)', 'BranchController::index/$1');
+			$routes->get('data', 'BranchController::data');
+			$routes->post('created', 'BranchController::created');
+			$routes->post('edit', 'BranchController::edit');
+		});
 	});
 
-	$routes->group('productos', function($routes){
-		$routes->get('history', 'ProductsController::history');
-		$routes->get('history/data', 'ProductsController::historyData');
+	$routes->group('reports', function($routes){
+		$routes->get('customers', 'ReportsController::customers');
+		$routes->get('sellers', 'ReportsController::sellers');
+		$routes->get('data/(:segment)', 'ReportsController::data/$1');
 	});
 
 });

@@ -119,8 +119,10 @@ async function load_datatable(){
                 extend: 'excel',
                 text: '<i class="ri-file-excel-line me-1"></i><span class="d-none d-sm-inline-block">Excel</span>',
                 className: `btn rounded-pill btn-label-success waves-effect mx-2 mt-2 ${user.role_id == 3 ? 'd-none' : ''}`,
+                filename: 'Reporte_Documentos', // 🔹 Define aquí el nombre del archivo
+                title: "Reporte de documentos",
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7],
+                    columns: [0, 1, 3, 4, 5, 6, 7, 8, 9],
                     format: {
                         body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
@@ -226,6 +228,9 @@ async function load_datatable(){
                     let offCanvasEl = new bootstrap.Offcanvas(offCanvasElement);
                     offCanvasEl.show();
                     $(`#customer_filter`).select2({
+                        dropdownParent: $('#canvasFilter')
+                    });
+                    $(`#seller_filter`).select2({
                         dropdownParent: $('#canvasFilter')
                     });
                     $(`#type_document_filter`).select2({

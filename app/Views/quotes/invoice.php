@@ -13,7 +13,9 @@
 
         <!-- Invoice -->
         <div class="col-xl-9 col-md-8 col-12 mb-md-0 mb-6">
-            <div class="card invoice-preview-card p-sm-12 p-6">
+            
+            <div class="card invoice-preview-card p-6 pt-0">
+                <h4 class="card-title text-center pt-6">Remisionar Cotización</h4>
                 <div class="card-body invoice-preview-header rounded-4 p-6">
                     <div
                         class="d-flex justify-content-between flex-xl-row flex-md-column flex-sm-row flex-column text-heading align-items-xl-center align-items-md-start align-items-sm-center flex-wrap gap-6">
@@ -53,6 +55,8 @@
                               <tr>
                                 <td class="pe-4">Correo:</td>
                                 <td><?= $invoice->customer->email ?></td>
+                                <td class="pe-4">Fecha Entrega:</td>
+                                <td><?= $invoice->delivery_date ?></td>
                               </tr>
                             </tbody>
                           </table>
@@ -169,6 +173,7 @@
                         <span class="d-flex align-items-center justify-content-center text-nowrap"><i
                         class="ri-send-plane-line ri-16px scaleX-n1-rtl me-2"></i>Remisionar</span>
                     </button>
+                    <p class=" text-center"><b>Fecha de entrega: </b><?= $invoice->delivery_date ?></p>
                     <div class="d-flex mb-4">
                         <a class="btn btn-outline-secondary d-grid w-100 me-4 waves-effect" target="_blank"
                             href="<?= base_url(['invoices/download', $invoice->id]) ?>">

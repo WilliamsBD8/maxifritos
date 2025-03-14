@@ -48,7 +48,7 @@ function menus(){
                 'type'          => 'secundario',
                 'status'        => 'active',
                 'references'    => $menu->id
-            ])->findAll();
+            ])->orderBy('position', 'asc')->findAll();
             foreach ($menu->sub_menu as $key => $sub_menu) {
                 $sub_menu->base_url = urlOption($sub_menu->id);
             }
@@ -61,7 +61,7 @@ function menus(){
             ])
             ->join('menus', 'menus.id = permissions.menu_id')
             ->join('roles', 'roles.id = permissions.role_id')
-            ->findAll();
+            ->orderBy('position', 'asc')->findAll();
             foreach ($menu->sub_menu as $key => $sub_menu) {
                 $sub_menu->base_url = urlOption($sub_menu->id);
             }
@@ -77,7 +77,7 @@ function submenu($refences)
     $menu = new Menu();
     if (session()->get('user')->role_id == 1) {
         $data = $menu->where(['type' => 'secundario', 'status' => 'active', 'references' => $refences])
-        ->orderBy('position', 'asc')
+        ->orderBy('position', 'ASC')
             ->get()
                 ->getResult();
     } else {
@@ -91,7 +91,7 @@ function submenu($refences)
             ->where()
             ->join('menus', 'menus.id = permissions.menu_id')
             ->join('roles', 'roles.id = permissions.role_id')
-            ->orderBy('position', 'asc')
+            ->orderBy('position', 'ASC')
             ->get()
             ->getResult();
     }
@@ -128,10 +128,24 @@ function urlOption($references = null)
 
 function isActive($data)
 {
-    if(base_url(uri_string()) == $data) {
+    $url_now = base_url(uri_string()); // Obtiene la URL actual completa
+
+    // Verifica si la URL actual es exactamente igual a `$data`
+    if ($url_now === $data) {
         return 'active';
     }
+
+    // Obtiene la parte restante de la URL después de la coincidencia con `$data`
+    $remainingPath = substr($url_now, strlen($data));
+
+    // Verifica si es una subruta válida (previene errores con `$remainingPath[0]`)
+    if (($remainingPath === '' || (isset($remainingPath[0]) && $remainingPath[0] === '/')) && $data != base_url('dashboard')) {
+        return 'active';
+    }
+
+    return ''; // Retorna vacío si no hay coincidencia
 }
+
 
 function subActive($id){
     $m_model = new Menu();

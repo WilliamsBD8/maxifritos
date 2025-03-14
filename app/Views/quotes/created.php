@@ -16,6 +16,7 @@
                 <div class="d-flex align-items-end row mb-1">
                     <div class="col-md-12">
                         <div class="card-body">
+                            <h4 class="card-title mb-4 text-center">Crear Cotización</h4>
                             <form action="javascript:void(0);" id="form_cotizacion">
                                 <div class="row">
                                     <div class="col-sm-12 col-lg-4 col-md-6 mb-2">

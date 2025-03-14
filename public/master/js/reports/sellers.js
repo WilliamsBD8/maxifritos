@@ -1,16 +1,17 @@
 const table             = [];
 const periods           = periodsData();
 const type_documents    = typeDocumentData();
-const customers         = customersData();
+const sellers           = sellersData();
 const products          = productsData();
+
 function loadTable(){
     table[0] = $(`#table_datatable`).DataTable({
         ajax: {
-            url: base_url(['dashboard/productos/history/data']),
+            url: base_url(['dashboard/reports/data/sellers']),
             data: function(d) {
                 d.date_init     = $('#date_init').val();
                 d.date_end      = $('#date_end').val();
-                d.customer_id   = $('#customer_filter').val();
+                d.seller_id     = $('#seller_filter').val();
                 d.product_id    = $('#product_filter').val();
                 d.type_document = $('#type_document_filter').val();
             },
@@ -20,10 +21,9 @@ function loadTable(){
             {title: 'Fecha Creación', data: 'created_at'},
             {title: 'Fecha Entrega', data: 'delivery_date'},
             {title: '# Resolución', data: 'resolution'},
-            {title: 'Tipo Documento', data: 'type_document_name'},
+            // {title: 'Tipo Documento', data: 'type_document_name'},
             {title: 'Producto', data: 'product_name'},
-            {title: 'Cliente', data: 'customer_name'},
-            {title: 'Cantidad', data: 'quantity'},
+            {title: 'Vendedor', data: 'seller_name'},
             {title: 'Valor', data: 'value', render:(v) => formatPrice(parseFloat(v))},
             {title: 'Descuento', data: 'discount_percentage', render: (d) => `${d} %`},
         ],
@@ -40,8 +40,18 @@ function loadTable(){
                 extend: 'excel',
                 text: '<i class="ri-file-excel-line me-1"></i><span class="d-none d-sm-inline-block">Excel</span>',
                 className: `btn rounded-pill btn-label-success waves-effect mx-2 mt-2 ${user.role_id == 3 ? 'd-none' : ''}`,
+                filename: 'Reporte_Vendedores', // 🔹 Define aquí el nombre del archivo
+                title: function () {
+                    let type_document   = type_documents.find(td => td.id == $('#type_document_filter').val());
+                    let seller        = sellers.find(c => c.id == $('#seller_filter').val());
+                    let dates = `Desde ${$("#date_init").val()} hasta ${$("#date_end").val()}`;
+
+                    let title = !!seller ? `Reporte Vendedor: ${seller.name}` : "Reporte Vendedores";
+                    title += !!type_document ? ` | ${type_document.name} - ${type_document.code}` : "";
+                    title += ` | ${dates}`;
+                    return title;
+                },
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8],
                     format: {
                         body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
@@ -65,11 +75,11 @@ function loadTable(){
                         length:         -1,
                         date_init:      $('#date_init').val(),
                         date_end:       $('#date_end').val(),
-                        customer_id:    $('#customer_filter').val(),
+                        seller_id:      $('#seller_filter').val(),
                         product_id:     $('#product_filter').val(),
                         type_document:  $('#type_document_filter').val(),
                     }
-                    const url_data = base_url(['dashboard/productos/history/data'], getData);
+                    const url_data = base_url(['dashboard/reports/data/sellers'], getData);
                     const exportData = await proceso_fetch_get(url_data).then(res => res.data);
                     dt.clear();
                     dt.rows.add(exportData);
@@ -84,7 +94,7 @@ function loadTable(){
                     const offCanvasElement = document.querySelector('#canvasFilter');
                     let offCanvasEl = new bootstrap.Offcanvas(offCanvasElement);
                     offCanvasEl.show();
-                    $(`#customer_filter`).select2({
+                    $(`#seller_filter`).select2({
                         dropdownParent: $('#canvasFilter')
                     });
                     $(`#product_filter`).select2({
@@ -109,18 +119,21 @@ function loadTable(){
                 let indicadores     = setting.json.indicadores;
                 
                 let type_document   = type_documents.find(td => td.id == $('#type_document_filter').val());
-                let customer        = customers.find(c => c.id == $('#customer_filter').val());
+                let seller        = sellers.find(c => c.id == $('#seller_filter').val());
                 let product         = products.find(p => p.id == $('#product_filter').val());
 
                 let rowData = [{
                     type_document_name: type_document ? type_document.name : "", 
                     type_document_code: type_document ? type_document.code : "", 
-                    customer_name: customer ? customer.name : "", 
+                    seller_name: seller ? seller.name : "",
                     product_name: product ? product.name : "", 
                     product_code: product ? product.code : "", 
                 }];
 
-                console.log(rowData);
+                let val_period = periods.find(p => p.value == $('#period').val());
+
+                let dates = val_period.value == "" ? `Desde <b>${$("#date_init").val()}</b> hasta <b>${$("#date_end").val()}</b>` : val_period.name;
+                $('.text-date').html(dates);
                 
                 if(!$.fn.DataTable.isDataTable("#table_data_filter")){
                     table[1] = $("#table_data_filter").DataTable({
@@ -135,7 +148,7 @@ function loadTable(){
                                 data:null, render: (_,__,_data) => `${_data.product_name} - ${_data.product_code}`,
                                 visible: false
                             },
-                            {title: "Cliente", data:'customer_name', visible: false}
+                            {title: "Vendedor", data:'seller_name', visible: false}
                         ],
                         paging: false, // Evita paginación innecesaria
                         searching: false, // Desactiva la búsqueda,
@@ -148,7 +161,10 @@ function loadTable(){
                 }
 
                 table[1].column(1).visible(!!product);  // Muestra la columna de "Producto" si product no es undefined
-                table[1].column(2).visible(!!customer);
+                table[1].column(2).visible(!!seller);
+
+                table[0].column(3).visible(!product);
+                table[0].column(4).visible(!seller);
                 
                 $('#indicadores').html(
                     Object.entries(indicadores).map(([key, value]) => `
@@ -168,6 +184,9 @@ function loadTable(){
             }
 
             $('#canvasFilter .btn-close').click();
+        },
+        initComplete: () => {
+            $('.head-label.text-center').html(`<span class="card-title m-0">El valor total solo refleja el valor del detalle, sin tomar en cuenta el descuento de la factura.</span>`)
         }
     })
 }
@@ -199,7 +218,7 @@ function sendFilter(e){
 
 function resetFilter(){
     $('#formFilter')[0].reset();
-    $('#customer_filter').val(null).trigger('change'); // Limpia Select2
+    $('#seller_filter').val(null).trigger('change'); // Limpia Select2
     $('#product_filter').val(null).trigger('change'); // Limpia Select2
     reloadTable()
 }
