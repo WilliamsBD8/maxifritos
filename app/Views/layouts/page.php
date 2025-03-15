@@ -29,8 +29,8 @@
       rel="stylesheet" />
 
     <?php
-      $color_primary = isset(configInfo()['primary_color']) && !empty(configInfo()['primary_color']) ? (string) configInfo()['primary_color'] : '8e24aa';
-      $secondary_color = isset(configInfo()['secundary_color']) && !empty(configInfo()['secundary_color']) ? (string) configInfo()['secundary_color'] : 'ff6e40';
+      $color_primary = isset(configInfo()->primary_color) && !empty(configInfo()->primary_color) ? (string) configInfo()->primary_color : '8e24aa';
+      $secondary_color = isset(configInfo()->secundary_color) && !empty(configInfo()->secundary_color) ? (string) configInfo()->secundary_color : 'ff6e40';
       $color_primary = "$color_primary";
     ?>
     
@@ -131,7 +131,7 @@
                     © 2024, Diseñado por <a href="https://www.iplanetcolombia.com/" target="_blank" class="footer-link">IplanetColombia</a>
                   </div>
                   <div class="d-none d-lg-inline-block">
-                    <!-- <?= isset(configInfo()['footer']) ? configInfo()['footer'] : '' ?> -->
+                    <!-- <?= isset(configInfo()->footer) ? configInfo()->footer : '' ?> -->
                   </div>
                 </div>
               </div>
