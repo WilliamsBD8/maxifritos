@@ -80,6 +80,12 @@ class TypeDocument extends Model
             $this->where([
                 'i.type_document_id' => $getData->type_document,
             ]);
+
+        if(isset($getData->seller_id) && !empty($getData->seller_id)){
+            $this->where([
+                'i.seller_id' => $getData->seller_id,
+            ]);
+        }
         return $this; // Permite el encadenamiento de métodos
     }
 

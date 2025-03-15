@@ -2,6 +2,7 @@
 
 use App\Models\Menu;
 use App\Models\Permission;
+use CodeIgniter\Config\Services;
 
 
 function menu()
@@ -135,13 +136,20 @@ function isActive($data)
         return 'active';
     }
 
-    // Obtiene la parte restante de la URL después de la coincidencia con `$data`
-    $remainingPath = substr($url_now, strlen($data));
+    $request = Services::request();
+    $url = $request->uri->getSegment(1);
+    $method =  $request->uri->getSegment(2);
 
-    // Verifica si es una subruta válida (previene errores con `$remainingPath[0]`)
-    if (($remainingPath === '' || (isset($remainingPath[0]) && $remainingPath[0] === '/')) && $data != base_url('dashboard')) {
-        return 'active';
+    if($url == "dashboard" && isset($method) && $data != base_url('dashboard')){
+        // Obtiene la parte restante de la URL después de la coincidencia con `$data`
+        $remainingPath = substr($url_now, strlen($data));
+    
+        // Verifica si es una subruta válida (previene errores con `$remainingPath[0]`)
+        if ($remainingPath === '' || (isset($remainingPath[0]) && $remainingPath[0] === '/')) {
+            return 'active';
+        }
     }
+
 
     return ''; // Retorna vacío si no hay coincidencia
 }

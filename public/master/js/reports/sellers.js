@@ -24,6 +24,7 @@ function loadTable(){
             // {title: 'Tipo Documento', data: 'type_document_name'},
             {title: 'Producto', data: 'product_name'},
             {title: 'Vendedor', data: 'seller_name'},
+            {title: 'Cantidad', data: 'quantity'},
             {title: 'Valor', data: 'value', render:(v) => formatPrice(parseFloat(v))},
             {title: 'Descuento', data: 'discount_percentage', render: (d) => `${d} %`},
         ],

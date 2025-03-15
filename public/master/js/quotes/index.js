@@ -14,6 +14,7 @@ async function load_datatable(){
                 d.date_end      = $('#date_end').val();
                 d.resolution    = $('#resolution_filter').val().trim();
                 d.customer_id   = $('#customer_filter').val();
+                d.seller_id     = $('#seller_filter').val();
                 d.type_document = $('#type_document_filter').val();
                 d.delivery_date = $('#delivery_date_filter').val();
             },
@@ -144,10 +145,12 @@ async function load_datatable(){
                 action: async function (e, dt, button, config) {
 
                     const getData = {
+                        length:         -1,
                         date_init:      $('#date_init').val(),
                         date_end:       $('#date_end').val(),
                         resolution:     $('#resolution_filter').val().trim(),
                         customer_id:    $('#customer_filter').val(),
+                        seller_id:      $('#seller_filter').val(),
                         type_document:  $('#type_document_filter').val(),
                         delivery_date:  $('#delivery_date_filter').val(),
                     }
