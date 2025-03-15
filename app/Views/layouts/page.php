@@ -14,7 +14,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title><?= !empty(configInfo()) && !empty(configInfo()->name_app) ? configInfo()->name_app : 'Name' ?><?= $this->renderSection('title') ?></title>
+    <title><?= !empty(configInfo()) && !empty(configInfo()['name_app']) ? configInfo()['name_app'] : 'Name' ?><?= $this->renderSection('title') ?></title>
 
     <meta name="description" content="" />
 
@@ -29,8 +29,8 @@
       rel="stylesheet" />
 
     <?php
-      $color_primary = isset(configInfo()->primary_color) && !empty(configInfo()->primary_color) ? (string) configInfo()->primary_color : '8e24aa';
-      $secondary_color = isset(configInfo()->secundary_color) && !empty(configInfo()->secundary_color) ? (string) configInfo()->secundary_color : 'ff6e40';
+      $color_primary = isset(configInfo()['primary_color']) && !empty(configInfo()['primary_color']) ? (string) configInfo()['primary_color'] : '8e24aa';
+      $secondary_color = isset(configInfo()['secundary_color']) && !empty(configInfo()['secundary_color']) ? (string) configInfo()['secundary_color'] : 'ff6e40';
       $color_primary = "$color_primary";
     ?>
     
@@ -131,7 +131,7 @@
                     © 2024, Diseñado por <a href="https://www.iplanetcolombia.com/" target="_blank" class="footer-link">IplanetColombia</a>
                   </div>
                   <div class="d-none d-lg-inline-block">
-                    <!-- <?= isset(configInfo()->footer) ? configInfo()->footer : '' ?> -->
+                    <!-- <?= isset(configInfo()['footer']) ? configInfo()['footer'] : '' ?> -->
                   </div>
                 </div>
               </div>
