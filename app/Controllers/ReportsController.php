@@ -37,7 +37,7 @@ class ReportsController extends BaseController
             'page'      => $_GET['page'] ?? ceil(($start - 1) / $length + 1)
         ];
 
-        $this->i_model->setAdditionalParams(["origin" => ""]);
+        // $this->i_model->setAdditionalParams(["origin" => ""]);
     }
 
     public function index(){
@@ -55,7 +55,9 @@ class ReportsController extends BaseController
     }
 
     public function dataIndex(){
-        return $this->respond(['data' => $this->dataIdx()]);
+        return $this->respond([
+            'data'      => $this->dataIdx()
+        ]);
     }
 
     private function dataIdx(){
@@ -66,6 +68,7 @@ class ReportsController extends BaseController
         $type_documents = $this->td_model->findAll();
         foreach ($type_documents as $key => $type_document) {
             $type_document->data = $this->i_model
+                ->setAdditionalParams(["origin" => ""])
                 ->select([
                     'IFNULL(SUM(invoices.payable_amount), 0) as total',
                     'DATE(invoices.created_at) as fecha'
@@ -81,6 +84,7 @@ class ReportsController extends BaseController
                 ->findAll();
 
             $type_document->month = $this->i_model
+                ->setAdditionalParams(["origin" => ""])
                 ->select([
                     'IFNULL(SUM(invoices.payable_amount), 0) as total',
                     'DAY(invoices.created_at) as fecha'
@@ -101,6 +105,7 @@ class ReportsController extends BaseController
             }, 0);
 
             $type_document->data_year = $this->i_model
+                ->setAdditionalParams(["origin" => ""])
                 ->select([
                     'IFNULL(SUM(invoices.payable_amount), 0) as total',
                     'MONTH(invoices.created_at) as mes',
@@ -115,6 +120,7 @@ class ReportsController extends BaseController
                 ->findAll();
 
             $type_document->data_day = $this->i_model
+                ->setAdditionalParams(["origin" => ""])
                 ->select([
                     'IFNULL(SUM(invoices.payable_amount), 0) as total',
                     'IFNULL(COUNT(invoices.id), 0) as total_inv',
@@ -131,6 +137,7 @@ class ReportsController extends BaseController
 
 
             $type_document->semanal = $this->i_model
+                ->setAdditionalParams(["origin" => ""])
                 ->select([
                     'IFNULL(SUM(invoices.payable_amount), 0) as total',
                     'DATE(invoices.created_at) as fecha'
@@ -145,6 +152,7 @@ class ReportsController extends BaseController
             ->findAll();
 
             $type_document->customers = $this->i_model
+                ->setAdditionalParams(["origin" => ""])
                 ->select([
                     'IFNULL(SUM(invoices.payable_amount), 0) as total',
                     'invoices.customer_id',

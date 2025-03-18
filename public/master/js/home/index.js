@@ -26,7 +26,7 @@ const chartColors = {
     }
 };
 
-const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+const mesesShortHome = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
 const type_documents = typeDocumentData();
 
@@ -38,7 +38,7 @@ for (let i = 0; i < 12; i++) {
   const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
-  months.push(`${year}-${meses[month - 1]}`);
+  months.push(`${year}-${mesesShortHome[month - 1]}`);
 }
 type_documents.map(td => {
     let data = [];

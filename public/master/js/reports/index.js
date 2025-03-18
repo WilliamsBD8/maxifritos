@@ -19,109 +19,12 @@ if (isDarkStyle) {
 }
 
 function graphicDay() {
-    const deliveryExceptionsChartE1 = document.querySelector("#sell-day"),
-        deliveryExceptionsChartConfig = {
-            chart: {
-                height: 400,
-                parentHeightOffset: 0,
-                type: "donut",
-            },
-            labels: ["Incorrect address", "Weather conditions"],
-            series: [55, 15],
-            colors: ["#522525", "#522963"],
-            stroke: {
-                width: 0,
-            },
-            dataLabels: {
-                enabled: false,
-                formatter: function (val, opt) {
-                    return parseInt(val) + "%";
-                },
-            },
-            legend: {
-                show: true,
-                position: "bottom",
-                offsetY: 10,
-                markers: {
-                    width: 8,
-                    height: 8,
-                    offsetX: -5,
-                },
-                itemMargin: {
-                    horizontal: 16,
-                    vertical: 5,
-                },
-                fontSize: "13px",
-                fontFamily: "Inter",
-                fontWeight: 400,
-                labels: {
-                    colors: headingColor,
-                    useSeriesColors: false,
-                },
-            },
-            tooltip: {
-                theme: "light",
-            },
-            grid: {
-                padding: {
-                    top: 15,
-                },
-            },
-            plotOptions: {
-                pie: {
-                    donut: {
-                        size: "75%",
-                        labels: {
-                            show: true,
-                            value: {
-                                fontSize: "24px",
-                                fontFamily: "Inter",
-                                color: headingColor,
-                                fontWeight: 500,
-                                offsetY: -30,
-                                formatter: function (val) {
-                                    return parseInt(val) + "%";
-                                },
-                            },
-                            name: {
-                                offsetY: 20,
-                                fontFamily: "Inter",
-                            },
-                            total: {
-                                show: true,
-                                fontSize: "15px",
-                                fontFamily: "Inter",
-                                label: "AVG. Exceptions",
-                                color: bodyColor,
-                                formatter: function (w) {
-                                    return "30%";
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-            responsive: [
-                {
-                    breakpoint: 420,
-                    options: {
-                        chart: {
-                            height: 360,
-                        },
-                    },
-                },
-            ],
-        };
-    if (
-        typeof deliveryExceptionsChartE1 !== undefined &&
-        deliveryExceptionsChartE1 !== null
-    ) {
-        const deliveryExceptionsChart = new ApexCharts(
-            deliveryExceptionsChartE1,
-            deliveryExceptionsChartConfig
-        );
-        deliveryExceptionsChart.render();
-    }
+    type_documents.map(td => {
+        if(td.data_day != null){
+            $(`.total_day_pri_${td.id}`).html(formatPrice(parseFloat(td.data_day.total)))
+            $(`.total_day_inv_${td.id}`).html(td.data_day.total_inv)
+        }
+    })
 }
 
 function graphicWeek() {
@@ -652,7 +555,6 @@ async function sendFilter(e){
 
     if(seller)
         $('.title-report').html(`Reporte General: ${seller.name}`)
-        
 
     $('#canvasFilter .btn-close').click();
     graphicWeek();

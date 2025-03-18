@@ -4,6 +4,8 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
+use CodeIgniter\Config\Services;
+
 class Invoice extends Model
 {
     protected $table            = 'invoices';
@@ -61,7 +63,10 @@ class Invoice extends Model
 
     public function setAdditionalParams(array $params)
     {
-        $getData = !empty($_GET) ? (object) $_GET : (object) $_POST;
+
+        $request = Services::request();
+        $getData = !empty($request->getVar()) ? (object)$request->getVar() : $request->getJson();
+
         $this->additionalParams = $params;
         $params = (object) $this->additionalParams;
         switch($params->origin){

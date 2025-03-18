@@ -25,7 +25,7 @@
                                 <span
                                     class="badge rounded-pill bg-<?= $td->color->class ?> mx-3 my-2 px-4 py-2"><?= "$td->name - $td->code" ?></span>
                                 <?php endforeach ?>
-                                <button class="btn btn-primary waves-effect waves-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#canvasFilter" aria-controls="canvasFilter">
+                                <button class="btn rounded-pill btn-label-primary waves-effect" type="button" data-bs-toggle="offcanvas" data-bs-target="#canvasFilter" aria-controls="canvasFilter">
                                     Filtrar
                                 </button>
                             </div>
@@ -49,8 +49,8 @@
                         <div class="w-100">
                             <div class="card-info">
                                 <div>
-                                    <h5 class="mb-0">$ <?= number_format($td->data_day->total, '2', '.', ',') ?></h5>
-                                    <h4 class="mb-1"><?= $td->data_day->total_inv ?></h4>
+                                    <h5 class="mb-0 total_day_pri_<?= $td->id ?>">$ 0.00</h5>
+                                    <h4 class="mb-1 total_day_inv_<?= $td->id ?>">0</h4>
                                 </div>
                                 <p class="mb-0 mt-1">
                                 <div class="d-flex gap-2 align-items-center justify-content-center mb-2">
@@ -92,17 +92,6 @@
                 </div>
                 <div class="card-body pt-xl-5">
                     <div id="total_semana"></div>
-                    <!-- <div class="d-flex justify-content-between mt-6">
-                        <div>
-                            <h6 class="mb-0">Most Visited Day</h6>
-                            <p class="mb-0 small">Total 62.4k Visits on Thursday</p>
-                        </div>
-                        <div class="avatar">
-                            <div class="avatar-initial bg-label-warning rounded">
-                                <i class="ri-arrow-right-s-line ri-24px scaleX-n1-rtl"></i>
-                            </div>
-                        </div>
-                    </div> -->
                 </div>
             </div>
         </div>
