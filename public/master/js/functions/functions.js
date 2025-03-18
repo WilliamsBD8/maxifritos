@@ -303,3 +303,34 @@ function loadSelectProducts(){
         dropdownParent: $this.parent()
     });
 }
+
+function obtenerDiaSemana(fecha) {
+  let diasSemana = DiaSemana();
+  let fechaObj = new Date(fecha);
+  let dia = fechaObj.getDay();
+  return [dia, diasSemana[dia]];
+}
+
+const DiaSemana = () => ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+const meses = (mes = null)  =>{
+  let meses = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+  ];
+  if (mes === null) {
+      return meses;
+  }
+  return meses[mes];
+}
+
+const mesesShort = (mes = null)  =>{
+  let meses = [
+      "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+      "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+  ];
+  if (mes === null) {
+      return meses;
+  }
+  return meses[mes];
+}

@@ -110,3 +110,16 @@ function getPeriodDate($period){
     }
     return (object) ["date_init" => $date_init, "date_end" => $date_end];    
 }
+
+function Dayspanish($day) {
+    $dias = [
+        'Monday'    => 'Lunes',
+        'Tuesday'   => 'Martes',
+        'Wednesday' => 'Miércoles',
+        'Thursday'  => 'Jueves',
+        'Friday'    => 'Viernes',
+        'Saturday'  => 'Sábado',
+        'Sunday'    => 'Domingo'
+    ];
+    return $dias[$day];
+}

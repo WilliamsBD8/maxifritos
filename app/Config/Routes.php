@@ -72,6 +72,9 @@ $routes->group('dashboard', function ($routes){
 	});
 
 	$routes->group('reports', function($routes){
+		$routes->get('', 'ReportsController::index');
+		$routes->post('data_index', 'ReportsController::dataIndex');
+
 		$routes->get('customers', 'ReportsController::customers');
 		$routes->get('sellers', 'ReportsController::sellers');
 		$routes->get('data/(:segment)', 'ReportsController::data/$1');

@@ -36,6 +36,143 @@ class ReportsController extends BaseController
             'start'     => $start = $_GET['start'] ?? 1,
             'page'      => $_GET['page'] ?? ceil(($start - 1) / $length + 1)
         ];
+
+        $this->i_model->setAdditionalParams(["origin" => ""]);
+    }
+
+    public function index(){
+
+        $type_documents = $this->dataIdx();
+
+        $sellers = $this->u_model->where(['role_id' => 3])->findAll();
+        
+        // return $this->respond($type_documents);
+
+        return view('reports/index', [
+            'documents' => $type_documents,
+            'sellers'   => $sellers
+        ]);
+    }
+
+    public function dataIndex(){
+        return $this->respond(['data' => $this->dataIdx()]);
+    }
+
+    private function dataIdx(){
+        $startOfWeek = date('Y-m-d', strtotime('-7 days'));
+        $startOfYear = date('Y-01-01');
+        $now = date('Y-m-d');
+
+        $type_documents = $this->td_model->findAll();
+        foreach ($type_documents as $key => $type_document) {
+            $type_document->data = $this->i_model
+                ->select([
+                    'IFNULL(SUM(invoices.payable_amount), 0) as total',
+                    'DATE(invoices.created_at) as fecha'
+                    // 'MONTH(invoices.created_at) as mes',
+                    // 'YEAR(invoices.created_at) as anio',
+                ])
+                ->where([
+                    'type_document_id'              => $type_document->id,
+                    'DATE(invoices.created_at) >='  => $startOfWeek,
+                    'DATE(invoices.created_at) <='  => $now
+                ])->groupBy('fecha')
+                // ])->groupBy('MONTH(invoices.created_at)', 'YEAR(invoices.created_at)')
+                ->findAll();
+
+            $type_document->month = $this->i_model
+                ->select([
+                    'IFNULL(SUM(invoices.payable_amount), 0) as total',
+                    'DAY(invoices.created_at) as fecha'
+                ])
+                ->where([
+                    'type_document_id'              => $type_document->id,
+                    'MONTH(invoices.created_at)'    => date('m'),
+                    'YEAR(invoices.created_at)'     => date('Y')
+                ])
+                ->groupBy('fecha') // Agrupa por día del mes
+                ->orderBy('fecha', 'ASC') // Ordena por día del mes
+                ->findAll();
+            
+
+            $type_document->total = (float) array_reduce($type_document->data, function($carry, $data){
+                $data = (object) $data;
+                return $carry += $data->total;
+            }, 0);
+
+            $type_document->data_year = $this->i_model
+                ->select([
+                    'IFNULL(SUM(invoices.payable_amount), 0) as total',
+                    'MONTH(invoices.created_at) as mes',
+                    'YEAR(invoices.created_at) as anio',
+                ])
+                ->where([
+                    'type_document_id'              => $type_document->id,
+                    'DATE(invoices.created_at) >='  => $startOfYear,
+                    'DATE(invoices.created_at) <='  => $now
+                // ])->groupBy('fecha')
+                ])->groupBy('MONTH(invoices.created_at)', 'YEAR(invoices.created_at)')
+                ->findAll();
+
+            $type_document->data_day = $this->i_model
+                ->select([
+                    'IFNULL(SUM(invoices.payable_amount), 0) as total',
+                    'IFNULL(COUNT(invoices.id), 0) as total_inv',
+                    // 'DAY(invoices.created_at) as dia',
+                ])
+                ->where([
+                    'type_document_id'          => $type_document->id,
+                    'DATE(invoices.created_at)' => $now
+                // ])->groupBy('fecha')
+                ])->groupBy('DAY(invoices.created_at)')
+                ->first();
+
+            
+
+
+            $type_document->semanal = $this->i_model
+                ->select([
+                    'IFNULL(SUM(invoices.payable_amount), 0) as total',
+                    'DATE(invoices.created_at) as fecha'
+                ])
+                ->where([
+                    'type_document_id' => $type_document->id
+                ])
+                ->where('DATE(invoices.created_at) >=', date('Y-m-d', strtotime('monday this week')))
+                ->where('DATE(invoices.created_at) <=', date('Y-m-d', strtotime('sunday this week')))
+                ->groupBy('fecha')
+                ->orderBy('fecha', 'ASC')
+            ->findAll();
+
+            $type_document->customers = $this->i_model
+                ->select([
+                    'IFNULL(SUM(invoices.payable_amount), 0) as total',
+                    'invoices.customer_id',
+                    'c.name'
+                ])
+                ->where([
+                    'type_document_id' => $type_document->id
+                ])
+                ->join('customers as c', 'c.id = invoices.customer_id', 'left')
+                ->groupBy('invoices.customer_id')
+                ->orderBy('total', 'DESC')
+            ->paginate(5);
+
+            switch ($type_document->id) {
+                case '1':
+                    $type_document->icon    = "ri-money-dollar-circle-line";
+                    $type_document->color   = (object) ["class" => "primary", "rgb" => "#8e24aa"];
+                    break;
+                
+                default:
+                    $type_document->icon    = "ri-money-dollar-circle-fill";
+                    $type_document->color   = (object) ["class" => "warning", "rgb" => "#fdb528"];
+                    break;
+            }
+
+        }
+
+        return $type_documents;
     }
     
     public function customers()
