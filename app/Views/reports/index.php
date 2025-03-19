@@ -76,8 +76,34 @@
             </div>
         </div>
 
+        <div class="col-12 col-xxl-6 col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="mb-1">Top Vendedores</h5>
+                    </div>
+                </div>
+                <div class="card-body pt-xl-5">
+                    <div id="seller-1"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xxl-6 col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="mb-1">Top Clientes</h5>
+                    </div>
+                </div>
+                <div class="card-body pt-xl-5">
+                    <div id="customer-1"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Top Referral Source  -->
-        <div class="col-12 col-xxl-6">
+        <!-- <div class="col-12 col-xxl-6">
             <div class="card h-100">
                 <div class="card-header mb-0 pb-0 d-flex justify-content-center">
                     <div>
@@ -85,7 +111,7 @@
                     </div>
                 </div>
                 <div class="card-body pb-0">
-                    <div class="col-12">
+                    <div class="card col-12">
                         <div class="mb-6">
                             <div class="card-header p-0">
                                 <div class="nav-align-top">
@@ -118,11 +144,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <!--/ Top Referral Source  -->
 
         <!-- Top Referral Source  -->
-        <div class="col-12 col-xxl-6">
+        <!-- <div class="col-12 col-xxl-6">
             <div class="card h-100">
                 <div class="card-header mb-0 pb-0 d-flex justify-content-center">
                     <div>
@@ -163,7 +189,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <!--/ Top Referral Source  -->
 
 
@@ -184,7 +210,7 @@
                         <?php endforeach ?>
                     </p>
                 </div>
-                <div class="card-body pt-xl-5">
+                <div class="card-body pt-xl-5" id="content-semana">
                     <div id="total_semana"></div>
                 </div>
             </div>
@@ -206,7 +232,7 @@
                         </p>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body" id="content-mes">
                     <div id="shipmentStatisticsChart"></div>
                 </div>
             </div>
@@ -222,7 +248,9 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div id="monthlyBudgetChart"></div>
+                    <div id="content-year">
+                        <div id="monthlyBudgetChart"></div>
+                    </div>
                     <div class="mt-4">
                         <p class="mb-0 card-subtitle">
                             <?php foreach ($documents as $key => $td): ?>

@@ -90,7 +90,8 @@ class ReportsController extends BaseController
                     'c.name'
                 ])
                 ->where([
-                    'type_document_id' => $type_document->id
+                    'type_document_id' => $type_document->id,
+                    'DATE(invoices.created_at)' => $now
                 ])
                 ->join('customers as c', 'c.id = invoices.customer_id', 'left')
                 ->groupBy('invoices.customer_id')
@@ -105,7 +106,8 @@ class ReportsController extends BaseController
                     'u.name'
                 ])
                 ->where([
-                    'type_document_id' => $type_document->id
+                    'type_document_id' => $type_document->id,
+                    'DATE(invoices.created_at)' => $now
                 ])
                 ->join('users as u', 'u.id = invoices.seller_id', 'left')
                 ->groupBy('invoices.seller_id')

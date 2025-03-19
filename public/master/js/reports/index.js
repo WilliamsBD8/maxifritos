@@ -108,8 +108,6 @@ function graphicWeek(data) {
                 },
             ],
         };
-
-    $(`#total_semana`).html("")
         
     const total_semana = new ApexCharts(total_semanaEl, total_semanaConfig);
     total_semana.render();
@@ -336,6 +334,7 @@ function graphicTop(data, categories, identification) {
             chart: {
                 type: "bar",
                 height: 200,
+                width: "100%",
                 parentHeightOffset: 0,
                 toolbar: {
                     show: false,
@@ -406,7 +405,21 @@ function graphicTop(data, categories, identification) {
             xaxis: {
                 categories: categories,
                 labels: {
-                    show: true
+                    show:false,
+                    formatter: function (val) {
+                        if (val >= 1000000) {
+                            return (val / 1000000).toFixed(0) + "M";
+                        } else if (val >= 1000) {
+                            return (val / 1000).toFixed(0) + "K";
+                        } else {
+                            return val.toFixed(0);
+                        }
+                    },
+                    style: {
+                        fontSize: '13px',
+                        colors: labelColor,
+                        fontFamily: 'Inter'
+                      }
                 },
                 axisBorder: {
                     show: false,
@@ -440,7 +453,10 @@ function graphicTop(data, categories, identification) {
             },
         };
 
+
+
     $(`#${identification}`).html("")
+
     const salesCountryChart = new ApexCharts(
         salesCountryChartEl,
         salesCountryChartConfig
@@ -474,7 +490,18 @@ function resetFilter(){
     $("#formFilter").submit();
 }
 
-function loadGraphics(){
+async function loadGraphics(){
+
+    $("#content-semana").html(`<div id="total_semana"></div>`);
+    $("#content-mes").html(`<div id="shipmentStatisticsChart"></div>`);
+    $("#content-year").html(`<div id="monthlyBudgetChart"></div>`);
+    
+    // type_documents.map((td) => {
+    //     $(`#navs-seller-${td.id}`).html(`<div class="w-100" id="seller-${td.id}"></div>`)
+    //     $(`#navs-customer-${td.id}`).html(`<div class="w-100" id="customer-${td.id}"></div>`)
+    // })
+    
+    // await new Promise(resolve => setTimeout(resolve, 1000));
 
     graphicDay();
     const data_week = []
@@ -487,12 +514,15 @@ function loadGraphics(){
     const currentMonth = today.getMonth();
 
     type_documents.map((td) => {
+
+        // $(`#navs-seller-${td.id}`).html(`<div id="seller-${td.id}"></div>`)
+
         const data_sellers = td.sellers.map(s => parseFloat(s.total));
-        const data_sellers_names = td.sellers.map(s => s.name);
+        const data_sellers_names = td.sellers.map(s => s.name.slice(0, 10));
         graphicTop(data_sellers, data_sellers_names, `seller-${td.id}`)
 
         const data_customers = td.customers.map(c => parseFloat(c.total));
-        const data_customers_names = td.customers.map(c => c.name);
+        const data_customers_names = td.customers.map(c => c.name.slice(0, 10));
         graphicTop(data_customers, data_customers_names, `customer-${td.id}`)
 
         const serie_week = {
@@ -558,11 +588,10 @@ function loadGraphics(){
     graphicYear(data_year, currentMonth);
 }
 
-window.onload = () => {
-
+$(() => {
     loadGraphics();
-
+    
     $(`#seller_filter`).select2({
         dropdownParent: $('#canvasFilter')
     });
-};
+});
