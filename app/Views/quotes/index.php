@@ -157,7 +157,7 @@
                         </div>
                         <div class="col-sm-12 mb-2">
                             <div class="form-floating form-floating-outline">
-                                <select class="select2 form-select" data-allow-clear="true" id="seller_filter" name="seller_filter" data-placeholder="Seleccione un cliente">
+                                <select class="select2 form-select" data-allow-clear="true" id="seller_filter" name="seller_filter" data-placeholder="Seleccione un vendedor">
                                     <option value=""></option>
                                     <?php foreach($sellers as $seller): ?>
                                         <option value="<?= $seller->id ?>"><?= $seller->name ?></option>
@@ -169,7 +169,7 @@
                         </div>
                         <div class="col-sm-12 mb-2">
                             <div class="form-floating form-floating-outline">
-                                <select class="select2 form-select" data-allow-clear="true" id="type_document_filter" name="type_document_filter" data-placeholder="Seleccione un cliente">
+                                <select class="select2 form-select" data-allow-clear="true" id="type_document_filter" name="type_document_filter" data-placeholder="Seleccione un tipo de documento">
                                     <option value=""></option>
                                     <?php foreach($type_documents as $key => $td): ?>
                                         <option value="<?= $td->id ?>"><?= $td->name ?></option>

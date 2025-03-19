@@ -19,63 +19,157 @@
                 <div class="d-flex align-items-end row mb-2">
                     <div class="col-md-12">
                         <div class="card-body p-2">
-                            <h4 class="card-title m-0 text-center title-report">Reporte General</h4>
-                            <div class="d-flex justify-content-center flex-wrap">
-                                <?php foreach ($documents as $key => $td): ?>
-                                <span
-                                    class="badge rounded-pill bg-<?= $td->color->class ?> mx-3 my-2 px-4 py-2"><?= "$td->name - $td->code" ?></span>
-                                <?php endforeach ?>
-                                <button class="btn rounded-pill btn-label-primary waves-effect" type="button" data-bs-toggle="offcanvas" data-bs-target="#canvasFilter" aria-controls="canvasFilter">
-                                    Filtrar
+                            <h4 class="card-title m-0 text-center title-report">
+                                Reporte General
+                                <button class="btn rounded-pill btn-label-primary waves-effect" type="button"
+                                    data-bs-toggle="offcanvas" data-bs-target="#canvasFilter"
+                                    aria-controls="canvasFilter">
+                                    <i class="ri-filter-3-fill ri-16px"></i>
                                 </button>
-                            </div>
+                            </h4>
+                            <h4 class="text-muted text-center m-0 seller-title"></h4>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Total Impression & Order Chart -->
-        <div class="col-lg-2 col-sm-12">
-            <div class="card h-100">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between">
-                        <h5 class="mb-1">Total hoy</h5>
-                    </div>
-                </div>
-                <div class="card-body pb-0 text-center">
-                    <?php foreach($documents as $key => $td): ?>
-                    <div class="d-flex align-items-center">
-                        <div class="w-100">
-                            <div class="card-info">
-                                <div>
-                                    <h5 class="mb-0 total_day_pri_<?= $td->id ?>">$ 0.00</h5>
-                                    <h4 class="mb-1 total_day_inv_<?= $td->id ?>">0</h4>
-                                </div>
-                                <p class="mb-0 mt-1">
-                                <div class="d-flex gap-2 align-items-center justify-content-center mb-2">
-                                    <div class="avatar avatar-xs flex-shrink-0">
-                                        <div class="avatar-initial rounded bg-label-<?= $td->color->class ?>">
-                                            <i class="<?= $td->icon ?> ri-16px"></i>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-widget-separator-wrapper">
+                    <div class="card-body">
+                        <div class="row gy-4 gy-sm-1">
+
+                            <h4 class="card-title mb-4 text-center">
+                                Total Hoy
+                            </h4>
+                            <?php foreach ($documents as $key => $td): ?>
+
+                            <div class="col-sm-12 col-md-6 col-lg-6 border-end" id="div_<?= $td->id ?>">
+                                <div
+                                    class="d-flex justify-content-between align-items-start card-widget-1 pb-4 pb-sm-0">
+                                    <div class="card-body py-0">
+                                        <div class="d-flex align-items-center justify-content-center mb-2">
+                                            <h2 class="mb-0">$ 0,00</h2>
+                                        </div>
+                                        <h6 class="mb-0 fw-normal text-center"><b><span
+                                                    class="badge rounded-pill bg-<?= $td->color->class ?> mx-3 my-2 px-4 py-2"><?= "$td->name" ?></span></b>
+                                        </h6>
+                                        <div class="row mb-1">
+                                            <div class="col-sm-12 col-lg-6">
+                                                <p class="mb-0 fw-medium text-center inv">Documentos: <b>0</b></p>
+                                            </div>
+                                            <div class="col-sm-12 col-lg-6">
+                                                <p class="mb-0 fw-medium text-center cli">Clientes: <b>0</b></p>
+                                            </div>
                                         </div>
                                     </div>
-                                    <p class="mb-0"><?= $td->name ?></p>
                                 </div>
-                                </p>
+                                <hr class="d-none d-sm-block d-md-none d-lg-none me-6 my-0">
                             </div>
+                            <?php endforeach ?>
+
+
                         </div>
                     </div>
-                    <?php if($key == 0): ?>
-                    <hr class="my-2" />
-                    <?php endif ?>
-                    <?php endforeach ?>
                 </div>
             </div>
         </div>
-        <!--/ Total Impression & Order Chart -->
+
+        <!-- Top Referral Source  -->
+        <div class="col-12 col-xxl-6">
+            <div class="card h-100">
+                <div class="card-header mb-0 pb-0 d-flex justify-content-center">
+                    <div>
+                        <h5 class="card-title mb-0">Top Vendedores</h5>
+                    </div>
+                </div>
+                <div class="card-body pb-0">
+                    <div class="col-12">
+                        <div class="mb-6">
+                            <div class="card-header p-0">
+                                <div class="nav-align-top">
+                                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                                        <?php foreach ($documents as $key => $td): ?>
+                                            <li class="nav-item">
+                                                <button type="button" class="nav-link <?= $key == 0 ? 'active' : '' ?>" role="tab"
+                                                    data-bs-toggle="tab" data-bs-target="#navs-seller-<?= $td->id ?>"
+                                                    aria-controls="navs-seller-<?= $td->id ?>" aria-selected="true">
+                                                    <span class="d-none d-sm-block text-<?= $td->color->class ?>"><i
+                                                            class="tf-icons <?= $td->icon ?> me-2"></i>
+                                                        <?= $td->name ?>
+                                                    </span>
+                                                </button>
+                                            </li>
+                                        <?php  endforeach ?>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="tab-content p-0">
+                                    <?php foreach ($documents as $key => $td): ?>
+                                        <div class="tab-pane fade <?= $key == 0 ? 'show active' : '' ?>" id="navs-seller-<?= $td->id ?>" role="tabpanel">
+                                            <div id="seller-<?= $td->id ?>"></div>
+                                        </div>
+                                    <?php endforeach ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--/ Top Referral Source  -->
+
+        <!-- Top Referral Source  -->
+        <div class="col-12 col-xxl-6">
+            <div class="card h-100">
+                <div class="card-header mb-0 pb-0 d-flex justify-content-center">
+                    <div>
+                        <h5 class="card-title mb-0">Top Clientes</h5>
+                    </div>
+                </div>
+                <div class="card-body pb-0">
+                    <div class="col-12">
+                        <div class="mb-6">
+                            <div class="card-header p-0">
+                                <div class="nav-align-top">
+                                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                                        <?php foreach ($documents as $key => $td): ?>
+                                            <li class="nav-item">
+                                                <button type="button" class="nav-link <?= $key == 0 ? 'active' : '' ?>" role="tab"
+                                                    data-bs-toggle="tab" data-bs-target="#navs-customer-<?= $td->id ?>"
+                                                    aria-controls="navs-customer-<?= $td->id ?>" aria-selected="true">
+                                                    <span class="d-none d-sm-block text-<?= $td->color->class ?>"><i
+                                                            class="tf-icons <?= $td->icon ?> me-2"></i>
+                                                        <?= $td->name ?>
+                                                    </span>
+                                                </button>
+                                            </li>
+                                        <?php  endforeach ?>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="tab-content p-0">
+                                    <?php foreach ($documents as $key => $td): ?>
+                                        <div class="tab-pane fade <?= $key == 0 ? 'show active' : '' ?>" id="navs-customer-<?= $td->id ?>" role="tabpanel">
+                                            <div id="customer-<?= $td->id ?>"></div>
+                                        </div>
+                                    <?php endforeach ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--/ Top Referral Source  -->
 
 
-        <div class="col-12 col-xxl-5 col-md-5">
+
+
+        <div class="col-12 col-xxl-6 col-md-6">
             <div class="card h-100">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
@@ -97,7 +191,7 @@
         </div>
 
         <!-- Shipment statistics-->
-        <div class="col-12 col-lg-5 col-xxl-5">
+        <div class="col-12 col-lg-6 col-xxl-6">
             <div class="card h-100">
                 <div class="card-header d-flex align-items-center justify-content-between">
                     <div class="card-title mb-0">
@@ -120,7 +214,7 @@
         <!--/ Shipment statistics -->
 
         <!-- Monthly Budget Chart-->
-        <div class="col-12 col-xxl-6 col-md-6">
+        <div class="col-12">
             <div class="card h-100">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
@@ -144,200 +238,12 @@
         </div>
         <!--/ Monthly Budget Chart-->
 
-        <!-- Top Referral Source  -->
-        <div class="col-12 col-xxl-6">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title mb-1">Top Clientes</h5>
-                    </div>
-                </div>
-                <div class="card-body pb-0">
-                    <ul class="nav nav-tabs nav-tabs-widget pb-6 gap-6 mx-1 d-flex flex-nowrap" role="tablist">
-                        <?php foreach ($documents as $key => $document): ?>
-                        <li class="nav-item">
-                            <a href="javascript:void(0);"
-                                class="nav-link btn <?= $key == 0 ? 'active' : '' ?> d-flex flex-column align-items-center justify-content-center"
-                                role="tab" data-bs-toggle="tab" data-bs-target="#navs-orders-id-<?= $document->id ?>"
-                                aria-controls="navs-orders-id-<?= $document->id ?>" aria-selected="true">
-                                <div class="d-flex flex-column align-items-center">
-                                    <div class="avatar">
-                                        <div class="avatar-initial bg-label-<?= $document->color->class ?> rounded-3">
-                                            <div class="<?= $document->icon ?> ri-20px"></div>
-                                        </div>
-                                    </div>
-                                    <p class="mt-3 mb-1"><?= $document->code ?></p>
-                                </div>
-                            </a>
-                        </li>
-                        <?php endforeach ?>
-                    </ul>
-                </div>
-                <div class="tab-content p-0">
-                    <?php foreach ($documents as $key => $document): ?>
-                    <div class="tab-pane fade <?= $key == 0 ? 'show active' : '' ?> "
-                        id="navs-orders-id-<?= $document->id ?>" role="tabpanel">
-                        <div class="card-body pb-1 px-0">
-                            <div id="customer-<?= $document->id ?>"></div>
-                        </div>
-                    </div>
-                    <?php endforeach ?>
-                    <!-- <div class="tab-pane fade" id="navs-sales-id" role="tabpanel">
-                        <div class="table-responsive text-nowrap">
-                          <table class="table border-top">
-                            <thead>
-                              <tr>
-                                <th class="bg-transparent border-bottom">Product Name</th>
-                                <th class="bg-transparent border-bottom">STATUS</th>
-                                <th class="text-end bg-transparent border-bottom">Profit</th>
-                                <th class="text-end bg-transparent border-bottom">REVENUE</th>
-                              </tr>
-                            </thead>
-                            <tbody class="table-border-bottom-0">
-                              <tr>
-                                <td>facebook Adsense</td>
-                                <td>
-                                  <div class="badge bg-label-info rounded-pill">In Draft</div>
-                                </td>
-                                <td class="text-success fw-medium text-end">+5%</td>
-                                <td class="text-end fw-medium">$5</td>
-                              </tr>
-                              <tr>
-                                <td>Affiliation Program</td>
-                                <td>
-                                  <div class="badge bg-label-primary rounded-pill">Active</div>
-                                </td>
-                                <td class="text-danger fw-medium text-end">-24%</td>
-                                <td class="text-end fw-medium">$5,576</td>
-                              </tr>
-                              <tr>
-                                <td>Email Marketing Campaign</td>
-                                <td>
-                                  <div class="badge bg-label-warning rounded-pill">warning</div>
-                                </td>
-                                <td class="text-success fw-medium text-end">+5%</td>
-                                <td class="text-end fw-medium">$2,857</td>
-                              </tr>
-                              <tr>
-                                <td>facebook Workspace</td>
-                                <td>
-                                  <div class="badge bg-label-success rounded-pill">Completed</div>
-                                </td>
-                                <td class="text-danger fw-medium text-end">-12%</td>
-                                <td class="text-end fw-medium">$850</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                      <div class="tab-pane fade" id="navs-profit-id" role="tabpanel">
-                        <div class="table-responsive text-nowrap">
-                          <table class="table border-top">
-                            <thead>
-                              <tr>
-                                <th class="bg-transparent border-bottom">Product Name</th>
-                                <th class="bg-transparent border-bottom">STATUS</th>
-                                <th class="text-end bg-transparent border-bottom">Profit</th>
-                                <th class="text-end bg-transparent border-bottom">REVENUE</th>
-                              </tr>
-                            </thead>
-                            <tbody class="table-border-bottom-0">
-                              <tr>
-                                <td>Affiliation Program</td>
-                                <td>
-                                  <div class="badge bg-label-primary rounded-pill">Active</div>
-                                </td>
-                                <td class="text-danger fw-medium text-end">-24%</td>
-                                <td class="text-end fw-medium">$5,576</td>
-                              </tr>
-                              <tr>
-                                <td>instagram Adsense</td>
-                                <td>
-                                  <div class="badge bg-label-info rounded-pill">In Draft</div>
-                                </td>
-                                <td class="text-success fw-medium text-end">+5%</td>
-                                <td class="text-end fw-medium">$5</td>
-                              </tr>
-                              <tr>
-                                <td>instagram Workspace</td>
-                                <td>
-                                  <div class="badge bg-label-success rounded-pill">Completed</div>
-                                </td>
-                                <td class="text-danger fw-medium text-end">-12%</td>
-                                <td class="text-end fw-medium">$850</td>
-                              </tr>
-                              <tr>
-                                <td>Email Marketing Campaign</td>
-                                <td>
-                                  <div class="badge bg-label-danger rounded-pill">warning</div>
-                                </td>
-                                <td class="text-danger fw-medium text-end">-5%</td>
-                                <td class="text-end fw-medium">$857</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                      <div class="tab-pane fade" id="navs-income-id" role="tabpanel">
-                        <div class="table-responsive text-nowrap">
-                          <table class="table border-top">
-                            <thead>
-                              <tr>
-                                <th class="bg-transparent border-bottom">Product Name</th>
-                                <th class="bg-transparent border-bottom">STATUS</th>
-                                <th class="text-end bg-transparent border-bottom">Profit</th>
-                                <th class="text-end bg-transparent border-bottom">REVENUE</th>
-                              </tr>
-                            </thead>
-                            <tbody class="table-border-bottom-0">
-                              <tr>
-                                <td>reddit Workspace</td>
-                                <td>
-                                  <div class="badge bg-label-warning rounded-pill">process</div>
-                                </td>
-                                <td class="text-danger fw-medium text-end">-12%</td>
-                                <td class="text-end fw-medium">$850</td>
-                              </tr>
-                              <tr>
-                                <td>Affiliation Program</td>
-                                <td>
-                                  <div class="badge bg-label-primary rounded-pill">Active</div>
-                                </td>
-                                <td class="text-danger fw-medium text-end">-24%</td>
-                                <td class="text-end fw-medium">$5,576</td>
-                              </tr>
-                              <tr>
-                                <td>reddit Adsense</td>
-                                <td>
-                                  <div class="badge bg-label-info rounded-pill">In Draft</div>
-                                </td>
-                                <td class="text-success fw-medium text-end">+5%</td>
-                                <td class="text-end fw-medium">$5</td>
-                              </tr>
-                              <tr>
-                                <td>Email Marketing Campaign</td>
-                                <td>
-                                  <div class="badge bg-label-success rounded-pill">Completed</div>
-                                </td>
-                                <td class="text-success fw-medium text-end">+50%</td>
-                                <td class="text-end fw-medium">$857</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div> -->
-                </div>
-            </div>
-        </div>
-        <!--/ Top Referral Source  -->
-
     </div>
 
     <div class="row gy-3">
 
         <div class="col-lg-3 col-md-6">
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="canvasFilter"
-                aria-labelledby="canvasFilterLabel">
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="canvasFilter" aria-labelledby="canvasFilterLabel">
                 <div class="offcanvas-header">
                     <h5 id="canvasFilterLabel" class="offcanvas-title"></h5>
                     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
@@ -348,7 +254,8 @@
                         <div class="row">
                             <div class="col-sm-12 mb-2">
                                 <div class="form-floating">
-                                    <select class="form-select" id="seller_filter" name="seller_filter">
+                                    <select class="form-select" id="seller_filter" name="seller_filter"
+                                        data-placeholder="Seleccione un vendedor" data-allow-clear="true">
                                         <option></option>
                                         <?php foreach($sellers as $seller): ?>
                                         <option value="<?= $seller->id ?>"><?= "{$seller->name}" ?></option>
@@ -364,7 +271,7 @@
                         <button type="submit"
                             class="btn btn-primary mb-2 d-grid w-100 waves-effect waves-light">Filtrar</button>
                         <button type="button" class="btn btn-danger mb-2 d-grid w-100 waves-effect waves-light"
-                            data-bs-dismiss="offcanvas">Cerrar</button>
+                            onclick="resetFilter()">Reiniciar</button>
                     </form>
                 </div>
             </div>
@@ -380,8 +287,8 @@
 <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
 
 <script>
-    const DocumentsData = () => <?= json_encode($documents) ?>;
-    const sellersData   = () => <?= json_encode($sellers) ?>;
+const DocumentsData = () => <?= json_encode($documents) ?>;
+const sellersData = () => <?= json_encode($sellers) ?>;
 </script>
 
 <script src="<?= base_url(['master/js/reports/index.js?v='.getCommit()]) ?>"></script>

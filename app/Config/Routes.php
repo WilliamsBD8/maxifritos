@@ -72,7 +72,7 @@ $routes->group('dashboard', function ($routes){
 	});
 
 	$routes->group('reports', function($routes){
-		$routes->get('', 'ReportsController::index');
+		$routes->get('anality', 'ReportsController::index');
 		$routes->post('data_index', 'ReportsController::dataIndex');
 
 		$routes->get('customers', 'ReportsController::customers');

@@ -67,6 +67,52 @@ class ReportsController extends BaseController
 
         $type_documents = $this->td_model->findAll();
         foreach ($type_documents as $key => $type_document) {
+
+            $type_document->data_day = $this->i_model
+                ->setAdditionalParams(["origin" => ""])
+                ->distinct('invoices.customer_id')
+                ->select([
+                    'IFNULL(SUM(invoices.payable_amount), 0) as total',
+                    'IFNULL(COUNT(invoices.id), 0) as total_inv',
+                    'IFNULL(COUNT(invoices.customer_id), 0) as total_cus',
+                ])
+                ->where([
+                    'type_document_id'          => $type_document->id,
+                    'DATE(invoices.created_at)' => $now
+                ])->groupBy('DAY(invoices.created_at)')
+            ->first();
+
+            $type_document->customers = $this->i_model
+                ->setAdditionalParams(["origin" => ""])
+                ->select([
+                    'IFNULL(SUM(invoices.payable_amount), 0) as total',
+                    'invoices.customer_id',
+                    'c.name'
+                ])
+                ->where([
+                    'type_document_id' => $type_document->id
+                ])
+                ->join('customers as c', 'c.id = invoices.customer_id', 'left')
+                ->groupBy('invoices.customer_id')
+                ->orderBy('total', 'DESC')
+            ->paginate(5);
+
+            $type_document->sellers = $this->i_model
+                ->setAdditionalParams(["origin" => ""])
+                ->select([
+                    'IFNULL(SUM(invoices.payable_amount), 0) as total',
+                    'invoices.seller_id',
+                    'u.name'
+                ])
+                ->where([
+                    'type_document_id' => $type_document->id
+                ])
+                ->join('users as u', 'u.id = invoices.seller_id', 'left')
+                ->groupBy('invoices.seller_id')
+                ->orderBy('total', 'DESC')
+            ->paginate(5);
+
+            
             $type_document->data = $this->i_model
                 ->setAdditionalParams(["origin" => ""])
                 ->select([
@@ -119,23 +165,6 @@ class ReportsController extends BaseController
                 ])->groupBy('MONTH(invoices.created_at)', 'YEAR(invoices.created_at)')
                 ->findAll();
 
-            $type_document->data_day = $this->i_model
-                ->setAdditionalParams(["origin" => ""])
-                ->select([
-                    'IFNULL(SUM(invoices.payable_amount), 0) as total',
-                    'IFNULL(COUNT(invoices.id), 0) as total_inv',
-                    // 'DAY(invoices.created_at) as dia',
-                ])
-                ->where([
-                    'type_document_id'          => $type_document->id,
-                    'DATE(invoices.created_at)' => $now
-                // ])->groupBy('fecha')
-                ])->groupBy('DAY(invoices.created_at)')
-                ->first();
-
-            
-
-
             $type_document->semanal = $this->i_model
                 ->setAdditionalParams(["origin" => ""])
                 ->select([
@@ -150,21 +179,6 @@ class ReportsController extends BaseController
                 ->groupBy('fecha')
                 ->orderBy('fecha', 'ASC')
             ->findAll();
-
-            $type_document->customers = $this->i_model
-                ->setAdditionalParams(["origin" => ""])
-                ->select([
-                    'IFNULL(SUM(invoices.payable_amount), 0) as total',
-                    'invoices.customer_id',
-                    'c.name'
-                ])
-                ->where([
-                    'type_document_id' => $type_document->id
-                ])
-                ->join('customers as c', 'c.id = invoices.customer_id', 'left')
-                ->groupBy('invoices.customer_id')
-                ->orderBy('total', 'DESC')
-            ->paginate(5);
 
             switch ($type_document->id) {
                 case '1':

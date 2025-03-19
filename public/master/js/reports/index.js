@@ -20,30 +20,13 @@ if (isDarkStyle) {
 
 function graphicDay() {
     type_documents.map(td => {
-        if(td.data_day != null){
-            $(`.total_day_pri_${td.id}`).html(formatPrice(parseFloat(td.data_day.total)))
-            $(`.total_day_inv_${td.id}`).html(td.data_day.total_inv)
-        }
+        $(`#div_${td.id} h2`).html(td.data_day ? formatPrice(parseFloat(td.data_day.total)): 0)
+        $(`#div_${td.id} .inv`).html(`Documentos: ${td.data_day ? td.data_day.total_inv: 0}`)
+        $(`#div_${td.id} .cli`).html(`Clientes: ${td.data_day ? td.data_day.total_cus: 0}`)
     })
 }
 
-function graphicWeek() {
-    const data = [];
-    type_documents.map((td) => {
-        const serie = {
-            name: `${td.name}`,
-            data: [0, 0, 0, 0, 0, 0, 0],
-            color: td.color.rgb,
-        };
-        let total = 0;
-        td.semanal.map((tds) => {
-            let dia = obtenerDiaSemana(tds.fecha);
-            serie.data[dia[0]] = tds.total;
-            total += parseFloat(tds.total);
-        });
-        $(`.week-type-document-${td.id}`).html(formatPrice(total));
-        data.push(serie);
-    });
+function graphicWeek(data) {
     const total_semanaEl = document.querySelector(`#total_semana`),
         total_semanaConfig = {
             chart: {
@@ -125,49 +108,16 @@ function graphicWeek() {
                 },
             ],
         };
-    if (typeof total_semanaEl !== undefined && total_semanaEl !== null) {
-        const total_semana = new ApexCharts(total_semanaEl, total_semanaConfig);
-        total_semana.render();
-    }
+
+    $(`#total_semana`).html("")
+        
+    const total_semana = new ApexCharts(total_semanaEl, total_semanaConfig);
+    total_semana.render();
 }
 
-function graphicMonth() {
-    const data = [];
-    const numDays = new Date().getDate();
-    let daySums = Array(numDays).fill(0); // Array para verificar qué días tienen datos
+function graphicMonth(data, validDays) {
 
-    type_documents.forEach((td) => {
-        const serie = {
-            name: `${td.name}`,
-            type: td.id == 1 ? "column" : "line",
-            data: Array(numDays).fill(0),
-            color: td.color.rgb,
-        };
-
-        let total = 0;
-
-        td.month.forEach((tds) => {
-            serie.data[tds.fecha - 1] = tds.total;
-            total += parseFloat(tds.total);
-            daySums[tds.fecha - 1] += parseFloat(tds.total); // Sumar al total del día
-        });
-
-        $(`.month-type-document-${td.id}`).html(formatPrice(total));
-        data.push(serie);
-    });
-
-    // Filtrar los días donde todos los valores son 0
-    const validDays = daySums
-        .map((sum, index) => (sum > 0 ? index : null))
-        .filter((index) => index !== null);
-
-    // Si no hay días con datos, no renderizar la gráfica
-    if (validDays.length === 0) {
-        console.log("No hay datos para mostrar.");
-        document.querySelector("#shipmentStatisticsChart").innerHTML =
-            "<p>No hay datos disponibles</p>";
-        return;
-    }
+    
 
     // Filtrar los datos para solo incluir los días válidos
     data.forEach((serie) => {
@@ -292,17 +242,15 @@ function graphicMonth() {
             ],
         };
 
-    if (shipmentEl !== null) {
-        const shipment = new ApexCharts(shipmentEl, shipmentConfig);
-        shipment.render();
-    }
+
+    $('#shipmentStatisticsChart').html("")
+    
+    const shipment = new ApexCharts(shipmentEl, shipmentConfig);
+    shipment.render();
 }
 
-function graphicYear() {
-    const data = [];
-    let hasData = false; // Bandera para saber si hay datos válidos
-    const today = new Date();
-    const currentMonth = today.getMonth(); // Mes actual (0 = Enero, 11 = Diciembre)
+function graphicYear(data, currentMonth) {
+     // Mes actual (0 = Enero, 11 = Diciembre)
     const months = [
         "Ene",
         "Feb",
@@ -317,37 +265,6 @@ function graphicYear() {
         "Nov",
         "Dic",
     ];
-
-    type_documents.forEach((td) => {
-        let serie = {
-            name: td.name,
-            data: Array(12).fill(0), // Inicializa con ceros para cada mes
-            color: td.color.rgb,
-        };
-
-        let total = 0;
-        td.data_year.forEach((tdy) => {
-            const monthIndex = tdy.mes - 1; // Convertimos el mes a índice (0-based)
-            if (monthIndex <= currentMonth) {
-                serie.data[monthIndex] = parseFloat(tdy.total);
-                total += parseFloat(tdy.total);
-            }
-        });
-
-        if (total > 0) hasData = true; // Si hay algún total > 0, activamos la bandera
-
-        $(`.year-type-document-${td.id}`).html(formatPrice(total));
-        data.push({
-            ...serie,
-            data: serie.data.slice(0, currentMonth + 1), // Recortamos hasta el mes actual
-        });
-    });
-
-    if (!hasData) {
-        document.querySelector("#monthlyBudgetChart").innerHTML =
-            "<p>No hay datos disponibles</p>";
-        return;
-    }
 
     const monthlyBudgetEl = document.querySelector("#monthlyBudgetChart"),
         monthlyBudgetConfig = {
@@ -407,137 +324,128 @@ function graphicYear() {
             ],
         };
 
-    if (monthlyBudgetEl !== null) {
-        const monthlyBudget = new ApexCharts(monthlyBudgetEl, monthlyBudgetConfig);
-        monthlyBudget.render();
-    }
+    $("#monthlyBudgetChart").html("")
+
+    const monthlyBudget = new ApexCharts(monthlyBudgetEl, monthlyBudgetConfig);
+    monthlyBudget.render();
 }
 
-function graphicCustomer() {
-    type_documents.map(td => {
-
-        const data = td.customers.map(customer => parseFloat(customer.total));
-        const data_names = td.customers.map(customer => customer.name);
-
-        const salesCountryChartEl = document.querySelector(`#customer-${td.id}`),
-            salesCountryChartConfig = {
-                chart: {
-                    type: "bar",
-                    height: 250,
-                    parentHeightOffset: 0,
-                    toolbar: {
-                        show: false,
+function graphicTop(data, categories, identification) {
+    const salesCountryChartEl = document.querySelector(`#${identification}`),
+        salesCountryChartConfig = {
+            chart: {
+                type: "bar",
+                height: 200,
+                parentHeightOffset: 0,
+                toolbar: {
+                    show: false,
+                },
+            },
+            series: [
+                {
+                    name: "Total",
+                    data: data,
+                },
+            ],
+            plotOptions: {
+                bar: {
+                    borderRadius: 10,
+                    barHeight: "60%",
+                    horizontal: true,
+                    distributed: true,
+                    startingShape: "rounded",
+                    dataLabels: {
+                        position: "bottom",
                     },
                 },
-                series: [
-                    {
-                        name: "Total",
-                        data: data,
-                    },
-                ],
-                plotOptions: {
-                    bar: {
-                        borderRadius: 10,
-                        barHeight: "60%",
-                        horizontal: true,
-                        distributed: true,
-                        startingShape: "rounded",
-                        dataLabels: {
-                            position: "bottom",
-                        },
-                    },
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function (val) {
+                    return formatPrice(val); // Agrega separadores de miles
                 },
-                dataLabels: {
-                    enabled: true,
+                textAnchor: "start",
+                offsetY: 8,
+                offsetX: 11,
+                style: {
+                    fontWeight: 500,
+                    fontSize: "0.8rem",
+                    fontFamily: "Inter",
+                },
+            },
+            tooltip: {
+                enabled: true,
+                y: {
                     formatter: function (val) {
-                        return formatPrice(val); // Agrega separadores de miles
+                        return formatPrice(Math.abs(val));
                     },
-                    textAnchor: "start",
-                    offsetY: 8,
-                    offsetX: 11,
+                },
+            },
+            legend: {
+                show: false,
+            },
+            colors: [
+                // config.colors.primary,
+                // config.colors.success,
+                // config.colors.warning,
+                config.colors.info,
+                config.colors.danger,
+            ],
+            grid: {
+                strokeDashArray: 8,
+                borderColor,
+                xaxis: { lines: { show: true } },
+                yaxis: { lines: { show: false } },
+                padding: {
+                    top: -18,
+                    left: 21,
+                    right: 33,
+                    bottom: 10,
+                },
+            },
+            xaxis: {
+                categories: categories,
+                labels: {
+                    show: true
+                },
+                axisBorder: {
+                    show: false,
+                },
+                axisTicks: {
+                    show: false,
+                },
+            },
+            yaxis: {
+                show: true,
+                labels: {
                     style: {
                         fontWeight: 500,
                         fontSize: "0.9375rem",
+                        colors: headingColor,
                         fontFamily: "Inter",
                     },
                 },
-                tooltip: {
-                    enabled: true,
-                    y: {
-                        formatter: function (val) {
-                            return formatPrice(Math.abs(val));
-                        },
+            },
+            states: {
+                hover: {
+                    filter: {
+                        type: "none",
                     },
                 },
-                legend: {
-                    show: false,
-                },
-                colors: [
-                    config.colors.primary,
-                    config.colors.success,
-                    config.colors.warning,
-                    config.colors.info,
-                    config.colors.danger,
-                ],
-                grid: {
-                    strokeDashArray: 8,
-                    borderColor,
-                    xaxis: { lines: { show: true } },
-                    yaxis: { lines: { show: false } },
-                    padding: {
-                        top: -18,
-                        left: 21,
-                        right: 33,
-                        bottom: 10,
+                active: {
+                    filter: {
+                        type: "none",
                     },
                 },
-                xaxis: {
-                    categories: data_names,
-                    labels: {
-                        show: false,
-                    },
-                    axisBorder: {
-                        show: false,
-                    },
-                    axisTicks: {
-                        show: false,
-                    },
-                },
-                yaxis: {
-                    show: false,
-                    labels: {
-                        style: {
-                            fontWeight: 500,
-                            fontSize: "0.9375rem",
-                            colors: headingColor,
-                            fontFamily: "Inter",
-                        },
-                    },
-                },
-                states: {
-                    hover: {
-                        filter: {
-                            type: "none",
-                        },
-                    },
-                    active: {
-                        filter: {
-                            type: "none",
-                        },
-                    },
-                },
-            };
-        if (
-            typeof salesCountryChartEl !== undefined &&
-            salesCountryChartEl !== null
-        ) {
-            const salesCountryChart = new ApexCharts(
-                salesCountryChartEl,
-                salesCountryChartConfig
-            );
-            salesCountryChart.render();
-        }
-    })
+            },
+        };
+
+    $(`#${identification}`).html("")
+    const salesCountryChart = new ApexCharts(
+        salesCountryChartEl,
+        salesCountryChartConfig
+    );
+    salesCountryChart.render();
 }
 
 async function sendFilter(e){
@@ -547,33 +455,114 @@ async function sendFilter(e){
     }
     let url = base_url(['dashboard/reports/data_index']);
 
-    const {data} = await proceso_fetch(url, filter);
+    const { data } = await proceso_fetch(url, filter);
     type_documents.length = 0;
-    type_documents.push(...data);
+
+    Array.prototype.push.apply(type_documents, data);
 
     const seller = sellers.find(s => s.id == $('#seller_filter').val())
 
-    if(seller)
-        $('.title-report').html(`Reporte General: ${seller.name}`)
+    $('.seller-title').html(seller ? seller.name : "")
+    
+    loadGraphics();
 
     $('#canvasFilter .btn-close').click();
-    graphicWeek();
-    graphicDay();
-    graphicMonth();
-    graphicYear();
-    graphicCustomer();
 }
 
-// let data = ;
-// td.semanal.map(tds => {
-//     let dia = obtenerDiaSemana(tds.fecha);
-//     data[dia[0]] = tds.total
-// })
+function resetFilter(){
+    $('#seller_filter').val(null).trigger('change'); // Limpia Select2
+    $("#formFilter").submit();
+}
+
+function loadGraphics(){
+
+    graphicDay();
+    const data_week = []
+    const data_month = []
+    const data_year = []
+    const numDays = new Date().getDate();
+    let daySums = Array(numDays).fill(0);
+
+    const today = new Date();
+    const currentMonth = today.getMonth();
+
+    type_documents.map((td) => {
+        const data_sellers = td.sellers.map(s => parseFloat(s.total));
+        const data_sellers_names = td.sellers.map(s => s.name);
+        graphicTop(data_sellers, data_sellers_names, `seller-${td.id}`)
+
+        const data_customers = td.customers.map(c => parseFloat(c.total));
+        const data_customers_names = td.customers.map(c => c.name);
+        graphicTop(data_customers, data_customers_names, `customer-${td.id}`)
+
+        const serie_week = {
+            name: `${td.name}`,
+            data: [0, 0, 0, 0, 0, 0, 0],
+            color: td.color.rgb,
+        };
+        td.semanal.map((tds) => {
+            let dia = obtenerDiaSemana(tds.fecha);
+            serie_week.data[dia[0]] = tds.total;
+        });
+        data_week.push(serie_week);
+        $(`.week-type-document-${td.id}`).html(formatPrice(td.semanal.reduce((sum, tds) => sum + parseFloat(tds.total), 0)));
+
+        const serie_month = {
+            name: `${td.name}`,
+            type: td.id == 1 ? "column" : "line",
+            data: Array(numDays).fill(0),
+            color: td.color.rgb,
+        };
+
+        td.month.forEach((tds) => {
+            serie_month.data[tds.fecha - 1] = tds.total;
+            daySums[tds.fecha - 1] += parseFloat(tds.total); // Sumar al total del día
+        });
+
+        $(`.month-type-document-${td.id}`).html(formatPrice(td.month.reduce((sum, tdm) => sum + parseFloat(tdm.total), 0)));
+        data_month.push(serie_month);
+
+        const serie = {
+            name: td.name,
+            data: Array(12).fill(0), // Inicializa con ceros para cada mes
+            color: td.color.rgb,
+        };
+
+        td.data_year.forEach((tdy) => {
+            const monthIndex = tdy.mes - 1; // Convertimos el mes a índice (0-based)
+            if (monthIndex <= currentMonth) {
+                serie.data[monthIndex] = parseFloat(tdy.total);
+            }
+        });
+
+        $(`.year-type-document-${td.id}`).html(formatPrice(td.data_year.reduce((sum, tdy) => sum + parseFloat(tdy.total), 0)));
+        data_year.push({
+            ...serie,
+            data: serie.data.slice(0, currentMonth + 1), // Recortamos hasta el mes actual
+        });
+    })
+    graphicWeek(data_week)
+
+
+    // Filtrar los días donde todos los valores son 0
+    const validDays = daySums
+        .map((sum, index) => (sum > 0 ? index : null))
+        .filter((index) => index !== null);
+
+    // Si no hay días con datos, no renderizar la gráfica
+    if (validDays.length === 0) {
+        console.log("No hay datos para mostrar.");
+        document.querySelector("#shipmentStatisticsChart").innerHTML =
+            "<p>No hay datos disponibles</p>";
+    }else graphicMonth(data_month, validDays)
+    graphicYear(data_year, currentMonth);
+}
 
 window.onload = () => {
-    graphicWeek();
-    graphicDay();
-    graphicMonth();
-    graphicYear();
-    graphicCustomer();
+
+    loadGraphics();
+
+    $(`#seller_filter`).select2({
+        dropdownParent: $('#canvasFilter')
+    });
 };
