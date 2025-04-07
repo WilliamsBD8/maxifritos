@@ -32,7 +32,7 @@ async function load_datatable(){
             {title: 'Vendedor', data:'seller'},
             {title: 'Estado', data:'status_id', render:(status_id) => {
                 let s = status_data.find(st => st.id == status_id);
-                return `<span class="badge rounded-pill ${s.class}">${s.name}</span>`;
+                return s ? `<span class="badge rounded-pill ${s.class}">${s.name}</span>` : '';
             }},
             {title: 'Valor', data: 'payable_amount', render: (v) => formatPrice(parseFloat(v))},
             {title: 'Fecha', data: 'created_at'},
@@ -41,12 +41,12 @@ async function load_datatable(){
             {
                 title: "Ubicación",
                 data:"address_origin",
-                render:(coor) => `<a onclick="view_map_detail('${coor}')" href="javascript:void(0)" class="btn btn-sm btn-text-primary rounded-pill btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-info" data-bs-original-title="Ver mapa"><i class="ri-map-pin-line"></i></a>`,
+                render:(coor) => coor ? `<a onclick="view_map_detail('${coor}')" href="javascript:void(0)" class="btn btn-sm btn-text-primary rounded-pill btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-info" data-bs-original-title="Ver mapa"><i class="ri-map-pin-line"></i></a>` : '',
                 visible: user.role_id != 3
             },
             {title: 'Acciones', data:'id', render: (_, __, c) => {
 
-                let actions = `
+                let actions = _ ? `
                     <div class="d-inline-block">
                         <a href="${base_url(['invoices/download', c.id])}" target="_blank" class="btn btn-sm btn-text-secondary rounded-pill btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-warning" data-bs-original-title="Descargar ${c.td_name}"><i class="ri-file-pdf-2-line"></i></a>
                         ${c.status_id == 1  ? `
@@ -67,7 +67,7 @@ async function load_datatable(){
                             
                         `}
                     </div>
-                `
+                ` : ''
                 return actions;
             }}
         ],

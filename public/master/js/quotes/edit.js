@@ -2,6 +2,7 @@
 // const productsD = [];
 const productsD = productsData();
 const invoice = invoiceData();
+const dateHoy = new Date().toISOString().split("T")[0];
 const products = [];
 const table = [];
 $(() => {
@@ -47,7 +48,7 @@ $(() => {
     $('#delivery_date').flatpickr({
         locale:             "es",
         monthSelectorType:  'static',
-        minDate:            new Date(),
+        minDate:            dateHoy,
         onClose: (_, dateStr, instance) => (dateStr === "" && invoice.delivery_date ? instance.setDate(invoice.delivery_date, true) : null)
     });
 

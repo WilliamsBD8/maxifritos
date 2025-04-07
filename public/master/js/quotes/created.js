@@ -2,6 +2,7 @@
 
 const productsD = productsData();
 const products = [];
+const dateHoy = new Date().toISOString().split("T")[0];
 const local_coord = {
     lat:0,
     lng:0
@@ -19,7 +20,10 @@ $(() => {
     $('#delivery_date').flatpickr({
         locale:             "es",
         monthSelectorType:  'dropdown',
-        minDate: new Date(),
+        minDate: dateHoy
+        // onClose: (_, dateStr, instance) => {
+        //     return (dateStr === "" && invoice.delivery_date ? instance.setDate(invoice.delivery_date, true) : null)
+        // }
     });
 });
 
