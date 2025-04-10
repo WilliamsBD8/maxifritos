@@ -27,7 +27,7 @@
             <div class="card-body py-6 px-0">
                 <div class="d-flex justify-content-between flex-wrap">
                     <div class="w-100">
-                        <table class="w-100 text-left">
+                        <table class="w-100 text-left table-customer">
                             <tbody>
                                 <tr>
                                     <td class="pe-4">Nombre:</td>

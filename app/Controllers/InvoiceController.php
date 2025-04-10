@@ -251,8 +251,9 @@ class InvoiceController extends BaseController
         $page = view('pdf/invoice', [
             'invoice' => $invoice
         ]);
-        $css = file_get_contents(base_url(['pdf/invoice.css']));
-        $inter = file_get_contents(base_url(['pdf/inter.css']));
+        // print(FCPATH); die;
+        $css = file_get_contents(FCPATH . 'pdf/invoice.css');
+        $inter = file_get_contents(FCPATH . 'pdf/inter.css');
         $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
         $mpdf->WriteHTML($inter, \Mpdf\HTMLParserMode::HEADER_CSS);
         $mpdf->WriteHTML($page);
