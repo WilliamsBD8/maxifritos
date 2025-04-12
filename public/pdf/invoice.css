@@ -75,7 +75,7 @@ table {
 }
 
 .table-customer, .table-borderless{
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .table-custom {
@@ -91,7 +91,7 @@ table {
     padding: 5px;
     border-left: 1px solid black;
     border-right: 1px solid black;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .table-custom td {
@@ -99,7 +99,7 @@ table {
     padding: 5px;
     border-left: 1px solid black;
     border-right: 1px solid black;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .table-custom td.text-left{
