@@ -34,7 +34,7 @@ class InvoiceController extends BaseController
                 'delivery_date' => [
                     'rules' => "required",
                     'errors' => [
-                        'required'    => 'El campo correo electrónico es obligatorio.',
+                        'required'    => 'El campo fecha de entrega es obligatorio.',
                     ]
                 ]
             ];

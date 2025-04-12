@@ -80,7 +80,7 @@ class Customer extends Model
 
 
     protected function functionBeforeFind(array $data){
-        log_message('info', json_encode($data));
+        // log_message('info', json_encode($data));
         $params = (object) $this->additionalParams;
         switch($params->origin){
             case 'customer_index':
@@ -103,7 +103,7 @@ class Customer extends Model
     }
 
     protected function functionAfterFind(array $data){
-        log_message('info', json_encode($data));
+        // log_message('info', json_encode($data));
         if (isset($data['data']) && is_array($data['data'])) {
             $params = (object) $this->additionalParams;
             foreach ($data['data'] as &$customer) {

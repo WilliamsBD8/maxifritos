@@ -5,6 +5,7 @@ namespace App\Models;
 use CodeIgniter\Model;
 
 use CodeIgniter\Config\Services;
+use CodeIgniter\Exceptions\ModelException;
 
 class Invoice extends Model
 {
@@ -50,7 +51,7 @@ class Invoice extends Model
 
     // Callbacks
     protected $allowCallbacks = true;
-    protected $beforeInsert   = [];
+    protected $beforeInsert   = ["functionBeforeInsert"];
     protected $afterInsert    = [];
     protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
@@ -213,6 +214,15 @@ class Invoice extends Model
             default:
                 # code...
                 break;
+        }
+        return $data;
+    }
+
+    protected function functionBeforeInsert(array $data){
+        log_message('info', "Antes de guardar: " . json_encode($data));
+        $reference = $data['data']['resolution_reference'] ?? null;
+        if ($reference && $this->where('resolution_reference', $reference)->countAllResults() > 0) {
+            throw new ModelException('Esta cotización ya cuenta con una remisión.');
         }
         return $data;
     }
