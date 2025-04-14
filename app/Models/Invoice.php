@@ -219,8 +219,15 @@ class Invoice extends Model
     }
 
     protected function functionBeforeInsert(array $data){
-        log_message('info', "Antes de guardar: " . json_encode($data));
         $reference = $data['data']['resolution_reference'] ?? null;
+        $type_document = $data['data']['type_document_id'];
+        if($type_document == 2){
+            $inv_cotizacion = $this->find($reference);
+            if($inv_cotizacion->status_id == 2)
+                throw new ModelException("La cotización #{$inv_cotizacion->resolution} ya cuenta con una remisión creada.");
+            else if($inv_cotizacion->status_id == 3)
+                throw new ModelException("La cotización #{$inv_cotizacion->resolution} se encuentra rechazada.");
+        }
         if ($reference && $this->where('resolution_reference', $reference)->countAllResults() > 0) {
             throw new ModelException('Esta cotización ya cuenta con una remisión.');
         }

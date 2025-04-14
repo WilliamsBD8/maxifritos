@@ -29,7 +29,7 @@ class InvoiceController extends BaseController
     public function created()
     {
         try{
-            $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();
+            $data = validUrl() ? $this->request->getJson() : (object) $this->request->getPost();            
             $validationRules = [
                 'delivery_date' => [
                     'rules' => "required",
@@ -48,6 +48,14 @@ class InvoiceController extends BaseController
 
 
             $invoice = $this->i_model->where(['type_document_id' => $data->type_document])->orderBy('id', 'DESC')->first();
+
+            if($data->type_document == 2){
+                $inv_cotizacion = $this->i_model->find($data->resolution_reference);
+                if($inv_cotizacion->status_id == 2)
+                    return $this->respond(['title' => 'Error en la cotización', 'error' => "La cotización #{$inv_cotizacion->resolution} ya cuenta con una remisión creada."], 500);
+                else if($inv_cotizacion->status_id == 3)
+                    return $this->respond(['title' => 'Error en la cotización', 'error' => "La cotización #{$inv_cotizacion->resolution} se encuentra rechazada."], 500);
+            }
 
             $data->coordenadas = json_decode($data->coordenadas);
             $data->coordenadas = "{$data->coordenadas->lat}, {$data->coordenadas->lng}";
@@ -87,6 +95,7 @@ class InvoiceController extends BaseController
                 'address_origin'        => $data->coordenadas,
                 'delivery_date'         => $data->delivery_date
             ];
+            
             if($this->i_model->save($dataInvoice)){
                 $invoice_id = $this->i_model->insertID();
                 foreach($data->products as $product){
