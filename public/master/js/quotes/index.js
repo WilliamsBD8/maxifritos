@@ -130,18 +130,26 @@ async function load_datatable(){
                             var el = $.parseHTML(inner);
                             var result = '';
                             $.each(el, function (index, item) {
+                                let text = ""
                                 if (item.classList !== undefined && item.classList.contains('user-name')) {
-                                    result = result + item.lastChild.firstChild.textContent;
+                                    text = item.lastChild.firstChild.textContent;
                                 } else if (item.innerText === undefined) {
-                                    result = result + item.textContent;
+                                    text = item.textContent;
                                 } else {
-                                    result = result + item.innerText;
+                                    text = item.innerText;
                                 }
+
+                                if(rowdex == 5){
+                                    text = format_number(text.replace(/\$/g, '').trim())
+                                }
+
+                                result += text;
+
                             });
                             return result;
                         }
                     }
-                },
+                },               
                 action: async function (e, dt, button, config) {
 
                     const getData = {

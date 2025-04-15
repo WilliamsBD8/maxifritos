@@ -110,27 +110,27 @@ class QuotesController extends BaseController
         
         $data = $this->dataTable->length == -1 ? $data->findAll() : $data->paginate($this->dataTable->length, 'dataTable', $this->dataTable->page);
 
-        if($this->dataTable->length == -1){
-            $data_extra = (object) [
-                'resolution'        => "",
-                'td_name'           => "",
-                'inv_resolution'    => "",
-                'customer'          => "",
-                'seller'            => "",
-                'status_id'         => "",
-                'payable_amount'    => array_reduce($data, function($total, $inv){
-                    $inv = (object) $inv;
-                    return $total + $inv->payable_amount;
-                }, 0),
-                'created_at'        => "",
-                'delivery_date'     => "",
-                'u_name'            => "",
-                'address_origin'    => "",
-                'id'                => "",
-            ];
+        // if($this->dataTable->length == -1){
+        //     $data_extra = (object) [
+        //         'resolution'        => "",
+        //         'td_name'           => "",
+        //         'inv_resolution'    => "",
+        //         'customer'          => "",
+        //         'seller'            => "",
+        //         'status_id'         => "",
+        //         'payable_amount'    => array_reduce($data, function($total, $inv){
+        //             $inv = (object) $inv;
+        //             return $total + $inv->payable_amount;
+        //         }, 0),
+        //         'created_at'        => "",
+        //         'delivery_date'     => "",
+        //         'u_name'            => "",
+        //         'address_origin'    => "",
+        //         'id'                => "",
+        //     ];
 
-            array_push($data, $data_extra);
-        }
+        //     array_push($data, $data_extra);
+        // }
 
         $this->td_model->setAdditionalParams(['origin' => 'quotes_data']);
 
