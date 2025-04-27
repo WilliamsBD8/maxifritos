@@ -183,7 +183,7 @@ class QuotesController extends BaseController
         
         $c_model->setAdditionalParams(['origin' => 'quotes']);
         $customers = $c_model->where(['type_customer_id' => 1, 'customers.status' => 'active'])->findAll();
-        $products = $p_model->where(['status' => 'active'])->findAll();
+        $products = $p_model->findAll();
         $invoice = $this->invoices->find($id);
         $invoice->line_invoice = $this->i_model->getLineInvoice($invoice->id);
         $sellers    = $u_model->where(['role_id' => 3, 'status' => 'active'])->findAll();
