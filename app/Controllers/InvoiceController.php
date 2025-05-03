@@ -277,6 +277,9 @@ class InvoiceController extends BaseController
             $data = $this->i_model
                 ->setAdditionalParams(['origin' => 'load_order'])
                 ->select([
+                    'invoices.resolution as resolution_invoice',
+                    'invoices.note as note_invoice',
+
                     'c.name as customer',
                     'c.id as id_customer',
                     'li.product_id',
@@ -379,6 +382,28 @@ class InvoiceController extends BaseController
                 for ($col = 3; $col <= $highestColumnIndex; $col++) {
                     $sheet->getColumnDimensionByColumn($col)->setAutoSize(true);
                 }
+
+
+                $sheet = $spreadsheet->createSheet();
+                $sheet->setTitle('Hoja de comentarios');
+
+                $spreadsheet->setActiveSheetIndexByName('Hoja de comentarios');
+                
+                // $sheet = $spreadsheet->getActiveSheet()->setTitle('Hoja de comentarios');
+                $headers = ['# Resolución', 'Comentario'];
+    
+                $sheet->fromArray($headers, null, 'A2');
+
+                foreach($data['invoices'] as $key => $invoice){
+                    $sheet->setCellValue("A".($key+3), $invoice->resolution_invoice);
+                    $sheet->setCellValue("B".($key+3), $invoice->note_invoice);
+                }
+
+                
+                $sheet->getColumnDimension('A')->setWidth(17);
+                $sheet->getColumnDimension('B')->setWidth(200);
+
+                $spreadsheet->setActiveSheetIndexByName('Hoja de carga');
     
                 $writer = new Xlsx($spreadsheet);
                 $tempFile = tempnam(sys_get_temp_dir(), 'excel_');

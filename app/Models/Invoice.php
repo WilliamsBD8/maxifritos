@@ -201,8 +201,21 @@ class Invoice extends Model
                     ];
                     return $carry;
                 }, []);
+
+                $invoices = array_reduce($data['data']['data'], function ($carry, $item) {
+                    $id = $item->resolution_invoice;
+                    if(!empty($item->note_invoice)){
+                        $carry[$id] = (object) [
+                            "resolution_invoice"    => $id,
+                            "note_invoice"          => $item->note_invoice,
+                        ];
+                    }
+                    return $carry;
+                }, []);
+
                 $data['data']['products'] = array_values($products);
                 $data['data']['customers'] = array_values($customers);
+                $data['data']['invoices'] = array_values($invoices);
                 break;
             case 'quotes_data':
                 foreach ($data['data'] as $key => $inv) {
