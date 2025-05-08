@@ -390,12 +390,12 @@ class InvoiceController extends BaseController
                 $spreadsheet->setActiveSheetIndexByName('Hoja de comentarios');
                 
                 // $sheet = $spreadsheet->getActiveSheet()->setTitle('Hoja de comentarios');
-                $headers = ['# Resolución', 'Comentario'];
+                $headers = ['Cliente', 'Comentario'];
     
                 $sheet->fromArray($headers, null, 'A2');
 
                 foreach($data['invoices'] as $key => $invoice){
-                    $sheet->setCellValue("A".($key+3), $invoice->resolution_invoice);
+                    $sheet->setCellValue("A".($key+3), $invoice->customer);
                     $sheet->setCellValue("B".($key+3), $invoice->note_invoice);
                 }
 

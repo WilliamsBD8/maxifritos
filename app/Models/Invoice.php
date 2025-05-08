@@ -206,8 +206,8 @@ class Invoice extends Model
                     $id = $item->resolution_invoice;
                     if(!empty($item->note_invoice)){
                         $carry[$id] = (object) [
-                            "resolution_invoice"    => $id,
-                            "note_invoice"          => $item->note_invoice,
+                            "customer"      => $item->customer,
+                            "note_invoice"  => $item->note_invoice,
                         ];
                     }
                     return $carry;
